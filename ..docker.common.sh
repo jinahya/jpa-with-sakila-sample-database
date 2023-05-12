@@ -1,6 +1,8 @@
 #!/bin/sh
+# shellcheck disable=SC2034
 image=jinahya/sakila
+container=sakila
 port=33306
-user=user1
-pass=pass1
-db=db1
+user=user
+pass=pass
+db=sakila

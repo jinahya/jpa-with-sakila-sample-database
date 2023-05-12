@@ -1,5 +1,5 @@
 #!/bin/sh
-source $(dirname $0)/..docker.common.sh
+. $(dirname $0)/..docker.common.sh
 sh ./.docker.stop.sh
 echo sleeping...
 sleep 5

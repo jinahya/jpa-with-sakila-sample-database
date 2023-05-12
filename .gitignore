@@ -1,5 +1,12 @@
 
 
+.DS_STore
+
+
+# Created by https://www.toptal.com/developers/gitignore/api/maven
+# Edit at https://www.toptal.com/developers/gitignore?templates=maven
+
+### Maven ###
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -18,5 +25,13 @@ buildNumber.properties
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+# End of https://www.toptal.com/developers/gitignore/api/maven
 
+
+*.bak
 *~
+
+
+*.iml
+*.idea
+!.idea/codeStyles

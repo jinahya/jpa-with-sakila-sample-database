@@ -1,0 +1,25 @@
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
+             version="3.1">
+  <persistence-unit name="sakilaPU">
+    <description>Sakila Persistence Unit</description>
+    <class>com.github.jinahya.persistence.Actor</class>
+    <class>com.github.jinahya.persistence.Film</class>
+<!--    <class>com.github.jinahya.persistence.more.BitFaceEntity</class>-->
+<!--    <class>com.github.jinahya.persistence.more.BitFaceAttributeConverter$OfLong</class>-->
+<!--    <class>com.github.jinahya.persistence.more.BitMaskAttributeConverter</class>-->
+<!--    <class>com.github.jinahya.persistence.more.BitMaskAttributeConverter$OfLong</class>-->
+<!--    <class>com.github.jinahya.persistence.more.BitMaskAttributeConverter$OfSet</class>-->
+<!--    <class>com.github.jinahya.persistence.more.BitMaskAttributeConverter$OfSet$OfLong</class>-->
+<!--    <class>com.github.jinahya.persistence.more.BitMaskEntity</class>-->
+    <properties>
+<!--      <property name="eclipselink.target-database" value="org.eclipse.persistence.platform.database.H2Platform"/>-->
+      <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="jakarta.persistence.jdbc.password" value="pass"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:33306/sakila"/>
+      <property name="jakarta.persistence.jdbc.username" value="user"/>
+<!--      <property name="jakarta.persistence.schema-generation.database.action" value="drop-and-create"/>-->
+    </properties>
+  </persistence-unit>
+</persistence>
