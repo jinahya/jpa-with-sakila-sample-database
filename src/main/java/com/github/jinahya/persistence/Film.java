@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Max;
@@ -44,6 +45,12 @@ import java.util.stream.Collectors;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">5.1.7 The film Table</a>
  */
+@NamedQuery(name = "Film_findAllByOriginLanguageId",
+            query = "SELECT f FROM Film AS f WHERE f.originalLanguageId = :originLanguageId")
+@NamedQuery(name = "Film_findAllByLanguageId",
+            query = "SELECT f FROM Film AS f WHERE f.languageId = :languageId")
+@NamedQuery(name = "Film_findAllByTitle", query = "SELECT f FROM Film AS f WHERE f.title = :title")
+@NamedQuery(name = "Film_findByFilmId", query = "SELECT f FROM Film AS f WHERE f.filmId = :filmId")
 @Entity
 @Table(name = Film.TABLE_NAME)
 public class Film
@@ -55,6 +62,17 @@ public class Film
     public static final String TABLE_NAME = "film";
 
     public static final String COLUMN_NAME_FILM_ID = "film_id";
+
+    /**
+     * The name of the table column to which the {@value Film_#LANGUAGE_ID} attribute maps. The value is {@value}.
+     */
+    public static final String COLUMN_NAME_LANGUAGE_ID = "language_id";
+
+    /**
+     * The name of the table column to which the {@value Film_#ORIGINAL_LANGUAGE_ID} attribute maps. The value is
+     * {@value}.
+     */
+    public static final String COLUMN_NAME_ORIGINAL_LANGUAGE_ID = "original_language_id";
 
     public static final String COLUMN_NAME_RENTAL_DURATION = "rental_duration";
 
@@ -74,14 +92,71 @@ public class Film
 
     public static final int COLUMN_SCALE_REPLACEMENT_COST = 2;
 
+    public static final BigDecimal COLUMN_DEFAULT_REPLACEMENT_COST = BigDecimal.valueOf(19.99d);
+
+    /**
+     * The name of the table column to which the {@value Film_#RATING} attributes maps.
+     */
     public static final String COLUMN_NAME_RATING = "rating";
 
+    /**
+     * A column value of {@value}(meaning General Audiences) for {@value #COLUMN_NAME_RATING} column.
+     */
+    public static final String COLUMN_VALUE_RATING_G = "G";
+
+    /**
+     * A column value of {@value}(meaning Parental Guidance Suggested) for {@value #COLUMN_NAME_RATING} column.
+     */
+    public static final String COLUMN_VALUE_RATING_PG = "PG";
+
+    /**
+     * A column value of {@value}(meaning Parents Strongly Cautioned) for {@value #COLUMN_NAME_RATING} column.
+     */
+    public static final String COLUMN_VALUE_RATING_PG_13 = "PG-13";
+
+    /**
+     * A column value of {@value}(meaning Restricted) for {@value #COLUMN_NAME_RATING} column.
+     */
+    public static final String COLUMN_VALUE_RATING_R = "R";
+
+    /**
+     * A column value of {@value}(meaning Adults Only) for {@value #COLUMN_NAME_RATING} column.
+     */
+    public static final String COLUMN_VALUE_RATING_NC_17 = "NC-17";
+
+    /**
+     * Predefined constants for {@value Film_#RATING} attribute.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     * @see <a href="https://en.wikipedia.org/wiki/Motion_Picture_Association_film_rating_system">Motion Picture
+     * Association film rating system</a> (Wikipeida)
+     */
     public enum Rating {
+
+        /**
+         * Constant for {@value #COLUMN_VALUE_RATING_G}.
+         */
         G,
+
+        /**
+         * Constants for {@value #COLUMN_VALUE_RATING_PG}.
+         */
         PG,
-        PG_13("PG-13"),
+
+        /**
+         * Constants for {@value #COLUMN_VALUE_RATING_PG_13}.
+         */
+        PG_13(COLUMN_VALUE_RATING_PG_13),
+
+        /**
+         * Constants for {@value #COLUMN_VALUE_RATING_R}.
+         */
         R,
-        NC_17("NC-17");
+
+        /**
+         * Constant for {@value #COLUMN_VALUE_RATING_NC_17}.
+         */
+        NC_17(COLUMN_VALUE_RATING_NC_17);
 
         static Rating valueOfColumnValue(final String columnValue) {
             Objects.requireNonNull(columnValue, "columnValue is null");
@@ -129,12 +204,24 @@ public class Film
         }
     }
 
+    /**
+     * The name of the table column to which the {@value Film_#SPECIAL_FEATURES} attribute maps.
+     */
     public static final String COLUMN_NAME_SPECIAL_FEATURES = "special_features";
 
+    /**
+     * Predefined constants for {@value Film_#SPECIAL_FEATURES} attributes.
+     *
+     * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+     */
     public enum SpecialFeature {
+
         TRAILERS("Trailers"),
+
         COMMENTARIES("Commentaries"),
+
         DELETED_SCENES("Deleted Scenes"),
+
         BEHIND_THE_SCENES("Behind the Scenes");
 
         static SpecialFeature valueOfColumnValue(final String columnValue) {
@@ -182,8 +269,6 @@ public class Film
                     .collect(Collectors.toCollection(() -> EnumSet.noneOf(SpecialFeature.class)));
         }
     }
-
-    public static final BigDecimal COLUMN_DEFAULT_REPLACEMENT_COST = BigDecimal.valueOf(19.99d);
 
     /**
      * Creates a new instance.
@@ -259,19 +344,19 @@ public class Film
         this.releaseYear = releaseYear;
     }
 
-    public Integer getLanguageId() {
+    Integer getLanguageId() {
         return languageId;
     }
 
-    public void setLanguageId(final Integer languageId) {
+    void setLanguageId(final Integer languageId) {
         this.languageId = languageId;
     }
 
-    public Integer getOriginalLanguageId() {
+    Integer getOriginalLanguageId() {
         return originalLanguageId;
     }
 
-    public void setOriginalLanguageId(final Integer originalLanguageId) {
+    void setOriginalLanguageId(final Integer originalLanguageId) {
         this.originalLanguageId = originalLanguageId;
     }
 
@@ -364,7 +449,7 @@ public class Film
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
-    @Column(name = "language_id", nullable = false)
+    @Column(name = COLUMN_NAME_LANGUAGE_ID, nullable = false)
     private Integer languageId;
 
     /**
@@ -375,7 +460,7 @@ public class Film
     @PositiveOrZero
     @NotNull
     @Basic(optional = true)
-    @Column(name = "original_language_id", nullable = true)
+    @Column(name = COLUMN_NAME_ORIGINAL_LANGUAGE_ID, nullable = true)
     private Integer originalLanguageId;
 
     /**
