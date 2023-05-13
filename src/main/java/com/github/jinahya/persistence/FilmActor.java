@@ -2,27 +2,34 @@ package com.github.jinahya.persistence;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.util.Objects;
+import java.util.Optional;
 
+/**
+ * An entity class for mapping {@value #TABLE_NAME} table.
+ * <p>
+ * <blockquote>
+ * The {@value #TABLE_NAME} table is used to support a many-to-many relationship between films and actors. For each
+ * actor in a given film, there will be one row in the {@value #TABLE_NAME} table listing the actor and film.<br/> The
+ * {@value #TABLE_NAME} table refers to the {@value Film#TABLE_NAME} and {@value Actor#TABLE_NAME} tables using foreign
+ * keys.
+ * </blockquote>
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+@IdClass(FilmActorId.class)
 @Entity
 @Table(name = FilmActor.TABLE_NAME)
-@IdClass(FilmActorId.class)
-@Setter
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder(toBuilder = true)
 public class FilmActor
         extends _BaseEntity<FilmActorId> {
 
@@ -35,6 +42,13 @@ public class FilmActor
 
     public static final String COLUMN_NAME_FILM_ID = Film.COLUMN_NAME_FILM_ID;
 
+    /**
+     * Creates a new instance.
+     */
+    public FilmActor() {
+        super();
+    }
+
     @Override
     public String toString() {
         return super.toString() + '{' +
@@ -46,8 +60,8 @@ public class FilmActor
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof FilmActor)) return false;
-        return super.equals(obj);
+        if (!(obj instanceof FilmActor that)) return false;
+        return equals_(that);
     }
 
     @Override
@@ -57,12 +71,31 @@ public class FilmActor
 
     @Override
     protected FilmActorId identifier() {
-        return FilmActorId.builder()
-                .actorId(getActorId())
-                .filmId(getFilmId())
-                .build();
+        final var identifier = new FilmActorId();
+        identifier.setActorId(getActorId());
+        identifier.setFilmId(getFilmId());
+        return identifier;
     }
 
+    Integer getActorId() {
+        return actorId;
+    }
+
+    void setActorId(final Integer actorId) {
+        this.actorId = actorId;
+    }
+
+    Integer getFilmId() {
+        return filmId;
+    }
+
+    void setFilmId(final Integer filmId) {
+        this.filmId = filmId;
+    }
+
+    /**
+     * A foreign key identifying the actor.
+     */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
@@ -70,10 +103,26 @@ public class FilmActor
     @Column(name = COLUMN_NAME_ACTOR_ID, nullable = false)
     private Integer actorId;
 
+    /**
+     * A foreign key identifying the film.
+     */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Id
     @Column(name = COLUMN_NAME_FILM_ID, nullable = false)
     private Integer filmId;
+
+    public Actor getActor() {
+        return actor;
+    }
+
+    public void setActor(final Actor actor) {
+        this.actor = actor;
+        setActorId(Optional.ofNullable(actor).map(Actor::getActorId).orElse(null));
+    }
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_ACTOR_ID, nullable = false, insertable = false, updatable = false)
+    private Actor actor;
 }

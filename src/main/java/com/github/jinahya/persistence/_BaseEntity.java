@@ -5,23 +5,22 @@ import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 
 @MappedSuperclass
-@Setter
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder(toBuilder = true)
 public abstract class _BaseEntity<U>
         extends __BaseEntity<U> {
+
+    /**
+     * Creates a new instance.
+     */
+    protected _BaseEntity() {
+        super();
+    }
 
     @Override
     public String toString() {
@@ -40,6 +39,26 @@ public abstract class _BaseEntity<U>
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    /**
+     * Returns current value of {@value _BaseEntity_#LAST_UPDATE} attribute.
+     *
+     * @return current value of {@value _BaseEntity_#LAST_UPDATE} attribute.
+     */
+    public Timestamp getLastUpdate() {
+        return lastUpdate;
+    }
+
+    /**
+     * Replaces current value of {@value _BaseEntity_#LAST_UPDATE} attribute with specified value.
+     *
+     * @param lastUpdate new value for {@value _BaseEntity_#LAST_UPDATE} attribute.
+     * @deprecated for removal
+     */
+    @Deprecated(forRemoval = true)
+    private void setLastUpdate(Timestamp lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     @Basic(optional = false)

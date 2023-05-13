@@ -4,6 +4,7 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
+import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,12 +15,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.temporal.ChronoField;
@@ -41,7 +37,7 @@ import java.util.stream.Collectors;
  * The film table is a list of all films potentially in stock in the stores. The actual in-stock copies of each film are
  * represented in the {@value MappedInventory#TABLE_NAME} table.
  * <p>
- * The film table refers to the {@value MappedLanguage#TABLE_NAME} table and is referred to by the
+ * The film table refers to the {@value Language#TABLE_NAME} table and is referred to by the
  * {@value MappedFilmCategory#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and {@value MappedInventory#TABLE_NAME}
  * tables.
  * </blockquote>
@@ -51,10 +47,6 @@ import java.util.stream.Collectors;
  */
 @Entity
 @Table(name = Film.TABLE_NAME)
-@Setter
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder(toBuilder = true)
 public class Film
         extends _BaseEntity<Integer> {
 
@@ -117,7 +109,8 @@ public class Film
         private final String columnValue;
     }
 
-    static class RatingConverter
+    @Converter
+    public static class RatingConverter
             implements AttributeConverter<Rating, String> {
 
         @Override
@@ -166,7 +159,8 @@ public class Film
         private final String columnValue;
     }
 
-    static class SpecialFeaturesConverter
+    @Converter
+    public static class SpecialFeaturesConverter
             implements AttributeConverter<Set<SpecialFeature>, String> {
 
         @Override
@@ -191,6 +185,13 @@ public class Film
     }
 
     public static final BigDecimal COLUMN_DEFAULT_REPLACEMENT_COST = BigDecimal.valueOf(19.99d);
+
+    /**
+     * Creates a new instance.
+     */
+    public Film() {
+        super();
+    }
 
     @Override
     public String toString() {
@@ -222,6 +223,107 @@ public class Film
         return super.hashCode();
     }
 
+    @Override
+    protected Integer identifier() {
+        return getFilmId();
+    }
+
+    public Integer getFilmId() {
+        return filmId;
+    }
+
+    public void setFilmId(final Integer filmId) {
+        this.filmId = filmId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(final String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(final String description) {
+        this.description = description;
+    }
+
+    public Integer getReleaseYear() {
+        return releaseYear;
+    }
+
+    public void setReleaseYear(final Integer releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public Integer getLanguageId() {
+        return languageId;
+    }
+
+    public void setLanguageId(final Integer languageId) {
+        this.languageId = languageId;
+    }
+
+    public Integer getOriginalLanguageId() {
+        return originalLanguageId;
+    }
+
+    public void setOriginalLanguageId(final Integer originalLanguageId) {
+        this.originalLanguageId = originalLanguageId;
+    }
+
+    public Integer getRentalDuration() {
+        return rentalDuration;
+    }
+
+    public void setRentalDuration(final Integer rentalDuration) {
+        this.rentalDuration = rentalDuration;
+    }
+
+    public BigDecimal getRentalRate() {
+        return rentalRate;
+    }
+
+    public void setRentalRate(final BigDecimal rentalRate) {
+        this.rentalRate = rentalRate;
+    }
+
+    public Integer getLength() {
+        return length;
+    }
+
+    public void setLength(final Integer length) {
+        this.length = length;
+    }
+
+    public BigDecimal getReplacementCost() {
+        return replacementCost;
+    }
+
+    public void setReplacementCost(final BigDecimal replacementCost) {
+        this.replacementCost = replacementCost;
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public void setRating(final Rating rating) {
+        this.rating = rating;
+    }
+
+    public Set<SpecialFeature> getSpecialFeatures() {
+        return specialFeatures;
+    }
+
+    public void setSpecialFeatures(final Set<SpecialFeature> specialFeatures) {
+        this.specialFeatures = specialFeatures;
+    }
+
     /**
      * A surrogate primary key used to uniquely identify each film in the table.
      */
@@ -229,7 +331,7 @@ public class Film
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
+    @Column(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = true, updatable = false)
     private Integer filmId;
 
     /**
@@ -257,7 +359,7 @@ public class Film
     private Integer releaseYear;
 
     /**
-     * A foreign key pointing at the {@value MappedLanguage#TABLE_NAME} table; identifies the language of the film.
+     * A foreign key pointing at the {@value Language#TABLE_NAME} table; identifies the language of the film.
      */
     @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
@@ -267,8 +369,8 @@ public class Film
     private Integer languageId;
 
     /**
-     * A foreign key pointing at the {@value MappedLanguage#TABLE_NAME} table; identifies the original language of the
-     * film. Used when a film has been dubbed into a new language.
+     * A foreign key pointing at the {@value Language#TABLE_NAME} table; identifies the original language of the film.
+     * Used when a film has been dubbed into a new language.
      */
     @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
@@ -336,14 +438,14 @@ public class Film
     private Set<SpecialFeature> specialFeatures;
 
     /**
-     * Returns current value of {@value MappedFilm_#RELEASE_YEAR} attribute as an instance of specified temporal
-     * accessor type.
+     * Returns current value of {@value Film_#RELEASE_YEAR} attribute as an instance of specified temporal accessor
+     * type.
      *
-     * @param mapper a function for mapping current value of {@value MappedFilm_#RELEASE_YEAR} attribute into an
-     *               instance of {@link T}.
+     * @param mapper a function for mapping current value of {@value Film_#RELEASE_YEAR} attribute into an instance of
+     *               {@link T}.
      * @param <T>    type of temporal accessor
-     * @return an instance of {@link T} mapped from current value of {@value MappedFilm_#RELEASE_YEAR} attribute;
-     * {@code null} if current value of {@value MappedFilm_#RELEASE_YEAR} attribute is {@code null}.
+     * @return an instance of {@link T} mapped from current value of {@value Film_#RELEASE_YEAR} attribute; {@code null}
+     * if current value of {@value Film_#RELEASE_YEAR} attribute is {@code null}.
      */
     public <T extends TemporalAccessor> T getReleaseYearAsTemporalAccessor(final IntFunction<? extends T> mapper) {
         Objects.requireNonNull(mapper, "mapper is null");
@@ -353,8 +455,8 @@ public class Film
     }
 
     /**
-     * Replaces current value of {@value MappedFilm_#RELEASE_YEAR} attribute with the {@link ChronoField#YEAR} field
-     * value of specified temporal accessor value.
+     * Replaces current value of {@value Film_#RELEASE_YEAR} attribute with the {@link ChronoField#YEAR} field value of
+     * specified temporal accessor value.
      *
      * @param releaseYearAsTemporalAccessor the temporal accessor value whose {@link ChronoField#YEAR} field value is
      *                                      fetched.
@@ -369,14 +471,13 @@ public class Film
     }
 
     /**
-     * Returns current value of {@value MappedFilm_#RENTAL_RATE} attribute as an instance of specified temporal amount
-     * type.
+     * Returns current value of {@value Film_#RENTAL_RATE} attribute as an instance of specified temporal amount type.
      *
-     * @param mapper a function for mapping current value of {@value MappedFilm_#RENTAL_DURATION} attribute into an
-     *               instance of {@link T}.
+     * @param mapper a function for mapping current value of {@value Film_#RENTAL_DURATION} attribute into an instance
+     *               of {@link T}.
      * @param <T>    type of temporal amount
-     * @return an instance of {@link T} mapped from current value of {@value MappedFilm_#RENTAL_DURATION} attribute;
-     * {@code null} if current value of {@value MappedFilm_#RENTAL_DURATION} attribute is {@code null}.
+     * @return an instance of {@link T} mapped from current value of {@value Film_#RENTAL_DURATION} attribute;
+     * {@code null} if current value of {@value Film_#RENTAL_DURATION} attribute is {@code null}.
      */
     @Transient
     public <T extends TemporalAmount> T getRentalDurationAsTemporalAmount(final IntFunction<? extends T> mapper) {
@@ -386,7 +487,7 @@ public class Film
     }
 
     /**
-     * Replaces current value of {@value MappedFilm_#RENTAL_DURATION} attribute with specified temporal amount in
+     * Replaces current value of {@value Film_#RENTAL_DURATION} attribute with specified temporal amount in
      * {@link java.time.temporal.ChronoUnit#DAYS} unit.
      *
      * @param rentalDurationAsTemporalAmount the temporal amount value for the
@@ -398,13 +499,13 @@ public class Film
     }
 
     /**
-     * Returns current value of {@value MappedFilm_#LENGTH} attribute as an instance of specified temporal amount type.
+     * Returns current value of {@value Film_#LENGTH} attribute as an instance of specified temporal amount type.
      *
-     * @param mapper a function for mapping current value of {@value MappedFilm_#LENGTH} attribute into an instance of
+     * @param mapper a function for mapping current value of {@value Film_#LENGTH} attribute into an instance of
      *               {@link T}.
      * @param <T>    type of temporal amount
-     * @return an instance of {@link T} mapped from current value of {@value MappedFilm_#LENGTH} attribute; {@code null}
-     * if current value of {@value MappedFilm_#LENGTH} attribute is {@code null}.
+     * @return an instance of {@link T} mapped from current value of {@value Film_#LENGTH} attribute; {@code null} if
+     * current value of {@value Film_#LENGTH} attribute is {@code null}.
      */
     @Transient
     public <T extends TemporalAmount> T getLengthAsTemporalAmount(final IntFunction<? extends T> mapper) {
@@ -414,7 +515,7 @@ public class Film
     }
 
     /**
-     * Replaces current value of {@value MappedFilm_#LENGTH} attribute with specified temporal amount in
+     * Replaces current value of {@value Film_#LENGTH} attribute with specified temporal amount in
      * {@link java.time.temporal.ChronoUnit#MINUTES} unit.
      *
      * @param lengthAsTemporalAmount the temporal amount value for the {@link java.time.temporal.ChronoUnit#MINUTES}

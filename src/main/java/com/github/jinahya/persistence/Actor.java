@@ -11,19 +11,14 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 /**
  * An entity class for mapping {@value Actor#TABLE_NAME} table.
  * <p>
  * <blockquote>
- * The {@value Actor#TABLE_NAME} table lists information for all actors. <br/> The {@value Actor#TABLE_NAME}
- * table is joined to the {@value Film#TABLE_NAME} table by means of the {@value FilmActor#TABLE_NAME}
- * table.
+ * The {@value Actor#TABLE_NAME} table lists information for all actors. <br/> The {@value Actor#TABLE_NAME} table is
+ * joined to the {@value Film#TABLE_NAME} table by means of the {@value FilmActor#TABLE_NAME} table.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -31,10 +26,6 @@ import lombok.experimental.SuperBuilder;
  */
 @Entity
 @Table(name = Actor.TABLE_NAME, indexes = {@Index(columnList = Actor.COLUMN_NAME_LAST_NAME)})
-@Setter
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder
 public class Actor
         extends _BaseEntity<Integer> {
 
@@ -52,6 +43,13 @@ public class Actor
      * The name of the table column to which the {@value Actor_#LAST_NAME} attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_LAST_NAME = "last_name";
+
+    /**
+     * Creates a new instance.
+     */
+    public Actor() {
+        super();
+    }
 
     @Override
     public String toString() {
@@ -74,6 +72,47 @@ public class Actor
         return super.hashCode();
     }
 
+    @Override
+    protected Integer identifier() {
+        return getActorId();
+    }
+
+    /**
+     * Returns current value of {@value Actor_#ACTOR_ID} attribute.
+     *
+     * @return current value of {@value Actor_#ACTOR_ID} attribute.
+     */
+    public Integer getActorId() {
+        return actorId;
+    }
+
+    /**
+     * Replaces current value of {@value Actor_#ACTOR_ID} attribute with specified value.
+     *
+     * @param actorId new value for {@value Actor_#ACTOR_ID} attribute.
+     * @deprecated for removal.
+     */
+    @Deprecated(forRemoval = true)
+    private void setActorId(Integer actorId) {
+        this.actorId = actorId;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(final String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(final String lastName) {
+        this.lastName = lastName;
+    }
+
     /**
      * A surrogate primary key used to uniquely identify each actor in the table.
      */
@@ -81,8 +120,9 @@ public class Actor
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = COLUMN_NAME_ACTOR_ID, nullable = false, insertable = false, updatable = false)
-    @Setter(AccessLevel.NONE)
+    @Column(name = COLUMN_NAME_ACTOR_ID, nullable = false,
+            insertable = true, // EclipseLink
+            updatable = false)
     private Integer actorId;
 
     /**

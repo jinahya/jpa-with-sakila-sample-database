@@ -1,0 +1,25 @@
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
+             version="3.1">
+  <persistence-unit name="sakilaPU">
+    <description>Sakila Persistence Unit</description>
+    <class>com.github.jinahya.persistence.Actor</class>
+    <class>com.github.jinahya.persistence.Category</class>
+    <class>com.github.jinahya.persistence.Film</class>
+    <class>com.github.jinahya.persistence.FilmActor</class>
+    <class>com.github.jinahya.persistence.Film$RatingConverter</class>
+    <class>com.github.jinahya.persistence.Film$SpecialFeaturesConverter</class>
+    <class>com.github.jinahya.persistence.Language</class>
+    <exclude-unlisted-classes/>
+    <properties>
+      <!-- https://wiki.eclipse.org/EclipseLink/Examples/JPA/Logging -->
+      <property name="eclipselink.logging.level" value="FINE"/>
+      <property name="eclipselink.logging.level.sql" value="FINE"/>
+      <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:33306/sakila"/>
+      <property name="jakarta.persistence.jdbc.user" value="user"/>
+      <property name="jakarta.persistence.jdbc.password" value="password"/>
+    </properties>
+  </persistence-unit>
+</persistence>

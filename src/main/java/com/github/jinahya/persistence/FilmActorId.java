@@ -3,25 +3,28 @@ package com.github.jinahya.persistence;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Setter
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SuperBuilder(toBuilder = true)
+/**
+ * A class for identifying {@link FilmActor}.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public class FilmActorId
         implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -3335863482033861830L;
+
+    /**
+     * Creates a new instance.
+     */
+    public FilmActorId() {
+        super();
+    }
 
     @Override
     public String toString() {
@@ -41,6 +44,22 @@ public class FilmActorId
     @Override
     public int hashCode() {
         return Objects.hash(actorId, filmId);
+    }
+
+    public Integer getActorId() {
+        return actorId;
+    }
+
+    public void setActorId(final Integer actorId) {
+        this.actorId = actorId;
+    }
+
+    public Integer getFilmId() {
+        return filmId;
+    }
+
+    public void setFilmId(final Integer filmId) {
+        this.filmId = filmId;
     }
 
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)

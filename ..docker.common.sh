@@ -4,5 +4,5 @@ image=jinahya/sakila
 container=sakila
 port=33306
 user=user
-pass=pass
+password=password
 db=sakila
