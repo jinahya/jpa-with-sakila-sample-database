@@ -19,7 +19,10 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.Period;
+import java.time.Year;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalField;
@@ -64,6 +67,10 @@ public class Film
 
     public static final String COLUMN_NAME_FILM_ID = "film_id";
 
+    public static final String COLUMN_NAME_TITLE = "title";
+
+    public static final String COLUMN_NAME_DESCRIPTION = "description";
+
     /**
      * The name of the table column to which the {@value Film_#LANGUAGE_ID} attribute maps. The value is {@value}.
      */
@@ -86,6 +93,8 @@ public class Film
     public static final int COLUMN_SCALE_RENTAL_RATE = 2;
 
     public static final BigDecimal COLUMN_DEFAULT_RENTAL_RATE = BigDecimal.valueOf(4.99d);
+
+    public static final String COLUMN_NAME_LENGTH = "length";
 
     public static final String COLUMN_NAME_REPLACEMENT_COST = "replacement_cost";
 
@@ -424,14 +433,14 @@ public class Film
      */
     @NotNull
     @Basic(optional = false)
-    @Column(name = "title", nullable = false, length = 128)
+    @Column(name = COLUMN_NAME_TITLE, nullable = false, length = 128)
     private String title;
 
     /**
      * A short description or plot summary of the film.
      */
     @Basic(optional = true)
-    @Column(name = "description", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT)
+    @Column(name = COLUMN_NAME_DESCRIPTION, nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT)
     private String description;
 
     /**
@@ -489,7 +498,7 @@ public class Film
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Basic(optional = true)
-    @Column(name = "length", nullable = true)
+    @Column(name = COLUMN_NAME_LENGTH, nullable = true)
     private Integer length;
 
     /**
@@ -538,9 +547,9 @@ public class Film
 
     /**
      * Replaces current value of {@value Film_#RELEASE_YEAR} attribute with the {@link ChronoField#YEAR} field value of
-     * specified temporal accessor value.
+     * specified temporal accessor.
      *
-     * @param releaseYearAsTemporalAccessor the temporal accessor value whose {@link ChronoField#YEAR} field value is
+     * @param releaseYearAsTemporalAccessor the temporal accessor whose {@link ChronoField#YEAR} field value is
      *                                      fetched.
      * @see TemporalAccessor#get(TemporalField)
      */
@@ -552,57 +561,68 @@ public class Film
         );
     }
 
+    @Transient
+    public Year getReleaseYearAsTemporalYear() {
+        return getReleaseYearAsTemporalAccessor(Year::of);
+    }
+
+    public void setReleaseYearAsTemporalYear(final Year releaseYearAsTemporalYear) {
+        setReleaseYearAsTemporalAccessor(releaseYearAsTemporalYear);
+    }
+
     /**
-     * Returns current value of {@value Film_#RENTAL_RATE} attribute as an instance of specified temporal amount type.
+     * Returns current value of {@value Film_#RENTAL_DURATION} attribute as an instance of {@link Period}.
      *
-     * @param mapper a function for mapping current value of {@value Film_#RENTAL_DURATION} attribute into an instance
-     *               of {@link T}.
-     * @param <T>    type of temporal amount
-     * @return an instance of {@link T} mapped from current value of {@value Film_#RENTAL_DURATION} attribute;
-     * {@code null} if current value of {@value Film_#RENTAL_DURATION} attribute is {@code null}.
+     * @return an instance of {@link Period}, in days, represents current value of {@value Film_#RENTAL_DURATION}
+     * attribute.
      */
     @Transient
-    public <T extends TemporalAmount> T getRentalDurationAsTemporalAmount(final IntFunction<? extends T> mapper) {
-        Objects.requireNonNull(mapper, "mapper is null");
-        // TODO: implement!
-        return null;
+    public Period getRentalDurationAsPeriod() {
+        return Optional.ofNullable(getRentalDuration())
+                .map(Period::ofDays)
+                .orElse(null);
     }
 
     /**
-     * Replaces current value of {@value Film_#RENTAL_DURATION} attribute with specified temporal amount in
-     * {@link java.time.temporal.ChronoUnit#DAYS} unit.
+     * Replaces current value of {@value Film_#RENTAL_DURATION} attribute with specified period.
      *
-     * @param rentalDurationAsTemporalAmount the temporal amount value for the
-     *                                       {@link java.time.temporal.ChronoUnit#DAYS} unit.
+     * @param rentalDurationAsPeriod the period of {@link java.time.temporal.ChronoUnit#DAYS days} for the
+     *                               {@value Film_#RENTAL_DURATION} attribute.
      * @see TemporalAmount#get(TemporalUnit)
      */
-    public void setRentalDurationAsTemporalAmount(final TemporalAmount rentalDurationAsTemporalAmount) {
-        // TODO: implement!
+    public void setRentalDurationAsPeriod(final Period rentalDurationAsPeriod) {
+        setRentalDuration(
+                Optional.ofNullable(rentalDurationAsPeriod)
+                        .map(v -> v.get(ChronoUnit.DAYS))
+                        .map(Long::intValue)
+                        .orElse(null)
+        );
     }
 
     /**
-     * Returns current value of {@value Film_#LENGTH} attribute as an instance of specified temporal amount type.
+     * Returns current value of {@value Film_#LENGTH} attribute as an instance of {@link Duration}.
      *
-     * @param mapper a function for mapping current value of {@value Film_#LENGTH} attribute into an instance of
-     *               {@link T}.
-     * @param <T>    type of temporal amount
-     * @return an instance of {@link T} mapped from current value of {@value Film_#LENGTH} attribute; {@code null} if
-     * current value of {@value Film_#LENGTH} attribute is {@code null}.
+     * @return an instance of {@link Duration} mapped from current value of {@value Film_#LENGTH} attribute.
      */
     @Transient
     public Duration getLengthAsDuration() {
-        return Optional.ofNullable(getLength()).map(Duration::ofMinutes).orElse(null);
+        return Optional.ofNullable(getLength())
+                .map(Duration::ofMinutes)
+                .orElse(null);
     }
 
     /**
-     * Replaces current value of {@value Film_#LENGTH} attribute with specified temporal amount in
-     * {@link java.time.temporal.ChronoUnit#MINUTES} unit.
+     * Replaces current value of {@value Film_#LENGTH} attribute with specified duration represented in
+     * {@link java.time.temporal.ChronoUnit#MINUTES minutes}.
      *
-     * @param lengthAsDuration the temporal amount value for the {@link java.time.temporal.ChronoUnit#MINUTES}
-     *                               unit.
-     * @see TemporalAmount#get(TemporalUnit)
+     * @param lengthAsDuration the duration for the {@value Film_#LENGTH} attribute.
      */
     public void getLengthAsDuration(final Duration lengthAsDuration) {
-        // TODO: implement!
+        setLength(
+                Optional.ofNullable(lengthAsDuration)
+                        .map(d -> d.get(ChronoUnit.MINUTES))
+                        .map(Long::intValue)
+                        .orElse(null)
+        );
     }
 }
