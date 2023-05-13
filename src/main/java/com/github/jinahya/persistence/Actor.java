@@ -7,11 +7,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.experimental.SuperBuilder;
 
 /**
  * An entity class for mapping {@value Actor#TABLE_NAME} table.
@@ -24,6 +24,8 @@ import lombok.experimental.SuperBuilder;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-actor.html">5.1.1 The actor Table</a>
  */
+@NamedQuery(name = "Actor_findAllByLastName", query = "SELECT a FROM Actor AS a WHERE a.lastName = :lastName")
+@NamedQuery(name = "Actor_findByActorId", query = "SELECT a FROM Actor AS a WHERE a.actorId = :actorId")
 @Entity
 @Table(name = Actor.TABLE_NAME, indexes = {@Index(columnList = Actor.COLUMN_NAME_LAST_NAME)})
 public class Actor

@@ -23,25 +23,22 @@ abstract class _BaseEntityIT<T extends _BaseEntity<U>, U>
     }
 
     private EntityManager entityManagerProxy() {
-        EntityManager result = entityManagerProxy;
-        if (result == null) {
-            final Method close;
-            try {
-                close = EntityManager.class.getMethod("close");
-            } catch (final NoSuchMethodException nsme) {
-                throw new RuntimeException(nsme);
-            }
-            entityManagerProxy = result = (EntityManager) Proxy.newProxyInstance(
-                    entityManager.getClass().getClassLoader(),
-                    new Class<?>[]{EntityManager.class},
-                    (p, m, a) -> {
-                        if (m.equals(close)) {
-                            throw new UnsupportedOperationException("you're not allowed to close the entity manager");
-                        }
-                        return m.invoke(entityManager, a);
-                    });
+        final Method close;
+        try {
+            close = EntityManager.class.getMethod("close");
+        } catch (final NoSuchMethodException nsme) {
+            throw new RuntimeException(nsme);
         }
-        return result;
+        return (EntityManager) Proxy.newProxyInstance(
+                entityManager.getClass().getClassLoader(),
+                new Class<?>[]{EntityManager.class},
+                (p, m, a) -> {
+                    if (m.equals(close)) {
+                        throw new UnsupportedOperationException("you're not allowed to close the entity manager");
+                    }
+                    return m.invoke(entityManager, a);
+                }
+        );
     }
 
     protected <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
@@ -56,7 +53,9 @@ abstract class _BaseEntityIT<T extends _BaseEntity<U>, U>
                 transaction.commit();
             }
         } catch (final Exception e) {
-            transaction.rollback();
+            if (e instanceof RuntimeException re) {
+                throw re;
+            }
             throw new RuntimeException(e);
         }
     }
@@ -70,6 +69,4 @@ abstract class _BaseEntityIT<T extends _BaseEntity<U>, U>
 
     @Inject
     private EntityManager entityManager;
-
-    private EntityManager entityManagerProxy = null;
 }

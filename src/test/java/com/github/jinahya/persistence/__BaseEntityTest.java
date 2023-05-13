@@ -13,6 +13,12 @@ abstract class __BaseEntityTest<T extends __BaseEntity<U>, U> {
         this.idClass = Objects.requireNonNull(idClass, "idClass is null");
     }
 
+    /**
+     * Returns a new instance of {@link #entityClass}.
+     *
+     * @return a new instance of {@link #entityClass}.
+     * @see #newEntitySpy()
+     */
     protected T newEntityInstance() {
         try {
             final Constructor<T> constructor = entityClass.getConstructor();
@@ -25,6 +31,12 @@ abstract class __BaseEntityTest<T extends __BaseEntity<U>, U> {
         }
     }
 
+    /**
+     * Returns a new spy instance of {@link #entityClass}.
+     *
+     * @return a new spy instance of {@link #entityClass}.
+     * @see #newEntityInstance()
+     */
     protected T newEntitySpy() {
         return spy(newEntityInstance());
     }

@@ -4,8 +4,6 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-import lombok.AccessLevel;
-import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -64,7 +62,6 @@ public abstract class _BaseEntity<U>
     @Basic(optional = false)
     @Column(name = _PersistenceConstants.COLUMN_NAME_LAST_UPDATE, nullable = false, insertable = false,
             updatable = false)
-    @Setter(AccessLevel.NONE)
     private Timestamp lastUpdate;
 
     @Transient

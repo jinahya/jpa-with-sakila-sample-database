@@ -9,6 +9,7 @@ final class _PersistenceConstants {
     static final String COLUMN_NAME_LAST_UPDATE = "last_update";
 
     static final int MAX_SMALLINT_UNSIGNED = 65536;
+
     static final int MAX_TINYINT_UNSIGNED = 256;
 
     static final int MIN_COLUMN_YEAR = 1901;

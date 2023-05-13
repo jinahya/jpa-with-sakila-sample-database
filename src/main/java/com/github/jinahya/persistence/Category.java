@@ -23,8 +23,8 @@ import jakarta.validation.constraints.PositiveOrZero;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-category.html">5.1.3 The category Table</a>
  */
-@NamedQuery(name = "Category_findAll", query = "SELECT c FROM Category AS c")
-@NamedQuery(name = "Category_findByName", query = "SELECT c FROM Category AS c WHERE c.name = :name") // not indexed!
+@NamedQuery(name = "Category_findAllByName", query = "SELECT c FROM Category AS c WHERE c.name = :name") // not indexed!
+@NamedQuery(name = "Category_findByCategoryId", query = "SELECT c FROM Category AS c WHERE c.categoryId = :categoryId")
 @Entity
 @Table(name = Category.TABLE_NAME)
 public class Category

@@ -15,7 +15,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.temporal.ChronoField;
@@ -387,7 +386,6 @@ public class Film
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_RENTAL_DURATION, nullable = false)
-    @Builder.Default
     private Integer rentalDuration = COLUMN_VALUE_RENTAL_DURATION_3;
 
     /**
@@ -397,7 +395,6 @@ public class Film
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_RENTAL_RATE, nullable = false, precision = COLUMN_PRECISION_RENTAL_RATE,
             scale = COLUMN_SCALE_RENTAL_RATE)
-    @Builder.Default
     private BigDecimal rentalRate = COLUMN_DEFAULT_RENTAL_RATE;
 
     /**
@@ -416,7 +413,6 @@ public class Film
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_REPLACEMENT_COST, nullable = false, precision = COLUMN_PRECISION_REPLACEMENT_COST,
             scale = COLUMN_SCALE_REPLACEMENT_COST)
-    @Builder.Default
     private BigDecimal replacementCost = COLUMN_DEFAULT_REPLACEMENT_COST;
 
     /**
