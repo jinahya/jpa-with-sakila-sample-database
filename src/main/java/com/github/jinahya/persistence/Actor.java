@@ -42,6 +42,11 @@ public class Actor
     public static final String COLUMN_NAME_ACTOR_ID = "actor_id";
 
     /**
+     * The name of the table column to which the {@value Actor_#FIRST_NAME} attribute maps. The value is {@value}.
+     */
+    public static final String COLUMN_NAME_FIRST_NAME = "first_name";
+
+    /**
      * The name of the table column to which the {@value Actor_#LAST_NAME} attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_LAST_NAME = "last_name";
