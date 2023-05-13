@@ -18,6 +18,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalAmount;
@@ -589,21 +590,19 @@ public class Film
      * current value of {@value Film_#LENGTH} attribute is {@code null}.
      */
     @Transient
-    public <T extends TemporalAmount> T getLengthAsTemporalAmount(final IntFunction<? extends T> mapper) {
-        Objects.requireNonNull(mapper, "mapper is null");
-        // TODO: implement!
-        return null;
+    public Duration getLengthAsDuration() {
+        return Optional.ofNullable(getLength()).map(Duration::ofMinutes).orElse(null);
     }
 
     /**
      * Replaces current value of {@value Film_#LENGTH} attribute with specified temporal amount in
      * {@link java.time.temporal.ChronoUnit#MINUTES} unit.
      *
-     * @param lengthAsTemporalAmount the temporal amount value for the {@link java.time.temporal.ChronoUnit#MINUTES}
+     * @param lengthAsDuration the temporal amount value for the {@link java.time.temporal.ChronoUnit#MINUTES}
      *                               unit.
      * @see TemporalAmount#get(TemporalUnit)
      */
-    public void setLengthAsTemporalAmount(final TemporalAmount lengthAsTemporalAmount) {
+    public void getLengthAsDuration(final Duration lengthAsDuration) {
         // TODO: implement!
     }
 }
