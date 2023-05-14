@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 @jakarta.persistence.Table(name = "city", schema = "sakila", catalog = "")
 public class MappedCity {
 
+public static final String TABLE_NAME = "city";
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @jakarta.persistence.Column(name = "city_id", nullable = false)

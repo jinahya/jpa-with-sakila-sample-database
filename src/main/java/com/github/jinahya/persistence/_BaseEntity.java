@@ -61,7 +61,7 @@ public abstract class _BaseEntity<U>
      * @deprecated for removal
      */
     @Deprecated(forRemoval = true)
-    private void setLastUpdate(Timestamp lastUpdate) {
+    private void setLastUpdate(final Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 

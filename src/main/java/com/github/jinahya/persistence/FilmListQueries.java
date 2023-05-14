@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class FilmListCriteria {
+public final class FilmListQueries {
 
     public static Optional<FilmList> findByFid(final EntityManager entityManager, final int fid) {
         Objects.requireNonNull(entityManager, "entityManager is null");
@@ -25,7 +25,7 @@ public final class FilmListCriteria {
         return result;
     }
 
-    private FilmListCriteria() {
+    private FilmListQueries() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

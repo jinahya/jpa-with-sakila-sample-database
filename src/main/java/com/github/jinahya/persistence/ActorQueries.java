@@ -21,10 +21,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public final class ActorQueries {
 
     /**
-     * Finds an actor whose {@value Actor_#ACTOR_ID} attribute matches to specified value.
+     * Finds an actor whose {@link Actor_#actorId actorId} attribute matches to specified value.
      *
      * @param entityManager an entity manager.
-     * @param actorId       the {@value Actor_#ACTOR_ID} attribute to match.
+     * @param actorId       the {@link Actor_#actorId actorId} attribute to match.
      * @return an optional of found actor.
      */
     public static Optional<Actor> findByActorId(final EntityManager entityManager, final int actorId) {
@@ -57,10 +57,10 @@ public final class ActorQueries {
     }
 
     /**
-     * Finds all actors whose {@value Actor_#LAST_NAME} attributes match to specified value.
+     * Finds all actors whose {@link Actor_#actorId actorId} attributes match to specified value.
      *
      * @param entityManager an entity manager.
-     * @param lastName      the {@value Actor_#LAST_NAME} attribute to match.
+     * @param lastName      the {@link Actor_#actorId actorId} attribute to match.
      * @param maxResults    maximum number of results to retrieve.
      * @return a list of found actors.
      */
@@ -112,7 +112,7 @@ public final class ActorQueries {
 
     /**
      * @param entityManager an entity manager.
-     * @param lastName      the value of {@value Actor_#LAST_NAME} attribute to match.
+     * @param lastName      the value of {@link Actor_#actorId actorid} attribute to match.
      * @param page          the page number.
      * @param size          a number of element per page.
      * @return a list of found entities.

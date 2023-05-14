@@ -1,7 +1,15 @@
 package com.github.jinahya.persistence;
 
+/**
+ * Constants for the sakila persistence.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 final class _PersistenceConstants {
 
+    /**
+     * The name of the sakila persistence unit. The value is {@value}.
+     */
     static final String PERSISTENCE_UNIT_NAME = "sakilaPU";
 
     static final int COLUMN_LENGTH_TEXT = 65535;
