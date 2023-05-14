@@ -2,6 +2,7 @@ package com.github.jinahya.persistence;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
 
@@ -13,6 +14,7 @@ import java.util.function.Function;
 
 @EnableAutoWeld
 @AddPackages({EntityManagerFactoryProducer.class})
+@Slf4j
 abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
         extends ___BaseEntityTestBase<T, U> {
 
@@ -55,7 +57,11 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
             try {
                 return function.apply(entityManager);
             } finally {
-                transaction.commit();
+                try {
+                    transaction.commit();
+                } catch (final Exception e) {
+                    log.error("failed to commit", e);
+                }
             }
         } catch (final Exception e) {
             if (e instanceof RuntimeException re) {

@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * represented in the {@value MappedInventory#TABLE_NAME} table.
  * <p>
  * The film table refers to the {@value Language#TABLE_NAME} table and is referred to by the
- * {@value MappedFilmCategory#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and {@value MappedInventory#TABLE_NAME}
+ * {@value FilmCategory#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and {@value MappedInventory#TABLE_NAME}
  * tables.
  * </blockquote>
  *

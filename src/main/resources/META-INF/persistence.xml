@@ -10,6 +10,7 @@
     <class>com.github.jinahya.persistence.Film$RatingConverter</class>
     <class>com.github.jinahya.persistence.Film$SpecialFeaturesConverter</class>
     <class>com.github.jinahya.persistence.FilmActor</class>
+    <class>com.github.jinahya.persistence.FilmCategory</class>
     <class>com.github.jinahya.persistence.FilmList</class>
     <class>com.github.jinahya.persistence.Language</class>
     <exclude-unlisted-classes/>

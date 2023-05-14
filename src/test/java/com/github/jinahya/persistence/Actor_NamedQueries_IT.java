@@ -36,7 +36,7 @@ class Actor_NamedQueries_IT
             final var actorId = 1;
             final var found = applyEntityManager(em -> {
                 final var query = em.createNamedQuery("Actor_findByActorId", Actor.class);
-                query.setParameter(Actor_.ACTOR_ID, actorId);
+                query.setParameter(Actor_.actorId.getName(), actorId);
                 return query.getSingleResult();
             });
             assertThat(found)
@@ -65,7 +65,7 @@ class Actor_NamedQueries_IT
             final var lastName = "GUINESS";
             final var found = applyEntityManager(em -> {
                 final var query = em.createNamedQuery("Actor_findAllByLastName", Actor.class);
-                query.setParameter(Actor_.LAST_NAME, lastName);
+                query.setParameter(Actor_.lastName.getName(), lastName);
                 return query.getResultList();
             });
             assertThat(found)

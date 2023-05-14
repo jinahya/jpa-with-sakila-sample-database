@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
- * An abstract mapped superclass with {@value _BaseEntity_#LAST_UPDATE} attribute.
+ * An abstract mapped superclass with {@link _BaseEntity_#lastUpdate lastUpdate} attribute.
  *
  * @param <U> id type parameter
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -46,18 +46,18 @@ public abstract class _BaseEntity<U>
     }
 
     /**
-     * Returns current value of {@value _BaseEntity_#LAST_UPDATE} attribute.
+     * Returns current value of {@link _BaseEntity_#lastUpdate lastUpdate} attribute.
      *
-     * @return current value of {@value _BaseEntity_#LAST_UPDATE} attribute.
+     * @return current value of {@link _BaseEntity_#lastUpdate lastUpdate} attribute.
      */
     public Timestamp getLastUpdate() {
         return lastUpdate;
     }
 
     /**
-     * Replaces current value of {@value _BaseEntity_#LAST_UPDATE} attribute with specified value.
+     * Replaces current value of {@link _BaseEntity_#lastUpdate lastUpdate} attribute with specified value.
      *
-     * @param lastUpdate new value for {@value _BaseEntity_#LAST_UPDATE} attribute.
+     * @param lastUpdate new value for {@link _BaseEntity_#lastUpdate lastUpdate} attribute.
      * @deprecated for removal
      */
     @Deprecated(forRemoval = true)
@@ -65,15 +65,20 @@ public abstract class _BaseEntity<U>
         this.lastUpdate = lastUpdate;
     }
 
+    /**
+     * When the row was created or most recently updated.
+     */
     @Basic(optional = false)
     @Column(name = _PersistenceConstants.COLUMN_NAME_LAST_UPDATE, nullable = false, insertable = false,
             updatable = false)
     private Timestamp lastUpdate;
 
     /**
-     * Returns current value of {@value _BaseEntity_#LAST_UPDATE} attribute as an instance of {@link LocalDateTime}.
+     * Returns current value of {@link _BaseEntity_#lastUpdate lastUpdate} attribute as an instance of
+     * {@link LocalDateTime}.
      *
-     * @return current value of {@value _BaseEntity_#LAST_UPDATE} attribute as an instance of {@link LocalDateTime}.
+     * @return current value of {@link _BaseEntity_#lastUpdate lastUpdate} attribute as an instance of
+     * {@link LocalDateTime}.
      * @see Timestamp#toLocalDateTime()
      */
     @Transient

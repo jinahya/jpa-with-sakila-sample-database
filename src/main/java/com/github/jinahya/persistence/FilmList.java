@@ -24,7 +24,7 @@ import java.util.Set;
  * <blockquote>
  * The {@value FilmList#VIEW_NAME} view contains a formatted view of the {@value Film#TABLE_NAME} table, with a
  * comma-separated list of actors for each film. <br/> The {@value FilmList#VIEW_NAME} view incorporates data from the
- * {@value Film#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value MappedFilmCategory#TABLE_NAME},
+ * {@value Film#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmCategory#TABLE_NAME},
  * {@value Actor#TABLE_NAME}, and {@value FilmActor#TABLE_NAME} tables.
  * </blockquote>
  */
@@ -40,8 +40,14 @@ public class FilmList
      */
     public static final String VIEW_NAME = "film_list";
 
+    /**
+     * The name of the view column to which the {@value FilmList_#FID} attribute maps. The value is {@value}.
+     */
     public static final String COLUMN_NAME_FID = "FID";
 
+    /**
+     * The name of the view column to which the {@value FilmList_#TITLE} attribute maps. The value is {@value}.
+     */
     public static final String COLUMN_NAME_TITLE = Film.COLUMN_NAME_TITLE;
 
     public static final String COLUMN_NAME_DESCRIPTION = Film.COLUMN_NAME_DESCRIPTION;

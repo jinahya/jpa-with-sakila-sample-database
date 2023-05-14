@@ -2,6 +2,11 @@
 desc actor
 ;
 
+-- select
+SELECT *
+FROM actor
+;
+
 -- count
 SELECT COUNT(1)
 FROM actor

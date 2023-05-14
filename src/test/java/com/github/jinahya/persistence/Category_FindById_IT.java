@@ -23,7 +23,7 @@ class Category_FindById_IT
                 () -> {
                     applyEntityManager(em -> {
                         final var query = em.createNamedQuery("Category_findByCategoryId", Category.class);
-                        query.setParameter(Category_.CATEGORY_ID, 0);
+                        query.setParameter(Category_.categoryId.getName(), 0);
                         return query.getSingleResult(); // NoResultException
                     });
                 }
@@ -38,7 +38,7 @@ class Category_FindById_IT
         // WHEN
         final Category found = applyEntityManager(em -> {
             final var query = em.createNamedQuery("Category_findByCategoryId", Category.class);
-            query.setParameter(Category_.CATEGORY_ID, categoryId);
+            query.setParameter(Category_.categoryId.getName(), categoryId);
             return query.getSingleResult();
         });
         // THEN

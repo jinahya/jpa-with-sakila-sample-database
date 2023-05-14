@@ -17,7 +17,7 @@ import jakarta.validation.constraints.PositiveOrZero;
  * <p>
  * <blockquote>
  * The category table lists the categories that can be assigned to a film.<br/>The category table is joined to the
- * {@value Film#TABLE_NAME} table by means of the {@value MappedFilmCategory#TABLE_NAME} table.
+ * {@value Film#TABLE_NAME} table by means of the {@value FilmCategory#TABLE_NAME} table.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
