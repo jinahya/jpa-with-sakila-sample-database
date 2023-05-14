@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A class for identifying {@link FilmActor}.
+ * A class for identifying {@link FilmActor} entity.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */

@@ -24,8 +24,8 @@ import java.util.Set;
  * <blockquote>
  * The {@value FilmList#VIEW_NAME} view contains a formatted view of the {@value Film#TABLE_NAME} table, with a
  * comma-separated list of actors for each film. <br/> The {@value FilmList#VIEW_NAME} view incorporates data from the
- * {@value Film#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmCategory#TABLE_NAME},
- * {@value Actor#TABLE_NAME}, and {@value FilmActor#TABLE_NAME} tables.
+ * {@value Film#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmCategory#TABLE_NAME}, {@value Actor#TABLE_NAME},
+ * and {@value FilmActor#TABLE_NAME} tables.
  * </blockquote>
  */
 @NamedQuery(name = "FilmList_findAllByFid", query = "SELECT e FROM FilmList AS e WHERE e.fid = :fid")
