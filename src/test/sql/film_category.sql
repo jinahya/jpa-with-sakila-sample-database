@@ -7,20 +7,22 @@ SELECT COUNT(1)
 FROM film_category
 ;
 
---
-SELECT fc.film_id, f.title, COUNT(1) AS c
+-- most categorized films
+SELECT fc.film_id, f.title, GROUP_CONCAT(c.name) AS categories
 FROM film_category AS fc
          JOIN film f on fc.film_id = f.film_id
+         JOIN category AS c on c.category_id = fc.category_id
 GROUP BY film_id
-HAVING c > 1
-ORDER BY c DESC
+HAVING COUNT(1) > 1
+ORDER BY COUNT(1) DESC
 ;
 
--- Films of Sir Alec Guinness CH CBE
+-- films of Sir Alec Guinness CH CBE
 SELECT f.*
 FROM film_actor AS fa
          JOIN actor AS a ON a.actor_id = fa.actor_id
          JOIN film AS f ON fa.film_id = f.film_id
 WHERE a.last_name = 'Guinness'
   AND a.first_name = 'Alec'
+ORDER BY f.release_year DESC
 ;

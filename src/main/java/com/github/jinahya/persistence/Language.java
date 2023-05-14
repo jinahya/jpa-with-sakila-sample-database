@@ -13,6 +13,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.util.Locale;
+import java.util.Optional;
 
 /**
  * <p>
@@ -119,7 +120,10 @@ public class Language
      * @see Locale#ENGLISH
      */
     public void setNameAsLocale(final Locale locale) {
-        // TODO: implement!
-        throw new UnsupportedOperationException("not implemented yet");
+        setName(
+                Optional.ofNullable(locale)
+                        .map(l -> l.getDisplayLanguage(Locale.ENGLISH))
+                        .orElse(null)
+        );
     }
 }

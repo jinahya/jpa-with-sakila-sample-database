@@ -209,3 +209,24 @@ INSERT INTO film_actor(`actor_id`, `film_id`)
 VALUES (ACTOR_ID('앵란', '엄'), @film_id);
 INSERT INTO film_actor(`actor_id`, `film_id`)
 VALUES (ACTOR_ID('성기', '안'), @film_id);
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- 七人の侍
+-- https://www.imdb.com/title/tt0047478/
+SET @film_title = '七人の侍';
+INSERT INTO film(`title`, `description`, `release_year`, `language_id`, `length`, `rating`)
+VALUES (@film_title,
+        'Farmers from a village exploited by bandits hire a veteran samurai for protection, who gathers six other samurai to join him.',
+        1954,
+        LANGUAGE_ID('Japanese'),
+        207,
+        'PG');
+SET @film_id = FILM_ID(@film_title);
+INSERT INTO film_category (film_id, category_id)
+VALUES (@film_id, CATEGORY_ID('Action'));
+INSERT INTO film_category (film_id, category_id)
+VALUES (@film_id, CATEGORY_ID('Drama'));
+INSERT INTO film_actor(`actor_id`, `film_id`)
+VALUES (ACTOR_ID('敏郎', '三船'), @film_id);
+INSERT INTO film_actor(`actor_id`, `film_id`)
+VALUES (ACTOR_ID('喬', '志村'), @film_id);

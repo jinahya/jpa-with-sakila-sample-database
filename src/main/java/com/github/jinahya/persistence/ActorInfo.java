@@ -12,19 +12,28 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.util.Objects;
 
 /**
- * An entity class for mapping {@value ActorInfo#TABLE_NAME} view.
+ * An entity class for mapping {@value ActorInfo#VIEW_NAME} view.
+ * <p>
+ * <blockquote>
+ * The {@value #VIEW_NAME} view provides a list of all actors, including the films in which they have performed, broken
+ * down by category.<br/>The {@value MappedStaffList#VIEW_NAME} view incorporates data from the
+ * {@value Film#TABLE_NAME}, {@value Actor#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and
+ * {@value MappedFilmCategory#TABLE_NAME} tables.
+ * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-views-actor_info.html">5.2.1 The actor_info
+ * View</a>
  */
 @Entity
-@Table(name = ActorInfo.TABLE_NAME)
+@Table(name = ActorInfo.VIEW_NAME)
 public class ActorInfo
         extends _BaseEntity<Integer> {
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
      */
-    public static final String TABLE_NAME = "actor_info";
+    public static final String VIEW_NAME = "actor_info";
 
     public static final String COLUMN_NAME_ACTOR_ID = Actor.COLUMN_NAME_ACTOR_ID;
 

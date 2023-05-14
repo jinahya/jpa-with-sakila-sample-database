@@ -9,6 +9,8 @@ import jakarta.persistence.Table;
 @Table(name = "staff_list", schema = "sakila", catalog = "")
 public class MappedStaffList {
 
+    public static final String VIEW_NAME = "staff_list";
+
     @Basic
     @Column(name = "ID", nullable = false)
     private Object id;

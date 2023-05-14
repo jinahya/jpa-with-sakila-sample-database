@@ -9,6 +9,12 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+/**
+ * An abstract mapped superclass with {@value _BaseEntity_#LAST_UPDATE} attribute.
+ *
+ * @param <U> id type parameter
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 @MappedSuperclass
 public abstract class _BaseEntity<U>
         extends __BaseEntity<U> {
@@ -64,8 +70,16 @@ public abstract class _BaseEntity<U>
             updatable = false)
     private Timestamp lastUpdate;
 
+    /**
+     * Returns current value of {@value _BaseEntity_#LAST_UPDATE} attribute as an instance of {@link LocalDateTime}.
+     *
+     * @return current value of {@value _BaseEntity_#LAST_UPDATE} attribute as an instance of {@link LocalDateTime}.
+     * @see Timestamp#toLocalDateTime()
+     */
     @Transient
-    public LocalDateTime getLastUpdateAsLocalDateTime() {
-        return Optional.ofNullable(getLastUpdate()).map(Timestamp::toLocalDateTime).orElse(null);
+    public final LocalDateTime getLastUpdateAsLocalDateTime() {
+        return Optional.ofNullable(getLastUpdate())
+                .map(Timestamp::toLocalDateTime)
+                .orElse(null);
     }
 }

@@ -25,6 +25,7 @@ import jakarta.validation.constraints.PositiveOrZero;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-actor.html">5.1.1 The actor Table</a>
  */
 @NamedQuery(name = "Actor_findAllByLastName", query = "SELECT a FROM Actor AS a WHERE a.lastName = :lastName")
+@NamedQuery(name = "Actor_findAll", query = "SELECT a FROM Actor AS a")
 @NamedQuery(name = "Actor_findByActorId", query = "SELECT a FROM Actor AS a WHERE a.actorId = :actorId")
 @Entity
 @Table(name = Actor.TABLE_NAME, indexes = {@Index(columnList = Actor.COLUMN_NAME_LAST_NAME)})
@@ -104,18 +105,38 @@ public class Actor
         this.actorId = actorId;
     }
 
+    /**
+     * Returns current value of {@value Actor_#FIRST_NAME} attribute.
+     *
+     * @return current value of {@value Actor_#FIRST_NAME} attribute.
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Replaces current value of {@value Actor_#FIRST_NAME} attribute with specified value.
+     *
+     * @param firstName new value for the {@value Actor_#FIRST_NAME} attribute.
+     */
     public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
+    /**
+     * Returns current value of {@value Actor_#LAST_NAME} attribute.
+     *
+     * @return current value of {@value Actor_#LAST_NAME} attribute.
+     */
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * Replaces current value of {@value Actor_#LAST_NAME} attribute with specified value.
+     *
+     * @param lastName new value for the {@value Actor_#LAST_NAME} attribute.
+     */
     public void setLastName(final String lastName) {
         this.lastName = lastName;
     }
