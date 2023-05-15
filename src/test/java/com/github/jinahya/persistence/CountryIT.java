@@ -16,7 +16,7 @@ class CountryIT
     }
 
     @Nested
-    class CountryAsLocaleTest {
+    class CountryAsLocalePropertyTest {
 
         /**
          * {@value Country#TABLE_NAME} 테이블에 저장된 모든 {@link Country_#country country} 컬럼값과 {@link java.util.Locale} 에 정의된

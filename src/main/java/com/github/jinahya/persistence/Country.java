@@ -138,8 +138,9 @@ public class Country
      */
     @Transient
     public Locale getCountryAsLocale() {
-        // TODO: implement!
-        throw new UnsupportedOperationException("not implemented yet");
+        return Optional.ofNullable(getCountry())
+                .flatMap(c -> LocaleUtils.valueOfDisplayCountry(Locale.ENGLISH, c))
+                .orElse(null);
     }
 
     /**

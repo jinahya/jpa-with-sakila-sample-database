@@ -20,10 +20,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.Period;
-import java.time.Year;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
@@ -32,7 +29,6 @@ import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -528,52 +524,12 @@ public class Film
     private Set<SpecialFeature> specialFeatures;
 
     /**
-     * Returns current value of {@value Film_#RELEASE_YEAR} attribute as an instance of specified temporal accessor
-     * type.
+     * Returns current value of {@link Film_#rentalDuration rentalDuration} attribute as an instance of
+     * {@link Period period} of {@link ChronoUnit#DAYS days}.
      *
-     * @param mapper a function for mapping current value of {@value Film_#RELEASE_YEAR} attribute into an instance of
-     *               {@link T}.
-     * @param <T>    type of temporal accessor
-     * @return an instance of {@link T} mapped from current value of {@value Film_#RELEASE_YEAR} attribute; {@code null}
-     * if current value of {@value Film_#RELEASE_YEAR} attribute is {@code null}.
-     */
-    public <T extends TemporalAccessor> T getReleaseYearAsTemporalAccessor(final IntFunction<? extends T> mapper) {
-        Objects.requireNonNull(mapper, "mapper is null");
-        return Optional.ofNullable(getReleaseYear())
-                .map(mapper::apply)
-                .orElse(null);
-    }
-
-    /**
-     * Replaces current value of {@value Film_#RELEASE_YEAR} attribute with the {@link ChronoField#YEAR} field value of
-     * specified temporal accessor.
-     *
-     * @param releaseYearAsTemporalAccessor the temporal accessor whose {@link ChronoField#YEAR} field value is
-     *                                      fetched.
-     * @see TemporalAccessor#get(TemporalField)
-     */
-    public void setReleaseYearAsTemporalAccessor(final TemporalAccessor releaseYearAsTemporalAccessor) {
-        setReleaseYear(
-                Optional.ofNullable(releaseYearAsTemporalAccessor)
-                        .map(ta -> ta.get(ChronoField.YEAR))
-                        .orElse(null)
-        );
-    }
-
-    @Transient
-    public Year getReleaseYearAsTemporalYear() {
-        return getReleaseYearAsTemporalAccessor(Year::of);
-    }
-
-    public void setReleaseYearAsTemporalYear(final Year releaseYearAsTemporalYear) {
-        setReleaseYearAsTemporalAccessor(releaseYearAsTemporalYear);
-    }
-
-    /**
-     * Returns current value of {@value Film_#RENTAL_DURATION} attribute as an instance of {@link Period}.
-     *
-     * @return an instance of {@link Period}, in days, represents current value of {@value Film_#RENTAL_DURATION}
-     * attribute.
+     * @return a {@link Period period}, of {@link ChronoUnit#DAYS days}, represents current value of the
+     * {@link Film_#rentalDuration rentalDuration} attribute.
+     * @see Period#ofDays(int)
      */
     @Transient
     public Period getRentalDurationAsPeriod() {
@@ -583,11 +539,13 @@ public class Film
     }
 
     /**
-     * Replaces current value of {@value Film_#RENTAL_DURATION} attribute with specified period.
+     * Replaces current value of {@link Film_#rentalDuration rentalDuration} attribute with specified period represented
+     * in {@link ChronoUnit#DAYS days}.
      *
-     * @param rentalDurationAsPeriod the period of {@link java.time.temporal.ChronoUnit#DAYS days} for the
-     *                               {@value Film_#RENTAL_DURATION} attribute.
+     * @param rentalDurationAsPeriod the period, of {@link java.time.temporal.ChronoUnit#DAYS days}, for the
+     *                               {@link Film_#rentalDuration rentalDuration} attribute.
      * @see TemporalAmount#get(TemporalUnit)
+     * @see ChronoUnit#DAYS
      */
     public void setRentalDurationAsPeriod(final Period rentalDurationAsPeriod) {
         setRentalDuration(
@@ -599,9 +557,12 @@ public class Film
     }
 
     /**
-     * Returns current value of {@value Film_#LENGTH} attribute as an instance of {@link Duration}.
+     * Returns current value of {@link Film_#length length} attribute as an instance of {@link Duration duration} of
+     * {@link ChronoUnit#MINUTES minutes}.
      *
-     * @return an instance of {@link Duration} mapped from current value of {@value Film_#LENGTH} attribute.
+     * @return an instance of {@link Duration duration}, of {@link ChronoUnit#MINUTES minutes}, represents current value
+     * of the {@link Film_#length length} attribute.
+     * @see Duration#ofMinutes(long)
      */
     @Transient
     public Duration getLengthAsDuration() {
@@ -611,10 +572,13 @@ public class Film
     }
 
     /**
-     * Replaces current value of {@value Film_#LENGTH} attribute with specified duration represented in
+     * Replaces current value of {@link Film_#length length} attribute with specified duration of
      * {@link java.time.temporal.ChronoUnit#MINUTES minutes}.
      *
-     * @param lengthAsDuration the duration for the {@value Film_#LENGTH} attribute.
+     * @param lengthAsDuration the duration, of {@link ChronoUnit#MINUTES minutes}, for the {@link Film_#length length}
+     *                         attribute.
+     * @see java.time.temporal.TemporalAccessor#get(TemporalField)
+     * @see ChronoUnit#MINUTES
      */
     public void getLengthAsDuration(final Duration lengthAsDuration) {
         setLength(
