@@ -25,10 +25,10 @@ class CountryTest
         super(Country.class, Integer.class);
     }
 
-    @DisplayName("setCountryAsLocale")
+    @DisplayName("countryAsLocale")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
-    class CountryAsLocaleTest {
+    class CountryAsLocalePropertyTest {
 
         @DisplayName("getCountry()null -> getCountryAsLocale()null")
         @Test

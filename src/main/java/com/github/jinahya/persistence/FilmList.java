@@ -41,12 +41,12 @@ public class FilmList
     public static final String VIEW_NAME = "film_list";
 
     /**
-     * The name of the view column to which the {@value FilmList_#FID} attribute maps. The value is {@value}.
+     * The name of the view column to which the {@link FilmList_#fid fid} attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_FID = "FID";
 
     /**
-     * The name of the view column to which the {@value FilmList_#TITLE} attribute maps. The value is {@value}.
+     * The name of the view column to which the {@link FilmList_#title title} attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_TITLE = Film.COLUMN_NAME_TITLE;
 

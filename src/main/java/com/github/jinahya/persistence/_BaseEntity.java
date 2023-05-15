@@ -16,7 +16,7 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @MappedSuperclass
-public abstract class _BaseEntity<U>
+abstract class _BaseEntity<U>
         extends __BaseEntity<U> {
 
     /**

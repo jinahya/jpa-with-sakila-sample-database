@@ -2,6 +2,7 @@ package com.github.jinahya.persistence;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.RollbackException;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -54,20 +55,13 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
         final var transaction = entityManager.getTransaction();
         transaction.begin();
         try {
+            return function.apply(entityManager);
+        } finally {
             try {
-                return function.apply(entityManager);
-            } finally {
-                try {
-                    transaction.commit();
-                } catch (final Exception e) {
-                    log.error("failed to commit", e);
-                }
+                transaction.commit();
+            } catch (final RollbackException re) {
+                log.error("rolled back", re.getCause());
             }
-        } catch (final Exception e) {
-            if (e instanceof RuntimeException re) {
-                throw re;
-            }
-            throw new RuntimeException(e);
         }
     }
 

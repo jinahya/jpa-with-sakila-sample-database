@@ -7,12 +7,24 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
+/**
+ * A class for identifying {@link FilmList} entity.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 public class FilmListId
         implements Serializable {
 
     @Serial
     private static final long serialVersionUID = -5606838902199850066L;
 
+    /**
+     * Creates a new instance with specified values.
+     *
+     * @param fid      a value for {@code fid} property.
+     * @param category a value for {@code category} property.
+     * @return a new instance of {@code fid} and {@code category}.
+     */
     static FilmListId of(final Integer fid, final String category) {
         final var instance = new FilmListId();
         instance.fid = fid;
@@ -39,7 +51,8 @@ public class FilmListId
     public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof FilmListId that)) return false;
-        return Objects.equals(fid, that.fid) && Objects.equals(category, that.category);
+        return Objects.equals(fid, that.fid) &&
+               Objects.equals(category, that.category);
     }
 
     @Override
@@ -51,7 +64,7 @@ public class FilmListId
         return fid;
     }
 
-    void setFid(final Integer fid) {
+    private void setFid(final Integer fid) {
         this.fid = fid;
     }
 
@@ -59,7 +72,7 @@ public class FilmListId
         return category;
     }
 
-    void setCategory(final String category) {
+    private void setCategory(final String category) {
         this.category = category;
     }
 

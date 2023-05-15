@@ -11,7 +11,7 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @MappedSuperclass
-public abstract class __BaseEntity<U> {
+abstract class __BaseEntity<U> {
 
     /**
      * Creates a new instance.

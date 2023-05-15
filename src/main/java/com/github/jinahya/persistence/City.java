@@ -1,0 +1,140 @@
+package com.github.jinahya.persistence;
+
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+
+/**
+ * An entity for mapping {@value #TABLE_NAME} table.
+ * <p>
+ * <blockquote>
+ * The {@value #TABLE_NAME} table contains a list of cities.<br/>The {@value #TABLE_NAME} table is referred to by a
+ * foreign key in the {@value MappedAddress#TABLE_NAME} table and refers to the {@value Country#TABLE_NAME} table using
+ * a foreign key.
+ * </blockquote>
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-city.html">5.1.4 The city Table</a>
+ */
+@Entity
+@Table(name = City.TABLE_NAME)
+public class City
+        extends _BaseEntity<Integer> {
+
+    /**
+     * The name of the database table to which this class maps. The value is {@value}.
+     */
+    public static final String TABLE_NAME = "city";
+
+    public static final String COLUMN_NAME_CITY_ID = "city_id";
+
+    public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
+
+    /**
+     * Creates a new instance.
+     */
+    public City() {
+        super();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + '{' +
+               "cityId=" + cityId +
+               ",city='" + city +
+               ",countryId=" + countryId +
+               '}';
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof City)) return false;
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    protected Integer identifier() {
+        return getCityId();
+    }
+
+    /**
+     * Returns current value of {@link City_#cityId cityId} attribute.
+     *
+     * @return current value of the {@link City_#cityId cityId} attribute.
+     */
+    public Integer getCityId() {
+        return cityId;
+    }
+
+    /**
+     * Replaces current value of {@link City_#cityId cityId} attribute with specified value.
+     *
+     * @param cityId new value for the {@link City_#cityId cityId} attribute.
+     * @deprecated for removal.
+     */
+    @Deprecated(forRemoval = true)
+    private void setCityId(final Integer cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(final String city) {
+        this.city = city;
+    }
+
+    public Integer getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(final Integer countryId) {
+        this.countryId = countryId;
+    }
+
+    /**
+     * A surrogate primary key used to uniquely identify each city in the table.
+     */
+    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @PositiveOrZero
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = COLUMN_NAME_CITY_ID, nullable = false,
+            insertable = true, // EclipseLink
+            updatable = false)
+    private Integer cityId;
+
+    /**
+     * The name of the city.
+     */
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "city", nullable = false, length = 50)
+    private String city;
+
+    /**
+     * A foreign key identifying the country that the city belongs to.
+     */
+    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @PositiveOrZero
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_COUNTRY_ID, nullable = false)
+    private Integer countryId;
+
+    // TODO: Map for an Country!
+}

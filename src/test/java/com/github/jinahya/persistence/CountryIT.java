@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Locale;
 
 @Slf4j
 class CountryIT
@@ -27,7 +28,13 @@ class CountryIT
                     em -> em.createQuery("SELECT e FROM Country AS e").getResultList()
             );
             for (final var e : found) {
-                final var locale = e.getCountryAsLocale();
+                final Locale locale;
+                try {
+                    locale = e.getCountryAsLocale();
+                } catch (final UnsupportedOperationException uoe) {
+                    log.warn("unsupported: {}", uoe.getMessage());
+                    continue;
+                }
                 if (locale == null) {
                     log.debug("no locale for '{}'", e.getCountry());
                 }

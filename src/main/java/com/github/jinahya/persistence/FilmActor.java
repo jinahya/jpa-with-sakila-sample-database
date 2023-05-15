@@ -8,6 +8,7 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -71,25 +72,42 @@ public class FilmActor
 
     @Override
     protected FilmActorId identifier() {
-        final var identifier = new FilmActorId();
-        identifier.setActorId(getActorId());
-        identifier.setFilmId(getFilmId());
-        return identifier;
+        return FilmActorId.of(getActorId(), getFilmId());
     }
 
-    Integer getActorId() {
+    /**
+     * Returns current value of {@link FilmActor_#actorId actorId} attribute.
+     *
+     * @return current value of the {@link FilmActor_#actorId actorId} attribute.
+     */
+    public Integer getActorId() {
         return actorId;
     }
 
-    void setActorId(final Integer actorId) {
+    /**
+     * Replaces current value of {@link FilmActor_#actorId actorId} attribute with specified value.
+     *
+     * @param actorId new value for the {@link FilmActor_#actorId actorId} attribute.
+     */
+    public void setActorId(final Integer actorId) {
         this.actorId = actorId;
     }
 
-    Integer getFilmId() {
+    /**
+     * Returns current value of {@link FilmActor_#filmId filmId} attribute.
+     *
+     * @return current value of the {@link FilmActor_#filmId filmId} attribute.
+     */
+    public Integer getFilmId() {
         return filmId;
     }
 
-    void setFilmId(final Integer filmId) {
+    /**
+     * Replaces current value of {@link FilmActor_#filmId filmId} attribute with specified value.
+     *
+     * @param filmId new value for the {@link FilmActor_#filmId filmId} attribute.
+     */
+    public void setFilmId(final Integer filmId) {
         this.filmId = filmId;
     }
 
@@ -113,16 +131,33 @@ public class FilmActor
     @Column(name = COLUMN_NAME_FILM_ID, nullable = false)
     private Integer filmId;
 
+    /**
+     * Returns current value of {@link FilmActor_#actor} attribute.
+     *
+     * @return current value of {@link FilmActor_#actor} attribute.
+     */
     public Actor getActor() {
         return actor;
     }
 
+    /**
+     * Replaces current value of {@link FilmActor_#actor} attribute with specified value.
+     *
+     * @param actor new value for the {@link FilmActor_#actor} attribute.
+     */
     public void setActor(final Actor actor) {
         this.actor = actor;
-        setActorId(Optional.ofNullable(actor).map(Actor::getActorId).orElse(null));
+        setActorId(
+                Optional.ofNullable(this.actor)
+                        .map(Actor::getActorId)
+                        .orElse(null)
+        );
     }
 
+    @Valid // without @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_ACTOR_ID, nullable = false, insertable = false, updatable = false)
     private Actor actor;
+
+    // TODO: Map for an Film!
 }

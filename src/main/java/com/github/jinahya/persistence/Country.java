@@ -21,7 +21,7 @@ import java.util.Optional;
  * <p>
  * <blockquote>
  * The {@value TABLE_NAME} table contains a list of countries.<br/>The {@value TABLE_NAME} table is referred to by a
- * foreign key in the {@value MappedCity#TABLE_NAME} table.
+ * foreign key in the {@value City#TABLE_NAME} table.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -46,6 +46,18 @@ public class Country
      * {@value}.
      */
     public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
+
+    /**
+     * Returns a new instance of specified {@link Country_#countryId countryId} attribute value.
+     *
+     * @param countryId the {@link Country_#countryId countryId} attribute value.
+     * @return a new instance of {@code countryId}.
+     */
+    public static Country of(final Integer countryId) {
+        final var instance = new Country();
+        instance.countryId = countryId;
+        return instance;
+    }
 
     /**
      * Creates a new instance.
@@ -117,10 +129,12 @@ public class Country
     private String country;
 
     /**
-     * 현재 이 객체가 가지고 있는 {@link Country_#country country} attribute 의 값을 {@link Locale} 값으로 반환한다.
+     * {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 가 현재 이 객체가 가지고 있는
+     * {@link Country_#country country} attribute 의 값과 같은 {@link Locale} 을 반환한다.
      *
-     * @return {@link Country_#country country} attribute 값에 해당하는 {@link Locale} 값; {@link Country_#country country}
-     * attribute 값이 {@code null} 이거나 적절한 {@link Locale} 값을 찾을 수 없으면 {@code null}.
+     * @return {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 가 현재 이 객체가 가지고 있는
+     * {@link Country_#country country} attribute 의 값과 같은 {@link Locale} 값; {@link Country_#country country} attribute
+     * 값이 {@code null} 이거나 적절한 {@link Locale} 값을 찾을 수 없으면 {@code null}.
      */
     @Transient
     public Locale getCountryAsLocale() {
