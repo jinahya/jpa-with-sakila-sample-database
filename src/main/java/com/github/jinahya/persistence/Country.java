@@ -139,7 +139,7 @@ public class Country
     @Transient
     public Locale getCountryAsLocale() {
         return Optional.ofNullable(getCountry())
-                .flatMap(c -> LocaleUtils.valueOfDisplayCountry(Locale.ENGLISH, c))
+                .flatMap(c -> _LocaleUtils.valueOfDisplayCountry(Locale.ENGLISH, c))
                 .orElse(null);
     }
 

@@ -18,7 +18,7 @@ class LocaleUtilsTest {
     @ParameterizedTest
     void valueOfDisplayCountry(final Locale inLocale) {
         final var displayCountry = inLocale.getDisplayCountry(inLocale);
-        final var got = LocaleUtils.valueOfDisplayCountry(inLocale, displayCountry);
+        final var got = _LocaleUtils.valueOfDisplayCountry(inLocale, displayCountry);
         assertThat(got).hasValueSatisfying(v -> {
             assertThat(v.getDisplayCountry(inLocale)).isEqualTo(displayCountry);
         });
@@ -28,7 +28,7 @@ class LocaleUtilsTest {
     @ParameterizedTest
     void valueOfDisplayLanguage(final Locale inLocale) {
         final var displayLanguage = inLocale.getDisplayLanguage(inLocale);
-        final var got = LocaleUtils.valueOfDisplayLanguage(inLocale, displayLanguage);
+        final var got = _LocaleUtils.valueOfDisplayLanguage(inLocale, displayLanguage);
         assertThat(got).hasValueSatisfying(v -> {
             assertThat(v.getDisplayLanguage(inLocale)).isEqualTo(displayLanguage);
         });
