@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.SOURCE)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.TYPE})
-public @interface _Comments {
+@interface _Comments {
 
     _Comment[] value();
 }

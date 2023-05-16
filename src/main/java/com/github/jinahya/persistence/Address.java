@@ -1,0 +1,298 @@
+package com.github.jinahya.persistence;
+
+import com.github.jinahya.persistence._PersistenceConverters.GeometryConverter;
+import com.github.jinahya.persistence._PersistenceTypes.Geometry;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+
+import java.util.Optional;
+
+/**
+ * An entity class for mapping {@value #TABLE_NAME} table.
+ * <p>
+ * <blockquote>
+ * The {@value #TABLE_NAME} table contains address information for customers, staff, and stores.<br/>The
+ * {@value TABLE_NAME} table primary key appears as a foreign key in the {@value MappedCustomer#TABLE_NAME},
+ * {@value Staff#TABLE_NAME}, and {@value Store#TABLE_NAME} tables.
+ * </blockquote>
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
+ */
+@Entity
+@Table(name = Address.TABLE_NAME)
+public class Address
+        extends _BaseEntity<Integer> {
+
+    /**
+     * The name of the database table to which this class maps. The value is {@value}.
+     */
+    public static final String TABLE_NAME = "address";
+
+    /**
+     * The name of the database column to which {@link Address_#addressId addressId} attribute maps. The value is
+     * {@value}.
+     */
+    public static final String COLUMN_NAME_ADDRESS_ID = "address_id";
+
+    /**
+     * The name of the database column to which {@link Address_#cityId cityId} attribute maps. The value is {@value}.
+     */
+    public static final String COLUMN_NAME_CITY_ID = City.COLUMN_NAME_CITY_ID;
+
+    /**
+     * The name of the database column to which {@link Address_#location location} attribute maps. The value is
+     * {@value}.
+     */
+    public static final String COLUMN_NAME_LOCATION = "location";
+
+    /**
+     * Creates a new instance.
+     */
+    public Address() {
+        super();
+    }
+
+    @Override
+    public String toString() {
+        return super.toString() + '{' +
+               "addressId=" + addressId +
+               ",address='" + address +
+               ",address2='" + address2 +
+               ",district='" + district +
+               ",cityId=" + cityId +
+               ",postalCode='" + postalCode +
+               ",phone='" + phone +
+               ",locationGeometry=" + locationGeometry +
+               '}';
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Address thta)) return false;
+        return equals_(thta);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    protected Integer identifier() {
+        return getAddressId();
+    }
+
+    /**
+     * Returns current value of {@link Address_#addressId addressId} attribute.
+     *
+     * @return current value of the {@link Address_#addressId addressId} attribute.
+     */
+    public Integer getAddressId() {
+        return addressId;
+    }
+
+    /**
+     * Replaces current value of {@link Address_#addressId addressId} attribute with specified value.
+     *
+     * @param addressId new value for the {@link Address_#addressId addressId} attribute.
+     * @deprecated for removal.
+     */
+    @Deprecated(forRemoval = true)
+    private void setAddressId(final Integer addressId) {
+        this.addressId = addressId;
+    }
+
+    /**
+     * Returns current value of {@link Address_#address address} attribute.
+     *
+     * @return current value of the {@link Address_#address address} attribute.
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * Replaces current value of {@link Address_#address address} attribute with specified value.
+     *
+     * @param address new value for the {@link Address_#address address} attribute.
+     */
+    public void setAddress(final String address) {
+        this.address = address;
+    }
+
+    /**
+     * Returns current value of {@link Address_#address2 address2} attribute.
+     *
+     * @return current value of the {@link Address_#address2 address2} attribute.
+     */
+    public String getAddress2() {
+        return address2;
+    }
+
+    /**
+     * Replaces current value of {@link Address_#address2 address2} attribute with specified value.
+     *
+     * @param address2 new value for the {@link Address_#address2 address2} attribute.
+     * @deprecated for removal.
+     */
+    public void setAddress2(final String address2) {
+        this.address2 = address2;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(final String district) {
+        this.district = district;
+    }
+
+    public Integer getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(final Integer cityId) {
+        this.cityId = cityId;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(final String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(final String phone) {
+        this.phone = phone;
+    }
+
+    private byte[] getLocation() {
+        return location;
+    }
+
+    private void setLocation(final byte[] location) {
+        this.location = location;
+    }
+
+    /**
+     * 대체 기본 키 - <blockquote>A surrogate primary key used to uniquely identify each address in the table.</blockquote>
+     */
+    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @PositiveOrZero
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = COLUMN_NAME_ADDRESS_ID, nullable = false,
+            insertable = true, // EclipseLink
+            updatable = false)
+    private Integer addressId;
+
+    /**
+     * 주소 첫번 째 줄 - <blockquote>The first line of an address.</blockquote>
+     */
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "address", nullable = false, length = 50)
+    private String address;
+
+    /**
+     * (선택) 주소 두번 째 줄 - <blockquote>An optional second line of an address.</blockquote>
+     */
+    @Basic(optional = true)
+    @Column(name = "address2", nullable = true, length = 50)
+    private String address2;
+
+    /**
+     * 주소 구역 - <blockquote>The region of an address, this may be a state, province, prefecture, etc.</blockquote>
+     */
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "district", nullable = false, length = 20)
+    private String district;
+
+    /**
+     * {@link City#TABLE_NAME 도시} 테이블 외래키 - <blockquote>A foreign key pointing to the {@link City#TABLE_NAME}
+     * table.</blockquote>
+     */
+    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @PositiveOrZero
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_CITY_ID, nullable = false)
+    private Integer cityId;
+
+    /**
+     * 우편 번호 - <blockquote>The postal code or ZIP code of the address (where applicable).</blockquote>
+     */
+    @Basic(optional = true)
+    @Column(name = "postal_code", nullable = true, length = 10)
+    private String postalCode;
+
+    /**
+     * 전화 번호 - <blockquote>The telephone number for the address.</blockquote>
+     */
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "phone", nullable = false, length = 20)
+    private String phone;
+
+    /**
+     * {@code GEOMETRY} 컬럼 형으로 저장된 위치 정보 - <blockquote>A Geometry column with a spatial index on it.</blockquote>
+     *
+     * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
+     */
+    @Size(min = _PersistenceConstants.COLUMN_LENGTH_GEOMETRY, max = _PersistenceConstants.COLUMN_LENGTH_GEOMETRY)
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_LOCATION, nullable = false)
+    private byte[] location;
+
+    /**
+     * Returns current value of {@link Address_#locationGeometry locationGeometry} attribute.
+     *
+     * @return current value of {@link Address_#locationGeometry locationGeometry} attribute.
+     */
+    public Geometry getLocationGeometry() {
+        return locationGeometry;
+    }
+
+    /**
+     * Replaces current value of {@link Address_#locationGeometry locationGeometry} attribute with specified value.
+     *
+     * @param locationGeometry new value for the {@link Address_#locationGeometry locationGeometry} attribute.
+     */
+    public void setLocationGeometry(final Geometry locationGeometry) {
+        this.locationGeometry = locationGeometry;
+        setLocation(
+                Optional.ofNullable(this.locationGeometry)
+                        .map(Geometry::toByteArray)
+                        .orElse(null)
+        );
+    }
+
+    /**
+     * {@value #COLUMN_NAME_LOCATION} column 값을 {@link Geometry} 형으로 매핑한 값.
+     */
+    @Convert(converter = GeometryConverter.class)
+    @NotNull
+    @Column(name = COLUMN_NAME_LOCATION, nullable = false, insertable = false, updatable = false)
+    private Geometry locationGeometry;
+
+    // TODO: Map for a City!
+}

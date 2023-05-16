@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 /**
+ * An entity class for mapping {@value #TABLE_NAME} table.
  * <p>
  * <blockquote>
  * The {@value Language#TABLE_NAME} table is a lookup table listing the possible languages that films can have for their

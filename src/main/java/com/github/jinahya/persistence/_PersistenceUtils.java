@@ -4,6 +4,10 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.PersistenceUnitUtil;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.HexFormat;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -27,6 +31,31 @@ final class _PersistenceUtils {
             }
             return puu.getIdentifier(entity);
         });
+    }
+
+    private static String digest(final String algorithm, final byte[] bytes) {
+        Objects.requireNonNull(algorithm, "algorithm is null");
+        Objects.requireNonNull(bytes, "bytes is null");
+        try {
+            final var digest = MessageDigest.getInstance(algorithm).digest(bytes);
+            return HexFormat.of().withLowerCase().formatHex(digest);
+        } catch (final NoSuchAlgorithmException nsae) {
+            throw new RuntimeException(nsae);
+        }
+    }
+
+    static String sha1(final byte[] password) {
+        if (Objects.requireNonNull(password, "password is null").length == 0) {
+            throw new IllegalArgumentException("empty password");
+        }
+        return digest("SHA-1", password);
+    }
+
+    static String sha2(final byte[] password) {
+        if (Objects.requireNonNull(password, "password is null").length == 0) {
+            throw new IllegalArgumentException("empty password");
+        }
+        return digest("SAH-256", password);
     }
 
     private _PersistenceUtils() {

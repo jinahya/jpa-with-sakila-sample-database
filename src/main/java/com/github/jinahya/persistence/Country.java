@@ -91,19 +91,40 @@ public class Country
         return getCountryId();
     }
 
+    /**
+     * Returns current value of {@link Country_#countryId countryId} attribute.
+     *
+     * @return current value of the {@link Country_#countryId countryId} attribute.
+     */
     public Integer getCountryId() {
         return countryId;
     }
 
+    /**
+     * Replaces current value of {@link Country_#countryId countryId} attribute with specified value.
+     *
+     * @param countryId new value for the {@link Country_#countryId countryId} attribute.
+     * @deprecated for removal
+     */
     @Deprecated(forRemoval = true)
     private void setCountryId(final Integer countryId) {
         this.countryId = countryId;
     }
 
+    /**
+     * Returns current value of {@link Country_#country country} attribute.
+     *
+     * @return current value of the {@link Country_#country country} attribute.
+     */
     public String getCountry() {
         return country;
     }
 
+    /**
+     * Replaces current value of {@link Country_#country country} attribute with specified value.
+     *
+     * @param country new value for the {@link Country_#country country} attribute.
+     */
     public void setCountry(final String country) {
         this.country = country;
     }
@@ -133,8 +154,9 @@ public class Country
      * {@link Country_#country country} attribute 의 값과 같은 {@link Locale} 을 반환한다.
      *
      * @return {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 가 현재 이 객체가 가지고 있는
-     * {@link Country_#country country} attribute 의 값과 같은 {@link Locale} 값; {@link Country_#country country} attribute
-     * 값이 {@code null} 이거나 적절한 {@link Locale} 값을 찾을 수 없으면 {@code null}.
+     * {@link Country_#country country} attribute 의 값과 같은 locale 값; {@link Country_#country country} attribute 값이
+     * {@code null} 이거나 적절한 locale 값을 찾을 수 없으면 {@code null}.
+     * @see _LocaleUtils#valueOfDisplayCountry(Locale, String)
      */
     @Transient
     public Locale getCountryAsLocale() {
@@ -144,10 +166,10 @@ public class Country
     }
 
     /**
-     * 현재 이 객체가 가지고 있는 {@link Country_#country country} attribute 의 값을 명시된 {@link Locale} 값의
+     * 현재 이 객체가 가지고 있는 {@link Country_#country country} attribute 의 값을 명시된 locale 값의
      * {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 값으로 변경한다.
      *
-     * @param locale {@link Country_#country country} attribute 에 저장될 {@link Locale} 값.
+     * @param locale {@link Country_#country country} attribute 에 저장될 locale 값.
      * @see Locale#getDisplayCountry(Locale)
      * @see Locale#ENGLISH
      */

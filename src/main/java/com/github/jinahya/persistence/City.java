@@ -16,7 +16,7 @@ import jakarta.validation.constraints.PositiveOrZero;
  * <p>
  * <blockquote>
  * The {@value #TABLE_NAME} table contains a list of cities.<br/>The {@value #TABLE_NAME} table is referred to by a
- * foreign key in the {@value MappedAddress#TABLE_NAME} table and refers to the {@value Country#TABLE_NAME} table using
+ * foreign key in the {@value Address#TABLE_NAME} table and refers to the {@value Country#TABLE_NAME} table using
  * a foreign key.
  * </blockquote>
  *
@@ -33,8 +33,14 @@ public class City
      */
     public static final String TABLE_NAME = "city";
 
+    /**
+     * The name of the table column to which the {@link City_#cityId cityId} attribute maps.
+     */
     public static final String COLUMN_NAME_CITY_ID = "city_id";
 
+    /**
+     * The name of the table column to which the {@link City_#countryId countryId} attribute maps.
+     */
     public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
 
     /**
@@ -90,18 +96,40 @@ public class City
         this.cityId = cityId;
     }
 
+    /**
+     * Returns current value of {@link City_#city city} attribute.
+     *
+     * @return current value of the {@link City_#city city} attribute.
+     */
     public String getCity() {
         return city;
     }
 
+    /**
+     * Replaces current value of {@link City_#city city} attribute with specified value.
+     *
+     * @param city new value for the {@link City_#city city} attribute.
+     */
     public void setCity(final String city) {
         this.city = city;
     }
 
+    /**
+     * Returns current value of {@link City_#countryId countryId} attribute.
+     *
+     * @return current value of the {@link City_#countryId countryId} attribute.
+     */
+    // TODO: narrow the scope of this method!
     public Integer getCountryId() {
         return countryId;
     }
 
+    /**
+     * Replaces current value of {@link City_#countryId countryId} attribute with specified value.
+     *
+     * @param countryId new value for the {@link City_#countryId countryId} attribute.
+     */
+    // TODO: narrow the scope of this method!
     public void setCountryId(final Integer countryId) {
         this.countryId = countryId;
     }
@@ -136,5 +164,5 @@ public class City
     @Column(name = COLUMN_NAME_COUNTRY_ID, nullable = false)
     private Integer countryId;
 
-    // TODO: Map for an Country!
+    // TODO: Map for a Country!
 }
