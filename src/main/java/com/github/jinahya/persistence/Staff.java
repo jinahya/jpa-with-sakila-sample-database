@@ -304,6 +304,6 @@ public class Staff
             throw new IllegalArgumentException("empty new client password");
         }
         signIn(oldClientPassword);
-        setPassword(_PersistenceUtils.sha1(newClientPassword));
+        setPassword(_PersistenceUtils.sha2(newClientPassword));
     }
 }
