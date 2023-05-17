@@ -41,8 +41,9 @@ class AddressRandomizer
     @Override
     public Address getRandomValue() {
         final var address = super.getRandomValue();
-        address.setLocation(HexFormat.of().parseHex("000000000101000000000000000000F03F000000000000F0BF"));
-        address.setLocationGeometryAsPoint(current().nextDouble(), current().nextDouble());
+//        address.setLocation(HexFormat.of().parseHex("000000000101000000000000000000F03F000000000000F0BF"));
+//        address.setLocationGeometryAsPoint(current().nextDouble(), current().nextDouble());
+        address.setLocationGeometryAsPoint(1d, -1d);
         assertThat(address.getLocation()).hasSize(25);
         log.debug("location: {}", HexFormat.of().withUpperCase().formatHex(address.getLocation()));
         return address;

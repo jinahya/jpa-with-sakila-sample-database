@@ -128,11 +128,12 @@ public final class _PersistenceTypes {
 
         public ByteBuffer toByteBuffer(final ByteBuffer buffer) {
             Objects.requireNonNull(buffer, "buffer is null");
-            final var order = buffer.order();
-            return buffer.order(order)
+            return buffer
+                    .order(order)
+                    .put(endianValue(order))
                     .putInt(type.value)
                     .put(data)
-                    .order(order);
+                    ;
         }
 
         public ByteBuffer toByteBuffer() {

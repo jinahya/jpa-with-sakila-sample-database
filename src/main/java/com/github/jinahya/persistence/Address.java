@@ -313,9 +313,8 @@ public class Address
     private _PersistenceTypes.Geometry locationGeometry;
 
     public void setLocationGeometryAsPoint(final int srid, final double xCoordinate, final double yCoordinate) {
-        final var buffer = ByteBuffer.allocate(Integer.BYTES + 1 + Integer.BYTES + Double.BYTES + Double.BYTES);
-        buffer.putInt(srid)
-                .order(ByteOrder.LITTLE_ENDIAN)
+        final var buffer = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + Double.BYTES + Double.BYTES);
+        buffer.order(ByteOrder.LITTLE_ENDIAN)
                 .put(_PersistenceTypes.Wkb.endianValue(buffer.order()))
                 .putInt(_PersistenceTypes.Wkb.Type.POINT.getValue())
                 .putDouble(xCoordinate)
