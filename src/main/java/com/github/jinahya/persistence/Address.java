@@ -1,20 +1,23 @@
 package com.github.jinahya.persistence;
 
-import com.github.jinahya.persistence._PersistenceConverters.GeometryConverter;
-import com.github.jinahya.persistence._PersistenceTypes.Geometry;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import jakarta.validation.constraints.Size;
+import lombok.extern.slf4j.Slf4j;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Optional;
 
 /**
@@ -31,6 +34,7 @@ import java.util.Optional;
  */
 @Entity
 @Table(name = Address.TABLE_NAME)
+@Slf4j
 public class Address
         extends _BaseEntity<Integer> {
 
@@ -73,15 +77,15 @@ public class Address
                ",cityId=" + cityId +
                ",postalCode='" + postalCode +
                ",phone='" + phone +
-               ",locationGeometry=" + locationGeometry +
+//               ",location=" + Arrays.toString(location) +
                '}';
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Address thta)) return false;
-        return equals_(thta);
+        if (!(obj instanceof Address)) return false;
+        return equals(obj);
     }
 
     @Override
@@ -145,7 +149,6 @@ public class Address
      * Replaces current value of {@link Address_#address2 address2} attribute with specified value.
      *
      * @param address2 new value for the {@link Address_#address2 address2} attribute.
-     * @deprecated for removal.
      */
     public void setAddress2(final String address2) {
         this.address2 = address2;
@@ -163,7 +166,7 @@ public class Address
         return cityId;
     }
 
-    public void setCityId(final Integer cityId) {
+    protected void setCityId(final Integer cityId) {
         this.cityId = cityId;
     }
 
@@ -183,11 +186,11 @@ public class Address
         this.phone = phone;
     }
 
-    private byte[] getLocation() {
+    protected byte[] getLocation() {
         return location;
     }
 
-    private void setLocation(final byte[] location) {
+    protected void setLocation(final byte[] location) {
         this.location = location;
     }
 
@@ -257,42 +260,76 @@ public class Address
      *
      * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
      */
-    @Size(min = _PersistenceConstants.COLUMN_LENGTH_GEOMETRY, max = _PersistenceConstants.COLUMN_LENGTH_GEOMETRY)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_LOCATION, nullable = false)
     private byte[] location;
 
     /**
-     * Returns current value of {@link Address_#locationGeometry locationGeometry} attribute.
+     * Returns current value of {@link Address_#city city} attribute.
      *
-     * @return current value of {@link Address_#locationGeometry locationGeometry} attribute.
+     * @return current value of {@link Address_#city city} attribute.
      */
-    public Geometry getLocationGeometry() {
-        return locationGeometry;
+    public City getCity() {
+        return city;
     }
 
     /**
-     * Replaces current value of {@link Address_#locationGeometry locationGeometry} attribute with specified value.
+     * Replaces current value of {@link Address_#city city} attribute with specified value.
      *
-     * @param locationGeometry new value for the {@link Address_#locationGeometry locationGeometry} attribute.
+     * @param city new value for the {@link Address_#city city} attribute.
+     * @apiNote This method also replaces current value of {@link Address_#cityId cityId} attribute with
+     * {@code city?.cityId}.
      */
-    public void setLocationGeometry(final Geometry locationGeometry) {
-        this.locationGeometry = locationGeometry;
-        setLocation(
-                Optional.ofNullable(this.locationGeometry)
-                        .map(Geometry::toByteArray)
+    public void setCity(final City city) {
+        this.city = city;
+        setCityId(
+                Optional.ofNullable(city)
+                        .map(City::getCityId)
                         .orElse(null)
         );
     }
 
-    /**
-     * {@value #COLUMN_NAME_LOCATION} column 값을 {@link Geometry} 형으로 매핑한 값.
-     */
-    @Convert(converter = GeometryConverter.class)
-    @NotNull
-    @Column(name = COLUMN_NAME_LOCATION, nullable = false, insertable = false, updatable = false)
-    private Geometry locationGeometry;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_CITY_ID, nullable = false, insertable = false, updatable = false)
+    private City city;
 
-    // TODO: Map for a City!
+    public _PersistenceTypes.Geometry getLocationGeometry() {
+        return locationGeometry;
+    }
+
+    public void setLocationGeometry(final _PersistenceTypes.Geometry locationGeometry) {
+        this.locationGeometry = locationGeometry;
+        setLocation(
+                Optional.ofNullable(this.locationGeometry)
+                        .map(_PersistenceTypes.Geometry::toByteArray)
+                        .orElse(null)
+
+        );
+    }
+
+    @Convert(converter = _PersistenceConverters.GeometryConverter.class)
+    @Column(name = COLUMN_NAME_LOCATION, nullable = false, insertable = false, updatable = false)
+    private _PersistenceTypes.Geometry locationGeometry;
+
+    public void setLocationGeometryAsPoint(final int srid, final double xCoordinate, final double yCoordinate) {
+        final var buffer = ByteBuffer.allocate(Integer.BYTES + 1 + Integer.BYTES + Double.BYTES + Double.BYTES);
+        buffer.putInt(srid)
+                .order(ByteOrder.LITTLE_ENDIAN)
+                .put(_PersistenceTypes.Wkb.endianValue(buffer.order()))
+                .putInt(_PersistenceTypes.Wkb.Type.POINT.getValue())
+                .putDouble(xCoordinate)
+                .putDouble(yCoordinate);
+        assert !buffer.hasRemaining();
+        setLocationGeometry(
+                _PersistenceTypes.Geometry.of(
+                        srid,
+                        _PersistenceTypes.Wkb.from(buffer.flip())
+                )
+        );
+    }
+
+    public void setLocationGeometryAsPoint(final double xCoordinate, final double yCoordinate) {
+        setLocationGeometryAsPoint(0, xCoordinate, yCoordinate);
+    }
 }

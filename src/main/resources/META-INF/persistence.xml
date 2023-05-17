@@ -4,8 +4,12 @@
              version="3.0">
   <persistence-unit name="sakilaPU">
     <description>Sakila Persistence Unit</description>
+    <class>com.github.jinahya.persistence.__BaseEntity</class>
+    <class>com.github.jinahya.persistence._BaseEntity</class>
     <class>com.github.jinahya.persistence.Actor</class>
+    <class>com.github.jinahya.persistence.Address</class>
     <class>com.github.jinahya.persistence.Category</class>
+    <class>com.github.jinahya.persistence.City</class>
     <class>com.github.jinahya.persistence.Country</class>
     <class>com.github.jinahya.persistence.Film</class>
     <class>com.github.jinahya.persistence.Film$RatingConverter</class>
@@ -14,6 +18,7 @@
     <class>com.github.jinahya.persistence.FilmCategory</class>
     <class>com.github.jinahya.persistence.FilmList</class>
     <class>com.github.jinahya.persistence.Language</class>
+    <class>com.github.jinahya.persistence._PersistenceConverters$GeometryConverter</class>
     <exclude-unlisted-classes/>
     <properties>
       <!-- https://wiki.eclipse.org/EclipseLink/Examples/JPA/Logging -->

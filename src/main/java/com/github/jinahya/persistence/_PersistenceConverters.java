@@ -2,6 +2,9 @@ package com.github.jinahya.persistence;
 
 import com.github.jinahya.persistence._PersistenceTypes.Geometry;
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+
+import java.nio.ByteBuffer;
 
 public final class _PersistenceConverters {
 
@@ -9,6 +12,7 @@ public final class _PersistenceConverters {
      * An attribute converter for converting from column values of {@code GEOMETRY} to {@link Geometry}, and vice
      * versa.
      */
+    @Converter
     public static class GeometryConverter
             implements AttributeConverter<Geometry, byte[]> {
 
@@ -25,7 +29,7 @@ public final class _PersistenceConverters {
             if (dbData == null) {
                 return null;
             }
-            return Geometry.from(dbData);
+            return Geometry.from(ByteBuffer.wrap(dbData));
         }
     }
 

@@ -1,18 +1,40 @@
 package com.github.jinahya.persistence;
 
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 class CountryIT
         extends _BaseEntityIT<Country, Integer> {
 
+    static Country newPersistedInstance(final EntityManager entityManager) {
+        Objects.requireNonNull(entityManager, "entityManager is null");
+        final var instance = new CountryRandomizer().getRandomValue();
+        log.debug("country: {}", instance);
+        entityManager.persist(instance);
+        entityManager.flush();
+        return instance;
+    }
+
     CountryIT() {
         super(Country.class, Integer.class);
+    }
+
+    @Test
+    void persist__() {
+        final var instance = applyEntityManager(CountryIT::newPersistedInstance);
+        assertThat(instance)
+                .isNotNull()
+                .extracting(Country::getCountryId)
+                .isNotNull();
     }
 
     @Nested

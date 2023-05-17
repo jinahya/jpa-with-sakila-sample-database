@@ -1,183 +1,244 @@
 package com.github.jinahya.persistence;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.Objects;
 
+@Slf4j
 public final class _PersistenceTypes {
 
     /**
-     * .
+     * Represents the Well-Known Binary Representation.
      *
      * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/gis-data-formats.html#gis-wkb-format">11.4.3 Supported
      * Spatial Data Formats</a>
      */
-    public enum WkbType {
-        POINT(1),
-        LINE_STRING(2),
-        POLYGON(3),
-        MULTI_POINT(4),
-        MULTI_LINE_STRING(5),
-        MULTI_POLYGON(6),
-        GEOMETRY_COLLECTION(7);
+    public static final class Wkb {
 
-        public static WkbType valueOfType(final int type) {
-            for (final var value : values()) {
-                if (value.type == type) {
-                    return value;
+        public static final int TYPE_VALUE_POINT = 1;
+
+        /**
+         * .
+         *
+         * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/gis-data-formats.html#gis-wkb-format">11.4.3 Supported
+         * Spatial Data Formats</a>
+         */
+        public enum Type {
+
+            POINT(TYPE_VALUE_POINT),
+
+            LINE_STRING(2),
+
+            POLYGON(3),
+
+            MULTI_POINT(4),
+
+            MULTI_LINE_STRING(5),
+
+            MULTI_POLYGON(6),
+
+            GEOMETRY_COLLECTION(7);
+
+            public static Type valueOfType(final int type) {
+                for (final var value : values()) {
+                    if (value.value == type) {
+                        return value;
+                    }
                 }
+                throw new IllegalArgumentException("no value for type: " + type);
             }
-            throw new IllegalArgumentException("no value for type: " + type);
+
+            Type(final int value) {
+                this.value = value;
+            }
+
+            public int getValue() {
+                return value;
+            }
+
+            private final int value;
         }
 
-        WkbType(final int type) {
-            this.type = type;
+        public static final int ENDIAN_BIG = 0;
+
+        public static final int ENDIAN_LITTLE = 1;
+
+        /**
+         * Returns a numeric value for specified byte order.
+         *
+         * @param byteOrder the byte order to convert.
+         * @return {@code 0} if {@code order} is {@link ByteOrder#BIG_ENDIAN}; {@code 1} otherwise.
+         */
+        public static byte endianValue(final ByteOrder byteOrder) {
+            Objects.requireNonNull(byteOrder, "order is null");
+            return (byte) (byteOrder == ByteOrder.BIG_ENDIAN ? ENDIAN_BIG : ENDIAN_LITTLE);
         }
 
-        public int getType() {
+        public static ByteOrder byteOrder(final byte endianValue) {
+            if (endianValue == ENDIAN_BIG) {
+                return ByteOrder.BIG_ENDIAN;
+            }
+            assert endianValue == ENDIAN_LITTLE;
+            return ByteOrder.LITTLE_ENDIAN;
+        }
+
+        public static Wkb from(final ByteBuffer buffer) {
+            Objects.requireNonNull(buffer, "buffer is null");
+            buffer.order(byteOrder(buffer.get()));
+            final var type = Type.valueOfType(buffer.getInt());
+            final var data = new byte[buffer.remaining()];
+            buffer.get(data);
+            return new Wkb(buffer.order(), type, data);
+        }
+
+        private Wkb(final ByteOrder order, final Type type, final byte[] data) {
+            super();
+            this.order = Objects.requireNonNull(order, "order is null");
+            this.type = Objects.requireNonNull(type, "type is null");
+            this.data = Objects.requireNonNull(data, "data is null");
+        }
+
+        @Override
+        public String toString() {
+            return super.toString() + '{' +
+                   "order=" + order +
+                   ",type=" + type +
+//                   ",data=" + Arrays.toString(data) +
+                   '}';
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) return true;
+            if (!(obj instanceof Wkb that)) return false;
+            return Objects.equals(order, that.order) &&
+                   type == that.type &&
+                   Arrays.equals(data, that.data);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = Objects.hash(order, type);
+            result = 31 * result + Arrays.hashCode(data);
+            return result;
+        }
+
+        public ByteBuffer toByteBuffer(final ByteBuffer buffer) {
+            Objects.requireNonNull(buffer, "buffer is null");
+            final var order = buffer.order();
+            return buffer.order(order)
+                    .putInt(type.value)
+                    .put(data)
+                    .order(order);
+        }
+
+        public ByteBuffer toByteBuffer() {
+            return toByteBuffer(ByteBuffer.allocate(capacity())).flip();
+        }
+
+        public byte[] toByteArray() {
+            return toByteBuffer().array();
+        }
+
+        public byte[] getDataArray() {
+            return Arrays.copyOf(data, data.length);
+        }
+
+        public ByteBuffer getDataBuffer() {
+            return ByteBuffer.wrap(data)
+                    .asReadOnlyBuffer()
+                    .order(order);
+        }
+
+        private int capacity() {
+            return Byte.BYTES + Integer.BYTES + data.length;
+        }
+
+        public ByteOrder getOrder() {
+            return order;
+        }
+
+        public Type getType() {
             return type;
         }
 
-        private final int type;
+        private final ByteOrder order;
+
+        private final Type type;
+
+        private final byte[] data;
     }
 
-    /**
-     * .
-     *
-     * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/gis-data-formats.html#gis-wkb-format">11.4.3 Supported
-     * Spatial Data Formats</a>
-     */
-    public static final class WkbComponent {
+    public static final class Geometry {
 
-        public static final int BYTES = 21;
-
-        public static WkbComponent from(final byte[] array, final int offset) {
-            if (Objects.requireNonNull(array, "array is null").length != BYTES) {
-                throw new IllegalArgumentException("invalid array.length: " + array.length + " (!= " + BYTES + ")");
-            }
-            final var byteOrder = array[offset] == 0 ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN;
-            final var byteBuffer = ByteBuffer.wrap(array, offset + 1, BYTES - 1).order(byteOrder);
-            final var wkbType = WkbType.valueOfType(byteBuffer.getInt());
-            final var xCoordinate = byteBuffer.getDouble();
-            final var yCoordinate = byteBuffer.getDouble();
-            return new WkbComponent(byteOrder, wkbType, xCoordinate, yCoordinate);
+        public static Geometry from(final ByteBuffer buffer) {
+            Objects.requireNonNull(buffer, "buffer is null");
+            final var srid = buffer.getInt();
+            final var wkb = Wkb.from(buffer);
+            return of(srid, wkb);
         }
 
-        public static WkbComponent from(final byte[] array) {
-            return from(array, 0);
+        public static Geometry of(final int srid, final Wkb binary) {
+            return new Geometry(srid, binary);
         }
 
-        private WkbComponent(final ByteOrder byteOrder, final WkbType wkbType, final double xCoordinate,
-                             final double yCoordinate) {
-            super();
-            this.byteOrder = Objects.requireNonNull(byteOrder, "byteOrder is null");
-            this.wkbType = Objects.requireNonNull(wkbType, "wkbType is null");
-            this.xCoordinate = xCoordinate;
-            this.yCoordinate = yCoordinate;
-        }
-
-        public byte[] toByteArray(final byte[] array, final int offset) {
-            final var byteBuffer = ByteBuffer.wrap(array, offset, BYTES).order(byteOrder);
-            byteBuffer.putInt(byteOrder == ByteOrder.BIG_ENDIAN ? 0 : 1);
-            byteBuffer.putInt(wkbType.type);
-            byteBuffer.putDouble(xCoordinate);
-            byteBuffer.putDouble(yCoordinate);
-            assert !byteBuffer.hasRemaining();
-            return array;
-        }
-
-        public byte[] toByteArray(final byte[] array) {
-            return toByteArray(array, 0);
-        }
-
-        public byte[] toByteArray() {
-            return toByteArray(new byte[BYTES]);
-        }
-
-        public ByteOrder getByteOrder() {
-            return byteOrder;
-        }
-
-        public WkbType getWkbType() {
-            return wkbType;
-        }
-
-        public double getxCoordinate() {
-            return xCoordinate;
-        }
-
-        public double getyCoordinate() {
-            return yCoordinate;
-        }
-
-        private final ByteOrder byteOrder;
-
-        private final WkbType wkbType;
-
-        private final double xCoordinate;
-
-        private final double yCoordinate;
-    }
-
-    public static class Geometry {
-
-        public static final int BYTES = WkbComponent.BYTES + 4;
-
-        public static Geometry from(final byte[] array, int offset) {
-            if (Objects.requireNonNull(array, "array is null").length != BYTES) {
-                throw new IllegalArgumentException("invalid array length: " + array.length + " (!= " + BYTES + ")");
-            }
-            final var srid = ((array[offset++] & 0xFF) << 24) |
-                             ((array[offset++] & 0xFF) << 16) |
-                             ((array[offset++] & 0xFF) << 8) |
-                             (array[offset++] & 0xFF);
-            final var component = WkbComponent.from(array, offset);
-            return of(srid, component);
-        }
-
-        public static Geometry from(final byte[] array) {
-            return from(array, 0);
-        }
-
-        public static Geometry of(final int srid, final WkbComponent component) {
-            return new Geometry(srid, component);
-        }
-
-        private Geometry(final int srid, final WkbComponent component) {
+        private Geometry(final int srid, final Wkb binary) {
             super();
             this.srid = srid;
-            this.component = Objects.requireNonNull(component, "component is null");
+            this.binary = Objects.requireNonNull(binary, "binary is null");
         }
 
-        public byte[] toByteArray(final byte[] array, int offset) {
-            Objects.requireNonNull(array, "array is null");
-            array[offset++] = (byte) ((srid >> 24) & 0xFF);
-            array[offset++] = (byte) ((srid >> 16) & 0xFF);
-            array[offset++] = (byte) ((srid >> 8) & 0xFF);
-            array[offset++] = (byte) (srid & 0xFF);
-            component.toByteArray(array, offset);
-            return array;
+        @Override
+        public String toString() {
+            return super.toString() + '{' +
+                   "srid=" + srid +
+                   ",binary=" + binary +
+                   '}';
         }
 
-        public byte[] toByteArray(final byte[] array) {
-            return toByteArray(array, 0);
+        @Override
+        public boolean equals(final Object obj) {
+            if (this == obj) return true;
+            if (!(obj instanceof Geometry geometry)) return false;
+            return srid == geometry.srid &&
+                   Objects.equals(binary, geometry.binary);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(srid, binary);
+        }
+
+        public ByteBuffer toByteBuffer(final ByteBuffer buffer) {
+            Objects.requireNonNull(buffer, "buffer is null");
+            return binary.toByteBuffer(buffer.putInt(srid));
+        }
+
+        public ByteBuffer toByteBuffer() {
+            log.debug("capa: {}", binary.capacity());
+            return toByteBuffer(
+                    ByteBuffer.allocate(Integer.BYTES + binary.capacity())
+            ).flip();
         }
 
         public byte[] toByteArray() {
-            return toByteArray(new byte[BYTES]);
+            return toByteBuffer().array();
         }
 
         public int getSrid() {
             return srid;
         }
 
-        public WkbComponent getComponent() {
-            return component;
+        public Wkb getBinary() {
+            return binary;
         }
 
         private final int srid;
 
-        private final WkbComponent component;
+        private final Wkb binary;
     }
 
     private _PersistenceTypes() {

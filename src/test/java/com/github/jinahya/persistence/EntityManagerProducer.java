@@ -14,7 +14,9 @@ class EntityManagerProducer {
 
     @Produces
     EntityManager produceEntityManager() {
-        return entityManagerFactory.createEntityManager();
+        final var entityManager = entityManagerFactory.createEntityManager();
+        log.debug("producing entity manager: {}", entityManager);
+        return entityManager;
     }
 
     void disposeEntityManager(@Disposes final EntityManager entityManager) {

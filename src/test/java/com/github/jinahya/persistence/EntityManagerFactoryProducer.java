@@ -16,7 +16,12 @@ class EntityManagerFactoryProducer {
     @Produces
     @ApplicationScoped
     EntityManagerFactory produceEntityManagerFactory() {
-        return Persistence.createEntityManagerFactory(_PersistenceConstants.PERSISTENCE_UNIT_NAME, new HashMap<>());
+        final var entityManagerFactory = Persistence.createEntityManagerFactory(
+                _PersistenceConstants.PERSISTENCE_UNIT_NAME,
+                new HashMap<>()
+        );
+        log.debug("producing entity manager factory: {}", entityManagerFactory);
+        return entityManagerFactory;
     }
 
     void disposeEntityManagerFactory(@Disposes final EntityManagerFactory entityManagerFactory) {

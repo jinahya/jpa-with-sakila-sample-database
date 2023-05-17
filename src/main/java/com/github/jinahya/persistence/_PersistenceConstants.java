@@ -14,8 +14,6 @@ final class _PersistenceConstants {
 
     static final int COLUMN_LENGTH_TEXT = 65535;
 
-    static final int COLUMN_LENGTH_GEOMETRY = 25;
-
     static final String COLUMN_NAME_LAST_UPDATE = "last_update";
 
     static final int MAX_SMALLINT_UNSIGNED = 65536;

@@ -3,21 +3,26 @@ package com.github.jinahya.persistence;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+
+import java.util.Optional;
 
 /**
  * An entity for mapping {@value #TABLE_NAME} table.
  * <p>
  * <blockquote>
  * The {@value #TABLE_NAME} table contains a list of cities.<br/>The {@value #TABLE_NAME} table is referred to by a
- * foreign key in the {@value Address#TABLE_NAME} table and refers to the {@value Country#TABLE_NAME} table using
- * a foreign key.
+ * foreign key in the {@value Address#TABLE_NAME} table and refers to the {@value Country#TABLE_NAME} table using a
+ * foreign key.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -119,7 +124,6 @@ public class City
      *
      * @return current value of the {@link City_#countryId countryId} attribute.
      */
-    // TODO: narrow the scope of this method!
     public Integer getCountryId() {
         return countryId;
     }
@@ -129,8 +133,7 @@ public class City
      *
      * @param countryId new value for the {@link City_#countryId countryId} attribute.
      */
-    // TODO: narrow the scope of this method!
-    public void setCountryId(final Integer countryId) {
+    protected void setCountryId(final Integer countryId) {
         this.countryId = countryId;
     }
 
@@ -164,5 +167,31 @@ public class City
     @Column(name = COLUMN_NAME_COUNTRY_ID, nullable = false)
     private Integer countryId;
 
-    // TODO: Map for a Country!
+    /**
+     * Returns current value of {@link City_#country country} attribute.
+     *
+     * @return current value of {@link City_#country country} attribute.
+     */
+    public Country getCountry() {
+        return country;
+    }
+
+    /**
+     * Replaces current value of {@link City_#country country} attribute with specified value.
+     *
+     * @param country new value for the {@link City_#country country} attribute.
+     * @apiNote This method also update {@link City_#countryId countryId} attribute with {@code country?.countryId}.
+     */
+    public void setCountry(final Country country) {
+        this.country = country;
+        setCountryId(
+                Optional.ofNullable(this.country)
+                        .map(Country::getCountryId)
+                        .orElse(null)
+        );
+    }
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_COUNTRY_ID, nullable = false, insertable = false, updatable = false)
+    private Country country;
 }

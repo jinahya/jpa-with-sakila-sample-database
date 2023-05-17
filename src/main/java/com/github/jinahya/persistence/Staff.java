@@ -1,12 +1,18 @@
 package com.github.jinahya.persistence;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -15,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -56,6 +63,25 @@ public class Staff
      */
     public static final String COLUMN_NAME_STORE_ID = Store.COLUMN_NAME_STORE_ID;
 
+    /**
+     * Creates a new instance with specified value of {@link Staff_#staffId staffId} attribute.
+     *
+     * @param staffId the value of {@link Staff_#staffId staffId} attribute.
+     * @return a new instance with {@code staffId}.
+     */
+    public static Staff of(final int staffId) {
+        final var instance = new Staff();
+        instance.staffId = staffId;
+        return instance;
+    }
+
+    /**
+     * Creates a new instance.
+     */
+    public Staff() {
+        super();
+    }
+
     @Override
     public String toString() {
         return super.toString() + '{' +
@@ -70,6 +96,18 @@ public class Staff
                ",username='" + username +
 //               ",password='" + password +
                '}';
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Staff)) return false;
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 
     @Override
@@ -141,7 +179,7 @@ public class Staff
         return storeId;
     }
 
-    public void setStoreId(final Integer storeId) {
+    private void setStoreId(final Integer storeId) {
         this.storeId = storeId;
     }
 
@@ -267,6 +305,65 @@ public class Staff
     @Basic(optional = true)
     @Column(name = "password", nullable = true, length = 40)
     private String password;
+
+    /**
+     * Returns current value of {@link Staff_#address address} attribute.
+     *
+     * @return current value of the {@link Staff_#address address} attribute.
+     */
+    public Address getAddress() {
+        return address;
+    }
+
+    /**
+     * Replaces current value of {@link Staff_#address address} attribute with specified value.
+     *
+     * @param address new value for the {@link Staff_#address address} attribute.
+     * @apiNote This method also updates {@link Staff_#addressId addressId} attribute with {@code address?.addressId}.
+     */
+    public void setAddress(final Address address) {
+        this.address = address;
+        setAddressId(
+                Optional.ofNullable(this.address)
+                        .map(Address::getAddressId)
+                        .orElse(null)
+        );
+    }
+
+    @Valid
+    @NotNull
+    @OneToOne(optional = false, fetch = FetchType.LAZY,
+              cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @JoinColumn(name = COLUMN_NAME_ADDRESS_ID, nullable = false, insertable = false, updatable = false)
+    private Address address;
+
+    /**
+     * Returns current value of {@link Store_#store store} attribute.
+     *
+     * @return current value of the {@link Store_#store store} attribute.
+     */
+    public Store getStore() {
+        return store;
+    }
+
+    /**
+     * Replaces current value of {@link Store_#store store} attribute with specified value.
+     *
+     * @param store new value for the {@link Store_#store store} attribute.
+     * @apiNote This method also updates current value of {@link Store#storeId storeId} with {@code store?.storeId}.
+     */
+    public void setStore(final Store store) {
+        this.store = store;
+        setStoreId(
+                Optional.ofNullable(this.store)
+                        .map(Store::getStoreId)
+                        .orElse(null)
+        );
+    }
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false, insertable = false, updatable = false)
+    private Store store;
 
     /**
      * Signs with specified password.

@@ -77,8 +77,8 @@ public class Country
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Country that)) return false;
-        return equals_(that);
+        if (!(obj instanceof Country)) return false;
+        return equals(obj);
     }
 
     @Override
