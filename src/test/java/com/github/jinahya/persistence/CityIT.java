@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CityIT
@@ -28,9 +27,10 @@ class CityIT
     @Test
     void persist__() {
         final var instance = applyEntityManager(CityIT::newPersistedInstance);
-        assertThat(instance)
-                .isNotNull()
-                .extracting(City::getCity)
-                .isNotNull();
+        assertThat(instance).isNotNull().satisfies(c -> {
+            assertThat(c.getCityId()).isNotNull();
+            assertThatBean(c).isValid();
+            assertThatBean(c.getCountry()).isValid();
+        });
     }
 }

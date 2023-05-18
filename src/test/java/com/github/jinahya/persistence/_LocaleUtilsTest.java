@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class LocaleUtilsTest {
+class _LocaleUtilsTest {
 
     private static Stream<Locale> getLocaleStream() {
         return Stream.of(Locale.getAvailableLocales());

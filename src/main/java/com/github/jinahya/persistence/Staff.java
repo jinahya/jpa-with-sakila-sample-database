@@ -1,7 +1,6 @@
 package com.github.jinahya.persistence;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -29,7 +28,7 @@ import java.util.Optional;
  * <blockquote>
  * The {@value TABLE_NAME} table lists all staff members, including information for email address, login information,
  * and picture.<br/>The {@value #TABLE_NAME} table refers to the {@value Store#TABLE_NAME} and
- * {@value Address#TABLE_NAME} tables using foreign keys, and is referred to by the {@value MappedRental#TABLE_NAME},
+ * {@value Address#TABLE_NAME} tables using foreign keys, and is referred to by the {@value Rental#TABLE_NAME},
  * {@value MappedPayment#TABLE_NAME}, and {@value Store#TABLE_NAME} tables.
  * </blockquote>
  *
@@ -179,7 +178,7 @@ public class Staff
         return storeId;
     }
 
-    private void setStoreId(final Integer storeId) {
+    protected void setStoreId(final Integer storeId) {
         this.storeId = storeId;
     }
 
@@ -332,8 +331,7 @@ public class Staff
 
     @Valid
     @NotNull
-    @OneToOne(optional = false, fetch = FetchType.LAZY,
-              cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_ADDRESS_ID, nullable = false, insertable = false, updatable = false)
     private Address address;
 
@@ -380,8 +378,8 @@ public class Staff
         }
         final byte[] copy = Arrays.copyOf(clientPassword, clientPassword.length);
         if (Objects.equals(_PersistenceUtils.sha1(copy), password)) {
-            log.info("signed in with sha1. updating password with sha2...");
-            setPassword(_PersistenceUtils.sha2(copy));
+//            log.info("signed in with sha1. updating password with sha2...");
+//            setPassword(_PersistenceUtils.sha2(copy));
             return;
         }
         if (Objects.equals(_PersistenceUtils.sha2(copy), password)) {
@@ -401,6 +399,7 @@ public class Staff
             throw new IllegalArgumentException("empty new client password");
         }
         signIn(oldClientPassword);
-        setPassword(_PersistenceUtils.sha2(newClientPassword));
+//        setPassword(_PersistenceUtils.sha2(newClientPassword));
+        setPassword(_PersistenceUtils.sha1(newClientPassword));
     }
 }

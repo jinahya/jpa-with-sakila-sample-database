@@ -28,7 +28,8 @@ import java.util.Set;
  * and {@value FilmActor#TABLE_NAME} tables.
  * </blockquote>
  */
-@NamedQuery(name = "FilmList_findAllByFid", query = "SELECT e FROM FilmList AS e WHERE e.fid = :fid")
+@NamedQuery(name = "FilmList_findAllByFid",
+            query = "SELECT e FROM FilmList AS e WHERE e.fid = :fid")
 @IdClass(FilmListId.class)
 @Entity
 @Table(name = FilmList.VIEW_NAME)
@@ -96,7 +97,7 @@ public class FilmList
 
     @Override
     protected FilmListId identifier() {
-        return FilmListId.of(fid, category);
+        return FilmListId.of(getFid(), getCategory());
     }
 
     public Integer getFid() {
@@ -134,41 +135,46 @@ public class FilmList
     @NotNull
     @Id
     @Basic
-    @Column(name = COLUMN_NAME_FID, nullable = false)
+    @Column(name = COLUMN_NAME_FID, nullable = false,
+            insertable = /*false*/true, // EclipseLink
+            updatable = false)
     private Integer fid;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_TITLE, nullable = false, length = 128)
+    @Column(name = COLUMN_NAME_TITLE, nullable = false, length = 128, insertable = false, updatable = false)
     private String title;
 
     @Basic(optional = true)
-    @Column(name = COLUMN_NAME_DESCRIPTION, nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT)
+    @Column(name = COLUMN_NAME_DESCRIPTION, nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT,
+            insertable = false, updatable = false)
     private String description;
 
     @Id
     @Basic(optional = true)
-    @Column(name = COLUMN_NAME_CATEGORY, nullable = true, length = 25)
+    @Column(name = COLUMN_NAME_CATEGORY, nullable = true, length = 25,
+            insertable = /*false*/true, // EclipseLink
+            updatable = false)
     private String category;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = "price", nullable = false, precision = 4, scale = 2)
+    @Column(name = "price", nullable = false, precision = 4, scale = 2, insertable = false, updatable = false)
     private BigDecimal price;
 
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Basic(optional = true)
-    @Column(name = COLUMN_NAME_LENGTH, nullable = true)
+    @Column(name = COLUMN_NAME_LENGTH, nullable = true, insertable = false, updatable = false)
     private Integer length;
 
     @Convert(converter = Film.RatingConverter.class)
     @Basic(optional = true)
-    @Column(name = COLUMN_NAME_RATING, nullable = true)
+    @Column(name = COLUMN_NAME_RATING, nullable = true, insertable = false, updatable = false)
     private Film.Rating rating;
 
     @Basic(optional = true)
-    @Column(name = "actors", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT)
+    @Column(name = "actors", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT, insertable = false, updatable = false)
     private String actors;
 
     public Set<String> getCategories() {

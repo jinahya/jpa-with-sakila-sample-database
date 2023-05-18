@@ -16,7 +16,8 @@ import java.util.Objects;
 @Table(name = "payment", schema = "sakila", catalog = "")
 public class MappedPayment {
 
-public static final String TABLE_NAME = "payment";
+    public static final String TABLE_NAME = "payment";
+
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "payment_id", nullable = false)

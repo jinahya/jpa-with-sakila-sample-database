@@ -16,10 +16,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @Slf4j
-class LanguageTest
+class Language_Test
         extends _BaseEntityTest<Language, Integer> {
 
-    LanguageTest() {
+    Language_Test() {
         super(Language.class, Integer.class);
     }
 

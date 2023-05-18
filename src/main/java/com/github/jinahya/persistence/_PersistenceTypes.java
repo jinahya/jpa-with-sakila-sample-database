@@ -219,7 +219,6 @@ public final class _PersistenceTypes {
         }
 
         public ByteBuffer toByteBuffer() {
-            log.debug("capa: {}", binary.capacity());
             return toByteBuffer(
                     ByteBuffer.allocate(Integer.BYTES + binary.capacity())
             ).flip();
@@ -237,7 +236,7 @@ public final class _PersistenceTypes {
             return binary;
         }
 
-        private final int srid;
+        private final int srid; // spatial reference identifier
 
         private final Wkb binary;
     }

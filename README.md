@@ -1,4 +1,5 @@
 # jpa-with-sakila-sample-database
+
 JPA with Sakila Sample Database
 
 
@@ -40,9 +41,14 @@ JPA with Sakila Sample Database
 
 * [`@Immutable`](https://javadoc.io/doc/org.hibernate/hibernate-core/5.6.15.Final/org/hibernate/annotations/Immutable.html)
 
+### Open Geospatial Consortium
+
+* [Simple feature access - Part 1 - OGC Portal](https://portal.ogc.org/files/?artifact_id=25355)
 
 ### Miscellaneous
 
 * [Random Address](https://www.bestrandoms.com/random-address)
   * [in United States](https://www.bestrandoms.com/random-address-in-us)
   * [in Korean](https://www.bestrandoms.com/random-address-in-ko)
+* [JPA Metamodel generation missing attributes](https://stackoverflow.com/q/27333779/330457)
+  * [`@Basic`](https://stackoverflow.com/a/41720695/330457)

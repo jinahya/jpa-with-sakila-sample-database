@@ -1,9 +1,9 @@
 package com.github.jinahya.persistence;
 
-class StoreTest
+class Store_Test
         extends _BaseEntityTest<Store, Integer> {
 
-    StoreTest() {
+    Store_Test() {
         super(Store.class, Integer.class);
     }
 }

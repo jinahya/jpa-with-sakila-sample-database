@@ -3,10 +3,12 @@ package com.github.jinahya.persistence;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.RollbackException;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Objects;
@@ -37,7 +39,16 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
                     if (m.equals(close)) {
                         throw new UnsupportedOperationException("you're not allowed to close the entity manager");
                     }
-                    return m.invoke(entityManager, a);
+                    try {
+                        return m.invoke(entityManager, a);
+                    } catch (final InvocationTargetException ite) {
+                        if (ite.getTargetException() instanceof ConstraintViolationException cve) {
+                            cve.getConstraintViolations().forEach(cv -> {
+                                log.error("constraint violation: {}", cv);
+                            });
+                        }
+                        throw ite;
+                    }
                 }
         );
     }

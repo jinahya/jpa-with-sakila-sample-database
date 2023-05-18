@@ -12,10 +12,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.jeasy.random.FieldPredicates.named;
 
 @Slf4j
-class AddressRandomizer
+class Address_Randomizer
         extends _BaseEntityRandomizer<Address> {
 
-    AddressRandomizer() {
+    Address_Randomizer() {
         super(Address.class);
     }
 
@@ -29,7 +29,8 @@ class AddressRandomizer
                 .excludeField(named(Address_.cityId.getName()))
                 .randomize(named(Address_.postalCode.getName()), new StringRandomizer(10))
                 .randomize(named(Address_.phone.getName()), new StringRandomizer(10))
-                .excludeField(named("locationGeometry"))
+                .excludeField(named(Address_.location.getName()))
+                .excludeField(named(Address_.locationGeometry.getName()))
                 ;
     }
 
@@ -41,11 +42,7 @@ class AddressRandomizer
     @Override
     public Address getRandomValue() {
         final var address = super.getRandomValue();
-//        address.setLocation(HexFormat.of().parseHex("000000000101000000000000000000F03F000000000000F0BF"));
-//        address.setLocationGeometryAsPoint(current().nextDouble(), current().nextDouble());
-        address.setLocationGeometryAsPoint(1d, -1d);
-        assertThat(address.getLocation()).hasSize(25);
-        log.debug("location: {}", HexFormat.of().withUpperCase().formatHex(address.getLocation()));
+        address.setLocationGeometryAsPoint(current().nextDouble(), current().nextDouble());
         return address;
     }
 }

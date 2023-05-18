@@ -1,12 +1,33 @@
 use sakila;
 
+
+-- ---------------------------------------------------------------------------------------------------------------------
+SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
+INSERT INTO `country` (`country`)
+VALUES ('The Country for Old Men');
+SET @the_country_id = LAST_INSERT_ID();
+INSERT INTO `city` (`city`, `country_id`)
+VALUES ('Ensaio sobre a Cegueira', @the_country_id);
+SET @the_city_id = LAST_INSERT_ID();
+INSERT INTO `address`(`address`, `district`, `city_id`, `phone`, `location`)
+VALUES ('', '', @the_city_id, '', /*!50705 0x000000000101000000000000000000F03F000000000000F0BF */);
+SET @the_address_id = LAST_INSERT_ID();
+INSERT INTO `staff` (`first_name`, `last_name`, `address_id`, `store_id`, `username`) VALUES ('', '', @the_address_id, 0, 'whoami');
+SET @the_staff_id = LAST_INSERT_ID();
+INSERT INTO `store` (`manager_staff_id`, `address_id`) VALUES (@the_staff_id, @the_address_id);
+SET @the_store_id = LAST_INSERT_ID();
+UPDATE `staff` SET `store_id` = @the_store_id WHERE `staff_id` = @the_staff_id;
+SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS
+;
+
 -- ---------------------------------------------------------------------------------------------------------------------
 -- Citizen Kane
 -- https://www.imdb.com/title/tt0033467/
 SET @film_title = 'Citizen Kane';
 INSERT INTO film(`title`, `description`, `release_year`, `language_id`, `length`, `rating`)
 VALUES (@film_title,
-        'Following the death of publishing tycoon Charles Foster Kane, reporters scramble to uncover the meaning of his final utterance: \'Rosebud.\'',
+        'Following the death of publishing tycoon Charles Foster Kane,
+        reporters scramble to uncover the meaning of his final utterance: \'Rosebud.\'',
         1941,
         LANGUAGE_ID('English'),
         119,

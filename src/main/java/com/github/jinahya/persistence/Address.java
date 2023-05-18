@@ -25,7 +25,7 @@ import java.util.Optional;
  * <p>
  * <blockquote>
  * The {@value #TABLE_NAME} table contains address information for customers, staff, and stores.<br/>The
- * {@value TABLE_NAME} table primary key appears as a foreign key in the {@value MappedCustomer#TABLE_NAME},
+ * {@value TABLE_NAME} table primary key appears as a foreign key in the {@value Customer#TABLE_NAME},
  * {@value Staff#TABLE_NAME}, and {@value Store#TABLE_NAME} tables.
  * </blockquote>
  *
@@ -309,6 +309,7 @@ public class Address
     }
 
     @Convert(converter = _PersistenceConverters.GeometryConverter.class)
+    @Basic(optional = false)
     @Column(name = COLUMN_NAME_LOCATION, nullable = false, insertable = false, updatable = false)
     private _PersistenceTypes.Geometry locationGeometry;
 

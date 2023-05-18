@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 
 @Slf4j
 class CountryIT
@@ -18,7 +20,6 @@ class CountryIT
     static Country newPersistedInstance(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new CountryRandomizer().getRandomValue();
-        log.debug("country: {}", instance);
         entityManager.persist(instance);
         entityManager.flush();
         return instance;
@@ -31,10 +32,10 @@ class CountryIT
     @Test
     void persist__() {
         final var instance = applyEntityManager(CountryIT::newPersistedInstance);
-        assertThat(instance)
-                .isNotNull()
-                .extracting(Country::getCountryId)
-                .isNotNull();
+        assertThat(instance).isNotNull().satisfies(c -> {
+            assertThat(c.getCountryId()).isNotNull();
+            assertThatBean(c).isValid();
+        });
     }
 
     @Nested

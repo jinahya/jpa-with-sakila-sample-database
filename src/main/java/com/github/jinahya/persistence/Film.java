@@ -6,14 +6,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Converter;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
@@ -35,21 +37,25 @@ import java.util.stream.Collectors;
  * An abstract mapped super class for mapping {@value Film#TABLE_NAME} table.
  * <blockquote>
  * The film table is a list of all films potentially in stock in the stores. The actual in-stock copies of each film are
- * represented in the {@value MappedInventory#TABLE_NAME} table.
+ * represented in the {@value Inventory#TABLE_NAME} table.
  * <p>
  * The film table refers to the {@value Language#TABLE_NAME} table and is referred to by the
- * {@value FilmCategory#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and {@value MappedInventory#TABLE_NAME} tables.
+ * {@value FilmCategory#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and {@value Inventory#TABLE_NAME} tables.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">5.1.7 The film Table</a>
  */
-@NamedQuery(name = "Film_findAllByOriginLanguageId",
+@NamedQuery(name = "Film_findAllByOriginalLanguageId",
             query = "SELECT f FROM Film AS f WHERE f.originalLanguageId = :originLanguageId")
 @NamedQuery(name = "Film_findAllByLanguageId",
             query = "SELECT f FROM Film AS f WHERE f.languageId = :languageId")
-@NamedQuery(name = "Film_findAllByTitle", query = "SELECT f FROM Film AS f WHERE f.title = :title")
-@NamedQuery(name = "Film_findByFilmId", query = "SELECT f FROM Film AS f WHERE f.filmId = :filmId")
+@NamedQuery(name = "Film_findAllByTitleLike",
+            query = "SELECT f FROM Film AS f WHERE f.title LIKE :titlePattern")
+@NamedQuery(name = "Film_findAllByTitle",
+            query = "SELECT f FROM Film AS f WHERE f.title = :title")
+@NamedQuery(name = "Film_findByFilmId",
+            query = "SELECT f FROM Film AS f WHERE f.filmId = :filmId")
 @Entity
 @Table(name = Film.TABLE_NAME)
 public class Film
@@ -67,13 +73,14 @@ public class Film
     public static final String COLUMN_NAME_DESCRIPTION = "description";
 
     /**
-     * The name of the table column to which the {@value Film_#LANGUAGE_ID} attribute maps. The value is {@value}.
+     * The name of the table column to which the {@link Film_#languageId languageId} attribute maps. The value is
+     * {@value}.
      */
     public static final String COLUMN_NAME_LANGUAGE_ID = "language_id";
 
     /**
-     * The name of the table column to which the {@value Film_#ORIGINAL_LANGUAGE_ID} attribute maps. The value is
-     * {@value}.
+     * The name of the table column to which the {@link Film_#originalLanguageId originLanguageId} attribute maps. The
+     * value is {@value}.
      */
     public static final String COLUMN_NAME_ORIGINAL_LANGUAGE_ID = "original_language_id";
 
@@ -276,6 +283,18 @@ public class Film
     }
 
     /**
+     * Creates a new instance with specified value of {@link Film_#filmId filmId} attribute.
+     *
+     * @param filmId the value of the {@link Film_#filmId filmId} attribute.
+     * @return a new instance.
+     */
+    public static Film of(final Integer filmId) {
+        final var instance = new Film();
+        instance.filmId = filmId;
+        return instance;
+    }
+
+    /**
      * Creates a new instance.
      */
     public Film() {
@@ -349,19 +368,19 @@ public class Film
         this.releaseYear = releaseYear;
     }
 
-    Integer getLanguageId() {
+    public Integer getLanguageId() {
         return languageId;
     }
 
-    void setLanguageId(final Integer languageId) {
+    protected void setLanguageId(final Integer languageId) {
         this.languageId = languageId;
     }
 
-    Integer getOriginalLanguageId() {
+    public Integer getOriginalLanguageId() {
         return originalLanguageId;
     }
 
-    void setOriginalLanguageId(final Integer originalLanguageId) {
+    protected void setOriginalLanguageId(final Integer originalLanguageId) {
         this.originalLanguageId = originalLanguageId;
     }
 
@@ -439,10 +458,10 @@ public class Film
     private String description;
 
     /**
+     * <blockquote site="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">
      * The year in which the movie was released.
+     * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_COLUMN_YEAR)
-    @Min(_PersistenceConstants.MIN_COLUMN_YEAR)
     @Basic(optional = true)
     @Column(name = "release_year", nullable = true)
     private Integer releaseYear;
@@ -463,7 +482,6 @@ public class Film
      */
     @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
-    @NotNull
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ORIGINAL_LANGUAGE_ID, nullable = true)
     private Integer originalLanguageId;
@@ -522,6 +540,40 @@ public class Film
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SPECIAL_FEATURES, nullable = true)
     private Set<SpecialFeature> specialFeatures;
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(final Language language) {
+        this.language = language;
+        setLanguageId(
+                Optional.ofNullable(this.language)
+                        .map(Language::getLanguageId)
+                        .orElse(null)
+        );
+    }
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_LANGUAGE_ID, nullable = false, insertable = false, updatable = false)
+    private Language language;
+
+    public Language getOriginalLanguage() {
+        return originalLanguage;
+    }
+
+    public void setOriginalLanguage(final Language originalLanguage) {
+        this.originalLanguage = originalLanguage;
+        setOriginalLanguageId(
+                Optional.ofNullable(this.originalLanguage)
+                        .map(Language::getLanguageId)
+                        .orElse(null)
+        );
+    }
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_ORIGINAL_LANGUAGE_ID, nullable = false, insertable = false, updatable = false)
+    private Language originalLanguage;
 
     /**
      * Returns current value of {@link Film_#rentalDuration rentalDuration} attribute as an instance of

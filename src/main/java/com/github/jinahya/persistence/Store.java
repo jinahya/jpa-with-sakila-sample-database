@@ -1,7 +1,7 @@
 package com.github.jinahya.persistence;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -17,8 +16,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,7 +25,7 @@ import java.util.Optional;
  * The {@value #TABLE_NAME} table lists all stores in the system. All inventory is assigned to specific stores, and
  * staff and customers are assigned a “home store”.<br/>The {@value TABLE_NAME} table refers to the
  * {@value Staff#TABLE_NAME} and {@value Address#TABLE_NAME} tables using foreign keys and is referred to by the
- * {@value Staff#TABLE_NAME}, {@value MappedCustomer#TABLE_NAME}, and {@value MappedInventory#TABLE_NAME} tables.
+ * {@value Staff#TABLE_NAME}, {@value Customer#TABLE_NAME}, and {@value Inventory#TABLE_NAME} tables.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
@@ -50,17 +47,31 @@ public class Store
      */
     public static final String COLUMN_NAME_STORE_ID = "store_id";
 
+    static final int COLUMN_VALUE_STORE_ID_THE = 3;
+
     /**
      * The name of the database column to which the {@link Store_#managerStaffId managerStaffId} attribute maps. The
      * value is {@value}.
      */
-    public static final String COLUMN_NAME_MANAGE_STAFF_ID = "manager_staff_id";
+    public static final String COLUMN_NAME_MANAGER_STAFF_ID = "manager_staff_id";
 
     /**
      * The name of the database column to which the {@link Store_#addressId addressId} attribute maps. The value is
      * {@value}.
      */
-    public static final String COLUMN_NAME_MANAGE_ADDRESS_ID = Address.COLUMN_NAME_ADDRESS_ID;
+    public static final String COLUMN_NAME_ADDRESS_ID = Address.COLUMN_NAME_ADDRESS_ID;
+
+    /**
+     * Creates a new instance with specified value of {@link Store_#storeId storeId} attribute.
+     *
+     * @param storeId the value of the {@link Store_#storeId storeId} attribute.
+     * @return a new instance.
+     */
+    public static Store of(final Integer storeId) {
+        final var instance = new Store();
+        instance.storeId = storeId;
+        return instance;
+    }
 
     /**
      * Creates a new instance.
@@ -102,6 +113,13 @@ public class Store
      */
     public Integer getStoreId() {
         return storeId;
+    }
+
+    @PostConstruct
+    protected void onPostConstruct() {
+        if (managerStaff != null) {
+            managerStaff.setStore(this);
+        }
     }
 
     /**
@@ -164,14 +182,14 @@ public class Store
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_MANAGE_STAFF_ID, nullable = false)
+    @Column(name = COLUMN_NAME_MANAGER_STAFF_ID, nullable = false)
     private Integer managerStaffId;
 
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_MANAGE_ADDRESS_ID, nullable = false)
+    @Column(name = COLUMN_NAME_ADDRESS_ID, nullable = false)
     private Integer addressId;
 
     /**
@@ -206,30 +224,9 @@ public class Store
         }
     }
 
-    @Valid
-    @NotNull
-    @OneToOne(optional = false, fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
-    @JoinColumn(name = COLUMN_NAME_MANAGE_STAFF_ID, nullable = false, insertable = false, updatable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_MANAGER_STAFF_ID, nullable = false, insertable = false, updatable = false)
     private Staff managerStaff;
-
-    /**
-     * Returns staffs of this store.
-     *
-     * @return a list of staff of this store.
-     */
-    public List<Staff> getStaffs() {
-        if (staffs == null) {
-            staffs = new ArrayList<>();
-        }
-        return staffs;
-    }
-
-    /**
-     * Staffs of this store.
-     */
-    @OneToMany(mappedBy = "store", orphanRemoval = true,
-               cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
-    private List<@Valid @NotNull Staff> staffs;
 
     /**
      * Returns current value of {@link Store_#address address} attribute.
@@ -257,8 +254,25 @@ public class Store
 
     @NotNull
     @Valid
-    @OneToOne(optional = false, fetch = FetchType.LAZY,
-              cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
-    @JoinColumn(name = COLUMN_NAME_MANAGE_ADDRESS_ID, nullable = false, insertable = false, updatable = false)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_ADDRESS_ID, nullable = false, insertable = false, updatable = false)
     private Address address;
+
+//    /**
+//     * Returns staffs of this store.
+//     *
+//     * @return a list of staff of this store.
+//     */
+//    public List<Staff> getStaffs() {
+//        if (staffs == null) {
+//            staffs = new ArrayList<>();
+//        }
+//        return staffs;
+//    }
+//
+//    /**
+//     * Staffs of this store.
+//     */
+//    @OneToMany(mappedBy = "store", orphanRemoval = true, cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+//    private List<@Valid @NotNull Staff> staffs;
 }

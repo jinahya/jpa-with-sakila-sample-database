@@ -6,7 +6,6 @@ import jakarta.persistence.PersistenceUnitUtil;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.Objects;
 import java.util.function.Function;
@@ -55,7 +54,7 @@ final class _PersistenceUtils {
         if (Objects.requireNonNull(password, "password is null").length == 0) {
             throw new IllegalArgumentException("empty password");
         }
-        return digest("SAH-256", password);
+        return digest("SHA-256", password);
     }
 
     private _PersistenceUtils() {

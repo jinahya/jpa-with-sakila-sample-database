@@ -10,27 +10,30 @@ import static com.github.jinahya.assertj.validation.ValidationAssertions.assertT
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class AddressIT
+class Address_IT
         extends _BaseEntityIT<Address, Integer> {
 
     static Address newPersistedInstance(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
-        final var instance = new AddressRandomizer().getRandomValue();
+        final var instance = new Address_Randomizer().getRandomValue();
         instance.setCity(CityIT.newPersistedInstance(entityManager));
         entityManager.persist(instance);
         entityManager.flush();
-        assertThatBean(instance).isValid();
         return instance;
     }
 
-    AddressIT() {
+    Address_IT() {
         super(Address.class, Integer.class);
     }
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(AddressIT::newPersistedInstance);
-        assertThat(instance.getAddressId()).isNotNull();
-        assertThat(instance.getCity()).isNotNull();
+        final var instance = applyEntityManager(Address_IT::newPersistedInstance);
+        assertThat(instance).isNotNull().satisfies(a -> {
+            assertThatBean(a).isValid();
+            assertThat(a.getAddressId()).isNotNull();
+            assertThatBean(a.getCity()).isNotNull().isValid();
+            assertThatBean(a.getCity().getCountry()).isNotNull().isValid();
+        });
     }
 }

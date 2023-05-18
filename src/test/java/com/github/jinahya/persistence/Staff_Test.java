@@ -13,10 +13,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Slf4j
-class StaffTest
+class Staff_Test
         extends _BaseEntityTest<Staff, Integer> {
 
-    StaffTest() {
+    Staff_Test() {
         super(Staff.class, Integer.class);
     }
 

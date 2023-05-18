@@ -66,11 +66,14 @@ abstract class _BaseEntity<U>
     }
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure.html">
      * When the row was created or most recently updated.
+     * </blockquote>
      */
     @Basic(optional = false)
-    @Column(name = _PersistenceConstants.COLUMN_NAME_LAST_UPDATE, nullable = false, insertable = false,
-            updatable = false)
+    @Column(name = _PersistenceConstants.COLUMN_NAME_LAST_UPDATE, nullable = false,
+            insertable = false, // default CURRENT_TIMESTAMP
+            updatable = false) // on update CURRENT_TIMESTAMP
     private Timestamp lastUpdate;
 
     /**
