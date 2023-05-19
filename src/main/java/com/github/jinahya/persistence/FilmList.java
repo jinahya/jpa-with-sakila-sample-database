@@ -3,10 +3,8 @@ package com.github.jinahya.persistence;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.NamedQuery;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Max;
@@ -15,11 +13,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.Set;
 
 /**
- * An entity class for mapping {@value FilmList#VIEW_NAME} view.
+ * <s>An entity</s>A class for mapping {@value FilmList#VIEW_NAME} view.
  * <p>
  * <blockquote>
  * The {@value FilmList#VIEW_NAME} view contains a formatted view of the {@value Film#TABLE_NAME} table, with a
@@ -27,14 +24,15 @@ import java.util.Set;
  * {@value Film#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmCategory#TABLE_NAME}, {@value Actor#TABLE_NAME},
  * and {@value FilmActor#TABLE_NAME} tables.
  * </blockquote>
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @apiNote This class is not annotated with {@link jakarta.persistence.Entity} due to the absence of column(s) suitable
+ * for uniquely identifying instances of this class.
  */
-@NamedQuery(name = "FilmList_findAllByFid",
-            query = "SELECT e FROM FilmList AS e WHERE e.fid = :fid")
-@IdClass(FilmListId.class)
-@Entity
+@MappedSuperclass
+//@jakarta.persistence.Entity // no columns(s) for uniquely identifying instance.
 @Table(name = FilmList.VIEW_NAME)
-public class FilmList
-        extends __BaseEntity<FilmListId> {
+public class FilmList {
 
     /**
      * The name of the database view to which this class maps. The value is {@value}.
@@ -58,7 +56,7 @@ public class FilmList
     public static final String COLUMN_NAME_LENGTH = Film.COLUMN_NAME_LENGTH;
 
     /**
-     * The name of the view column to which the {@value FilmList_#RATING} attribute maps. The value is {@value}.
+     * The name of the view column to which the {@link FilmList_#rating rating} attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_RATING = Film.COLUMN_NAME_RATING;
 
@@ -81,23 +79,6 @@ public class FilmList
                ",rating=" + rating +
                ",actors=" + actors +
                '}';
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof FilmList that)) return false;
-        return equals_(that);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(identifier());
-    }
-
-    @Override
-    protected FilmListId identifier() {
-        return FilmListId.of(getFid(), getCategory());
     }
 
     public Integer getFid() {
@@ -174,7 +155,8 @@ public class FilmList
     private Film.Rating rating;
 
     @Basic(optional = true)
-    @Column(name = "actors", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT, insertable = false, updatable = false)
+    @Column(name = "actors", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT, insertable = false,
+            updatable = false)
     private String actors;
 
     public Set<String> getCategories() {

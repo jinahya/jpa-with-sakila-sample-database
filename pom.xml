@@ -54,6 +54,7 @@
     <version.com.h2database>2.1.214</version.com.h2database>
     <version.nl.jqno.equalsverifier>3.14.1</version.nl.jqno.equalsverifier>
     <version.org.eclipse.persistence>4.0.1</version.org.eclipse.persistence>
+    <version.org.eclipse.persistence.jpa>${version.org.eclipse.persistence}</version.org.eclipse.persistence.jpa>
     <version.org.glassfish.expressly>5.0.0</version.org.glassfish.expressly>
     <version.org.hibernate.orm>6.2.2.Final</version.org.hibernate.orm>
     <version.org.hibernate.validator>8.0.0.Final</version.org.hibernate.validator>
@@ -248,6 +249,13 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <!-- https://wiki.eclipse.org/EclipseLink/UserGuide/JPA/Advanced_JPA_Development/Performance/Weaving/Static_Weaving#Use_the_Maven_plugin -->
+          <!-- https://github.com/empulse-gmbh/eclipselink-static-weave-plugin -->
+          <groupId>de.empulse.eclipselink</groupId>
+          <artifactId>staticweave-maven-plugin</artifactId>
+          <version>1.0.0</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -536,6 +544,31 @@
                 </path>
               </annotationProcessorPaths>
             </configuration>
+          </plugin>
+          <plugin>
+            <!-- IDE 에서의 실행은 위해 phase 를 compile 로 바꾼 후에 maven-compiler-plugin 뒤로 내렸다 -->
+            <groupId>de.empulse.eclipselink</groupId>
+            <artifactId>staticweave-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>weave</id>
+<!--                <phase>process-classes</phase>-->
+                <phase>compile</phase>
+                <goals>
+                  <goal>weave</goal>
+                </goals>
+                <configuration>
+                  <logLevel>FINE</logLevel>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.eclipse.persistence</groupId>
+                <artifactId>eclipselink</artifactId>
+                <version>${version.org.eclipse.persistence}</version>
+              </dependency>
+            </dependencies>
           </plugin>
         </plugins>
       </build>

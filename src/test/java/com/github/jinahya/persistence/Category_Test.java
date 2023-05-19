@@ -3,10 +3,10 @@ package com.github.jinahya.persistence;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-class CategoryIT
-        extends _BaseEntityIT<Category, Integer> {
+class Category_Test
+        extends _BaseEntityTest<Category, Integer> {
 
-    CategoryIT() {
+    Category_Test() {
         super(Category.class, Integer.class);
     }
 }

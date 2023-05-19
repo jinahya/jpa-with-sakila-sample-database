@@ -16,7 +16,7 @@ class Address_IT
     static Address newPersistedInstance(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new Address_Randomizer().getRandomValue();
-        instance.setCity(CityIT.newPersistedInstance(entityManager));
+        instance.setCity(City_IT.newPersistedInstance(entityManager));
         entityManager.persist(instance);
         entityManager.flush();
         return instance;

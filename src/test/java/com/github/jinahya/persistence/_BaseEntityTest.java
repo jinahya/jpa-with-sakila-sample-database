@@ -52,7 +52,6 @@ abstract class _BaseEntityTest<T extends _BaseEntity<U>, U>
             final var actual = spy.getLastUpdateAsLocalDateTime();
             // THEN
             assertThat(actual).isNull();
-            verify(spy, times(1)).getLastUpdate();
         }
 
         @DisplayName("getLastUpdate()!null -> !null")

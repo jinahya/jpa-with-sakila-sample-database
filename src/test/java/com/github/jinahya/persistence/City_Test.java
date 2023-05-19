@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-class CityTest
+class City_Test
         extends _BaseEntityTest<City, Integer> {
 
-    CityTest() {
+    City_Test() {
         super(City.class, Integer.class);
     }
 

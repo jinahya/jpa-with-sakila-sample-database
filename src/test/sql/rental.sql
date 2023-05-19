@@ -12,6 +12,14 @@ SELECT COUNT(1)
 FROM rental
 ;
 
+-- inventory.store <> customer.store
+SELECT i.store_id, c.store_id
+FROM rental AS r
+         JOIN inventory AS i ON r.inventory_id = i.inventory_id
+         JOIN customer AS c ON r.customer_id = c.customer_id
+WHERE i.store_id <> c.store_id
+;
+
 -- best customers by stores
 SELECT s.store_id, r.customer_id, c.first_name, c.last_name, COUNT(1) AS rental_count
 FROM rental AS r

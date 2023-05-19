@@ -13,14 +13,16 @@
     <class>com.github.jinahya.persistence.City</class>
     <class>com.github.jinahya.persistence.Country</class>
     <class>com.github.jinahya.persistence.Customer</class>
+    <class>com.github.jinahya.persistence.CustomerList</class>
     <class>com.github.jinahya.persistence.Film</class>
     <class>com.github.jinahya.persistence.Film$RatingConverter</class>
     <class>com.github.jinahya.persistence.Film$SpecialFeaturesConverter</class>
     <class>com.github.jinahya.persistence.FilmActor</class>
     <class>com.github.jinahya.persistence.FilmCategory</class>
-    <class>com.github.jinahya.persistence.FilmList</class>
     <class>com.github.jinahya.persistence.Inventory</class>
     <class>com.github.jinahya.persistence.Language</class>
+    <class>com.github.jinahya.persistence.NicerButSlowerFilmList</class>
+    <class>com.github.jinahya.persistence.Payment</class>
     <class>com.github.jinahya.persistence.Rental</class>
     <class>com.github.jinahya.persistence.Staff</class>
     <class>com.github.jinahya.persistence.Store</class>
@@ -31,7 +33,9 @@
       <property name="jakarta.persistence.jdbc.user" value="user"/>
       <property name="jakarta.persistence.jdbc.password" value="password"/>
       <!-- https://wiki.eclipse.org/EclipseLink/Examples/JPA/Logging -->
-      <property name="eclipselink.logging.level" value="OFF"/>
+<!--      <property name="eclipselink.logging.level" value="OFF"/>-->
+      <property name="eclipselink.weaving" value="static"/>
+      <property name="eclipselink.logging.parameters" value="true"/>
       <property name="eclipselink.logging.level.sql" value="FINE"/>
 <!--      <property name="org.hibernate.SQL" value="DEBUG"/>-->
 <!--      <property name="org.hibernate.type" value="TRACE"/>-->

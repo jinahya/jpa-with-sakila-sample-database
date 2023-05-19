@@ -2,70 +2,31 @@ package com.github.jinahya.persistence;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 
-@Entity
-@Table(name = "sales_by_store", schema = "sakila", catalog = "")
+/**
+ * <blockquote>
+ * <p>The {@value #VIEW_NAME} view provides a list of total sales, broken down by store.</p>
+ * <p>The view returns the store location, manager name, and total sales.</p>
+ * <p>The {@value #VIEW_NAME} view incorporates data from the {@value City#TABLE_NAME}, {@value Country#TABLE_NAME},
+ * {@value Payment#TABLE_NAME} {@value Rental#TABLE_NAME}, inventory, store, address, and
+ * staff tables.</p>
+ * </blockquote>
+ */
 public class MappedSalesByStore {
 
-    @Basic
+    public static final String VIEW_NAME = "sales_by_store";
+
+    @Basic(optional = true)
     @Column(name = "store", nullable = true, length = 101)
     private String store;
 
-    @Basic
+    @Basic(optional = true)
     @Column(name = "manager", nullable = true, length = 91)
     private String manager;
 
-    @Basic
-    @Column(name = "total_sales", nullable = true, precision = 2)
+    @Basic(optional = true)
+    @Column(name = "total_sales", nullable = true, precision = 27, scale = 2)
     private BigDecimal totalSales;
-
-    public String getStore() {
-        return store;
-    }
-
-    public void setStore(String store) {
-        this.store = store;
-    }
-
-    public String getManager() {
-        return manager;
-    }
-
-    public void setManager(String manager) {
-        this.manager = manager;
-    }
-
-    public BigDecimal getTotalSales() {
-        return totalSales;
-    }
-
-    public void setTotalSales(BigDecimal totalSales) {
-        this.totalSales = totalSales;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        MappedSalesByStore that = (MappedSalesByStore) obj;
-
-        if (store != null ? !store.equals(that.store) : that.store != null) return false;
-        if (manager != null ? !manager.equals(that.manager) : that.manager != null) return false;
-        if (totalSales != null ? !totalSales.equals(that.totalSales) : that.totalSales != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = store != null ? store.hashCode() : 0;
-        result = 31 * result + (manager != null ? manager.hashCode() : 0);
-        result = 31 * result + (totalSales != null ? totalSales.hashCode() : 0);
-        return result;
-    }
 }

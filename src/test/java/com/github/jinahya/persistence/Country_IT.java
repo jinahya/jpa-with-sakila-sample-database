@@ -11,10 +11,9 @@ import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
 
 @Slf4j
-class CountryIT
+class Country_IT
         extends _BaseEntityIT<Country, Integer> {
 
     static Country newPersistedInstance(final EntityManager entityManager) {
@@ -25,13 +24,13 @@ class CountryIT
         return instance;
     }
 
-    CountryIT() {
+    Country_IT() {
         super(Country.class, Integer.class);
     }
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(CountryIT::newPersistedInstance);
+        final var instance = applyEntityManager(Country_IT::newPersistedInstance);
         assertThat(instance).isNotNull().satisfies(c -> {
             assertThat(c.getCountryId()).isNotNull();
             assertThatBean(c).isValid();

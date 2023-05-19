@@ -1,9 +1,9 @@
 package com.github.jinahya.persistence;
 
-class ActorTest
+class Actor_Test
         extends _BaseEntityTest<Actor, Integer> {
 
-    ActorTest() {
+    Actor_Test() {
         super(Actor.class, Integer.class);
     }
 }

@@ -12,7 +12,7 @@ SET @the_city_id = LAST_INSERT_ID();
 INSERT INTO `address`(`address`, `district`, `city_id`, `phone`, `location`)
 VALUES ('', '', @the_city_id, '', /*!50705 0x000000000101000000000000000000F03F000000000000F0BF */);
 SET @the_address_id = LAST_INSERT_ID();
-INSERT INTO `staff` (`first_name`, `last_name`, `address_id`, `store_id`, `username`) VALUES ('', '', @the_address_id, 0, 'whoami');
+INSERT INTO `staff` (`first_name`, `last_name`, `address_id`, `store_id`, `username`) VALUES ('José', 'Saramago', @the_address_id, 0, 'whoami');
 SET @the_staff_id = LAST_INSERT_ID();
 INSERT INTO `store` (`manager_staff_id`, `address_id`) VALUES (@the_staff_id, @the_address_id);
 SET @the_store_id = LAST_INSERT_ID();

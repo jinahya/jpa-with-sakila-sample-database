@@ -26,7 +26,7 @@ import java.util.Optional;
  * <p>
  * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-customer.html">
  * The {@value #TABLE_NAME} table contains a list of all customers.<br/>The {@value #TABLE_NAME} table is referred to in
- * the {@value MappedPayment#TABLE_NAME} and {@value Rental#TABLE_NAME} tables and refers to the
+ * the {@value Payment#TABLE_NAME} and {@value Rental#TABLE_NAME} tables and refers to the
  * {@value Address#TABLE_NAME} and {@value Store#TABLE_NAME} tables using foreign keys.
  * </blockquote>
  *

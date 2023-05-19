@@ -29,7 +29,7 @@ import java.util.Optional;
  * The {@value TABLE_NAME} table lists all staff members, including information for email address, login information,
  * and picture.<br/>The {@value #TABLE_NAME} table refers to the {@value Store#TABLE_NAME} and
  * {@value Address#TABLE_NAME} tables using foreign keys, and is referred to by the {@value Rental#TABLE_NAME},
- * {@value MappedPayment#TABLE_NAME}, and {@value Store#TABLE_NAME} tables.
+ * {@value Payment#TABLE_NAME}, and {@value Store#TABLE_NAME} tables.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;

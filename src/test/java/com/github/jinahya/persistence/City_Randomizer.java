@@ -6,10 +6,10 @@ import org.jeasy.random.randomizers.text.StringRandomizer;
 
 import static org.jeasy.random.FieldPredicates.named;
 
-class CityRandomizer
+class City_Randomizer
         extends _BaseEntityRandomizer<City> {
 
-    CityRandomizer() {
+    City_Randomizer() {
         super(City.class);
     }
 

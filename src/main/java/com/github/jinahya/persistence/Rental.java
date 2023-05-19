@@ -25,8 +25,11 @@ import java.util.Optional;
  * The {@value #TABLE_NAME} table contains one row for each rental of each inventory item with information about who
  * rented what item, when it was rented, and when it was returned.<br/>The {@value #TABLE_NAME} table refers to the
  * {@value Inventory#TABLE_NAME}, {@value Customer#TABLE_NAME}, and {@value Staff#TABLE_NAME} tables and is referred to
- * by the {@value MappedPayment#TABLE_NAME} table.
+ * by the {@value Payment#TABLE_NAME} table.
  * </blockquote>
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-rental.html">5.1.14 The rental Table</a>
  */
 @Entity
 @Table(name = Rental.TABLE_NAME)

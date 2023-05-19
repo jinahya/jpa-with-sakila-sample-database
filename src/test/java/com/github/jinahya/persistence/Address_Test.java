@@ -14,10 +14,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @Slf4j
-class AddressTest
+class Address_Test
         extends _BaseEntityTest<Address, Integer> {
 
-    AddressTest() {
+    Address_Test() {
         super(Address.class, Integer.class);
     }
 

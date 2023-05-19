@@ -18,10 +18,11 @@ import java.util.Optional;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
- * <p>
+ *
  * <blockquote>
  * The {@value TABLE_NAME} table contains a list of countries.<br/>The {@value TABLE_NAME} table is referred to by a
- * foreign key in the {@value City#TABLE_NAME} table.
+ * foreign key in the {@value City#TABLE_NAME} table.<br/><cite><a
+ * href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a></cite>
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
