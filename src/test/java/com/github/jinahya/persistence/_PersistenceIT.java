@@ -2,11 +2,13 @@ package com.github.jinahya.persistence;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
+import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
 
 import java.util.Objects;
 import java.util.function.Function;
 
+@AddPackages({EntityManagerProducer.class})
 @EnableAutoWeld
 class _PersistenceIT {
 
@@ -15,7 +17,7 @@ class _PersistenceIT {
         return function.apply(getEntityManager());
     }
 
-    protected EntityManager getEntityManager() {
+    EntityManager getEntityManager() {
         var result = entityManagerProxy;
         if (result == null) {
             result = entityManagerProxy = _LangUtils.uncloseableProxy(EntityManager.class, entityManager);

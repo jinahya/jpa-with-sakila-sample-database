@@ -16,7 +16,7 @@ class Language_IT
 
     static Language newPersistedInstance(final EntityManager entityManager) {
         final var instance = new Language_Randomizer().getRandomValue();
-        return entityManager.createNamedQuery("Language_findByName", Language.class)
+        return entityManager.createNamedQuery("Language_findAllByName", Language.class)
                 .setParameter("name", instance.getName())
                 .getResultList()
                 .stream()
@@ -61,7 +61,7 @@ class Language_IT
         void findByName__() {
             final var name = "English";
             final List<Language> list = applyEntityManager(em -> {
-                final var query = em.createNamedQuery("Language_findByName", Language.class);
+                final var query = em.createNamedQuery("Language_findAllByName", Language.class);
                 query.setParameter("name", name);
                 return query.getResultList();
             });

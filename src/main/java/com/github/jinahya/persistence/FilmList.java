@@ -2,7 +2,6 @@ package com.github.jinahya.persistence;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -12,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -117,7 +117,10 @@ public class FilmList {
         return length;
     }
 
-    public Film.Rating getRating() {
+    //    public Film.Rating getRating() {
+//        return rating;
+//    }
+    public String getRating() {
         return rating;
     }
 
@@ -155,10 +158,13 @@ public class FilmList {
     @Column(name = COLUMN_NAME_LENGTH, nullable = true, insertable = false, updatable = false)
     private Integer length;
 
-    @Convert(converter = Film.RatingConverter.class)
+    //    @Convert(converter = Film.RatingConverter.class)
+//    @Basic(optional = true)
+//    @Column(name = COLUMN_NAME_RATING, nullable = true, insertable = false, updatable = false)
+//    private Film.Rating rating;
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_RATING, nullable = true, insertable = false, updatable = false)
-    private Film.Rating rating;
+    private String rating;
 
     @Basic(optional = true)
     @Column(name = "actors", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT, insertable = false,
@@ -167,11 +173,13 @@ public class FilmList {
 
     @Transient
     public Set<String> getCategories() {
+        if (categories == null) {
+            categories = new HashSet<>();
+            if (category != null && !category.isBlank()) {
+                categories.add(category.strip());
+            }
+        }
         return categories;
-    }
-
-    void setCategories(final Set<String> categories) {
-        this.categories = categories;
     }
 
     @Transient

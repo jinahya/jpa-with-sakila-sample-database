@@ -28,8 +28,12 @@ import java.util.Optional;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-language.html">5.1.12 The language
  * Table</a>
  */
-@NamedQuery(name = "Language_findAll", query = "SELECT c FROM Language AS c")
-@NamedQuery(name = "Language_findByName", query = "SELECT c FROM Language AS c WHERE c.name = :name") // not indexed!
+@NamedQuery(name = "Language_findAllByName",
+            query = "SELECT e FROM Language AS e WHERE e.name = :name") // not indexed!
+@NamedQuery(name = "Language_findByLanguageId",
+            query = "SELECT e FROM Language AS e WHERE e.languageId = :languageId")
+@NamedQuery(name = "Language_findAll",
+            query = "SELECT e FROM Language AS e")
 @Entity
 @Table(name = Language.TABLE_NAME)
 public class Language
@@ -81,7 +85,8 @@ public class Language
         return languageId;
     }
 
-    public void setLanguageId(final Integer languageId) {
+    @Deprecated
+    private void setLanguageId(final Integer languageId) {
         this.languageId = languageId;
     }
 
@@ -94,7 +99,9 @@ public class Language
     }
 
     /**
+     * <blockquote>
      * Surrogate primary key used to uniquely identify each language.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
     @Positive
@@ -104,12 +111,25 @@ public class Language
     private Integer languageId;
 
     /**
+     * <blockquote>
      * The English name of the language.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
     @Column(name = "name", nullable = false, length = 20)
     private String name;
+
+    /**
+     * Returns the locale represents current value of {@link Language_#name name} attribute.
+     *
+     * @return the locale represents current value of {@link Language_#name name} attribute; {@code null} if not found.
+     */
+    public Locale getNameAsLocale() {
+        return Optional.ofNullable(getName())
+                .flatMap(_LocaleUtils::valueOfDisplayLanguageInEnglish)
+                .orElse(null);
+    }
 
     /**
      * Replaces current value of {@value Language_#NAME} attribute with specified locale's
