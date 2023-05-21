@@ -2,15 +2,10 @@ package com.github.jinahya.persistence;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.RollbackException;
-import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -21,36 +16,8 @@ import java.util.function.Function;
 abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
         extends ___BaseEntityTestBase<T, U> {
 
-    protected __BaseEntityIT(final Class<T> entityClass, final Class<U> idClass) {
+    __BaseEntityIT(final Class<T> entityClass, final Class<U> idClass) {
         super(entityClass, idClass);
-    }
-
-    private EntityManager entityManagerProxy() {
-        final Method close;
-        try {
-            close = EntityManager.class.getMethod("close");
-        } catch (final NoSuchMethodException nsme) {
-            throw new RuntimeException(nsme);
-        }
-        return (EntityManager) Proxy.newProxyInstance(
-                entityManager.getClass().getClassLoader(),
-                new Class<?>[]{EntityManager.class},
-                (p, m, a) -> {
-                    if (m.equals(close)) {
-                        throw new UnsupportedOperationException("you're not allowed to close the entity manager");
-                    }
-                    try {
-                        return m.invoke(entityManager, a);
-                    } catch (final InvocationTargetException ite) {
-                        if (ite.getTargetException() instanceof ConstraintViolationException cve) {
-                            cve.getConstraintViolations().forEach(cv -> {
-                                log.error("constraint violation: {}", cv);
-                            });
-                        }
-                        throw ite;
-                    }
-                }
-        );
     }
 
     /**
@@ -60,20 +27,8 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
      * @param <R>      result type parameter
      * @return the result of the {@code function}.
      */
-    protected <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
-        Objects.requireNonNull(function, "function is null");
-        final EntityManager entityManager = entityManagerProxy();
-        final var transaction = entityManager.getTransaction();
-        transaction.begin();
-        try {
-            return function.apply(entityManager);
-        } finally {
-            try {
-                transaction.commit();
-            } catch (final RollbackException re) {
-                log.error("rolled back", re.getCause());
-            }
-        }
+    <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
+        return applyEntityManager(function, true);
     }
 
     /**
@@ -81,13 +36,53 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
      *
      * @param consumer the consumer.
      */
-    protected void acceptEntityManager(final Consumer<? super EntityManager> consumer) {
+    @Deprecated
+    void acceptEntityManager(final Consumer<? super EntityManager> consumer) {
         applyEntityManager(em -> {
             consumer.accept(em);
             return null;
         });
     }
 
+    void acceptEntityManager(final Consumer<? super EntityManager> consumer, final boolean rollback) {
+        Objects.requireNonNull(consumer, "consumer is null");
+        applyEntityManager(
+                em -> {
+                    consumer.accept(em);
+                    return null;
+                },
+                rollback
+        );
+    }
+
+    <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function, final boolean rollback) {
+        Objects.requireNonNull(function, "function is null");
+        final EntityManager entityManager = getEntityManager();
+        final var transaction = entityManager.getTransaction();
+        transaction.begin();
+        try {
+            return function.apply(entityManager);
+        } finally {
+            if (rollback) {
+                log.debug("rolling back...");
+                transaction.rollback();
+            } else {
+                log.debug("committing...");
+                transaction.commit();
+            }
+        }
+    }
+
+    private EntityManager getEntityManager() {
+        var proxy = entityManagerProxy;
+        if (proxy == null) {
+            proxy = entityManagerProxy = _LangUtils.uncloseableProxy(EntityManager.class, entityManager);
+        }
+        return proxy;
+    }
+
     @Inject
     private EntityManager entityManager;
+
+    private EntityManager entityManagerProxy;
 }

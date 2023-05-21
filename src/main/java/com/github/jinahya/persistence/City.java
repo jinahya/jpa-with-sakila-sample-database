@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +29,12 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-city.html">5.1.4 The city Table</a>
  */
+@NamedQuery(name = "City_findAllByCity",
+            query = "SELECT e FROM City AS e WHERE e.city = :city")
+@NamedQuery(name = "City_findAll",
+            query = "SELECT e FROM City AS e")
+@NamedQuery(name = "City_findByCityId",
+            query = "SELECT e FROM City AS e WHERE e.cityId = :cityId")
 @Entity
 @Table(name = City.TABLE_NAME)
 public class City
@@ -47,6 +54,18 @@ public class City
      * The name of the table column to which the {@link City_#countryId countryId} attribute maps.
      */
     public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
+
+    public static City of(final Integer cityId) {
+        final var instance = new City();
+        instance.cityId = cityId;
+        return instance;
+    }
+
+    public static City of(final String city) {
+        final var instance = new City();
+        instance.city = city;
+        return instance;
+    }
 
     /**
      * Creates a new instance.

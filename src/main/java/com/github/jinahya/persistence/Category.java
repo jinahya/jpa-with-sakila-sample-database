@@ -15,17 +15,21 @@ import jakarta.validation.constraints.PositiveOrZero;
 /**
  * An entity class for mapping {@value Category#TABLE_NAME} table.
  * <p>
+ * <cite><a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-category.html">5.1.3 The category
+ * Table</a></cite>
  * <blockquote>
- * The category table lists the categories that can be assigned to a film.<br/>The category table is joined to the
- * {@value Film#TABLE_NAME} table by means of the {@value FilmCategory#TABLE_NAME} table.
+ * <p>The category table lists the categories that can be assigned to a film.</p>
+ * <p>The category table is joined to the {@value Film#TABLE_NAME} table by means of the
+ * {@value FilmCategory#TABLE_NAME} table.</p>
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-category.html">5.1.3 The category Table</a>
  */
-@NamedQuery(name = "Category_findAllByName", query = "SELECT c FROM Category AS c WHERE c.name = :name") // not indexed!
-@NamedQuery(name = "Category_findAll", query = "SELECT c FROM Category AS c")
-@NamedQuery(name = "Category_findByCategoryId", query = "SELECT c FROM Category AS c WHERE c.categoryId = :categoryId")
+@NamedQuery(name = "Category_findByCategoryId",
+            query = "SELECT e FROM Category AS e WHERE e.categoryId = :categoryId")
+@NamedQuery(name = "Category_findAll",
+            query = "SELECT e FROM Category AS e")
 @Entity
 @Table(name = Category.TABLE_NAME)
 public class Category

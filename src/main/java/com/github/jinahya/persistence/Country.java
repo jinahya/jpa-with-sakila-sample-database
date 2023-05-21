@@ -28,6 +28,8 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a>
  */
+@NamedQuery(name = "Country_findAllByCountry",
+            query = "SELECT e FROM Country AS e WHERE e.country = :country")
 @NamedQuery(name = "Country_findAll",
             query = "SELECT e FROM Country AS e")
 @NamedQuery(name = "Country_findByCountryId",
@@ -57,6 +59,12 @@ public class Country
     public static Country of(final Integer countryId) {
         final var instance = new Country();
         instance.countryId = countryId;
+        return instance;
+    }
+
+    public static Country of(final String country) {
+        final var instance = new Country();
+        instance.country = country;
         return instance;
     }
 

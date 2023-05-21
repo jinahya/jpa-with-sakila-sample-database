@@ -1,9 +1,12 @@
 package com.github.jinahya.persistence;
 
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.PersistenceUnitUtil;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
@@ -11,6 +14,35 @@ import java.util.Objects;
 import java.util.function.Function;
 
 final class _PersistenceUtils {
+
+    static EntityManager entityManagerProxy(final EntityManager entityManager) {
+        Objects.requireNonNull(entityManager, "entityManager is null");
+        final Method close;
+        try {
+            close = EntityManager.class.getMethod("close");
+        } catch (final NoSuchMethodException nsme) {
+            throw new RuntimeException("unable to find the close() method from " + EntityManager.class, nsme);
+        }
+        return (EntityManager) Proxy.newProxyInstance(
+                entityManager.getClass().getClassLoader(),
+                new Class<?>[]{EntityManager.class},
+                (p, m, a) -> {
+                    if (m.equals(close)) {
+                        throw new UnsupportedOperationException("you're not allowed to close the entity manager");
+                    }
+//                    try {
+                    return m.invoke(entityManager, a);
+//                    } catch (final InvocationTargetException ite) {
+//                        if (ite.getTargetException() instanceof ConstraintViolationException cve) {
+//                            cve.getConstraintViolations().forEach(cv -> {
+//                                log.error("constraint violation: {}", cv);
+//                            });
+//                        }
+//                        throw ite;
+//                    }
+                }
+        );
+    }
 
     static <R> R applyEntityManagerFactory(final Function<? super EntityManagerFactory, ? extends R> function) {
         try (var emf = Persistence.createEntityManagerFactory(_PersistenceConstants.PERSISTENCE_UNIT_NAME)) {

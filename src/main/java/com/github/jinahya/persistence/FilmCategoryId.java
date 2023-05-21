@@ -36,7 +36,7 @@ public class FilmCategoryId
     /**
      * Creates a new instance.
      */
-    public FilmCategoryId() {
+    protected FilmCategoryId() {
         super();
     }
 
@@ -61,10 +61,20 @@ public class FilmCategoryId
         return Objects.hash(filmId, categoryId);
     }
 
+    /**
+     * Returns current value of {@code filmId} property.
+     *
+     * @return current value of {@code filmId} property.
+     */
     public Integer getFilmId() {
         return filmId;
     }
 
+    /**
+     * Returns current value of {@code categoryId} property.
+     *
+     * @return current value of {@code categoryId} property.
+     */
     public Integer getCategoryId() {
         return categoryId;
     }

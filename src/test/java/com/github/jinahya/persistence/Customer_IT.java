@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 
+import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static org.assertj.core.api.Assertions.assertThat;
+
 class Customer_IT
         extends _BaseEntityIT<Customer, Integer> {
 
@@ -14,6 +17,7 @@ class Customer_IT
         final var instance = new Customer_Randomizer().getRandomValue();
         instance.setStore(store);
         instance.setAddress(Address_IT.newPersistedInstance(entityManager));
+        assertThatBean(instance).isValid();
         entityManager.persist(instance);
         entityManager.flush();
         return instance;
@@ -30,5 +34,9 @@ class Customer_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(Customer_IT::newPersistedInstance);
+        assertThat(instance).isNotNull().satisfies(e -> {
+            assertThat(e.getCustomerId()).isNotNull();
+        });
+        assertThatBean(instance).isValid();
     }
 }

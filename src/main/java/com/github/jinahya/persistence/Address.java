@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,14 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
  */
+@NamedQuery(name = "Address_findAllByCity",
+            query = "SELECT e FROM Address AS e WHERE e.city = :city")
+@NamedQuery(name = "Address_findAllByCityId",
+            query = "SELECT e FROM Address AS e WHERE e.cityId = :cityId")
+@NamedQuery(name = "Address_findByAddressId",
+            query = "SELECT e FROM Address AS e WHERE e.addressId = :addressId")
+@NamedQuery(name = "Address_findAll",
+            query = "SELECT e FROM Address AS e")
 @Entity
 @Table(name = Address.TABLE_NAME)
 @Slf4j

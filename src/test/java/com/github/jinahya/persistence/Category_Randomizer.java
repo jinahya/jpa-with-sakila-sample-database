@@ -6,20 +6,18 @@ import org.jeasy.random.randomizers.text.StringRandomizer;
 
 import static org.jeasy.random.FieldPredicates.named;
 
-class City_Randomizer
-        extends _BaseEntityRandomizer<City> {
+class Category_Randomizer
+        extends _BaseEntityRandomizer<Category> {
 
-    City_Randomizer() {
-        super(City.class);
+    Category_Randomizer() {
+        super(Category.class);
     }
 
     @Override
     protected EasyRandomParameters parameters() {
         return super.parameters()
-                .excludeField(named(City_.cityId.getName()))
-                .randomize(named(City_.city.getName()), new StringRandomizer(50))
-                .excludeField(named(City_.countryId.getName()))
-                .excludeField(named(City_.country.getName()))
+                .excludeField(named(Category_.categoryId.getName()))
+                .randomize(named(Category_.name.getName()), new StringRandomizer(25))
                 ;
     }
 
@@ -29,7 +27,7 @@ class City_Randomizer
     }
 
     @Override
-    public City getRandomValue() {
+    public Category getRandomValue() {
         return super.getRandomValue();
     }
 }

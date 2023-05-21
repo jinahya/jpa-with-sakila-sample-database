@@ -31,6 +31,7 @@ class Address_Randomizer
                 .randomize(named(Address_.phone.getName()), new StringRandomizer(10))
                 .excludeField(named(Address_.location.getName()))
                 .excludeField(named(Address_.locationGeometry.getName()))
+                .excludeField(named(Address_.city.getName()))
                 ;
     }
 

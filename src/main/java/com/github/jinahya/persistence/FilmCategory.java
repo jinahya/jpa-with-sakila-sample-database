@@ -21,20 +21,25 @@ import java.util.Optional;
  * An entity class for mapping {@value #TABLE_NAME} table.
  * <p>
  * <blockquote>
- * The {@value #TABLE_NAME} table is used to support a many-to-many relationship between films and categories. For each
- * category applied to a film, there will be one row in the {@value #TABLE_NAME} table listing the category and
- * film.<br/> The {@value #TABLE_NAME} table refers to the {@value Film#TABLE_NAME} and {@link Category#TABLE_NAME}
- * tables using foreign keys.
+ * <p>The {@value #TABLE_NAME} table is used to support a many-to-many relationship between films and categories. For
+ * each category applied to a film, there will be one row in the {@value #TABLE_NAME} table listing the category and
+ * film.</p>
+ * <p>The {@value #TABLE_NAME} table refers to the {@value Film#TABLE_NAME} and {@link Category#TABLE_NAME} tables
+ * using foreign keys</p>.
+ * <cite><a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">5.1.9 The
+ * film_category Table</a></cite>
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">5.1.9 The film_category
+ * Table</a>
  */
-//@NamedQuery(name = "FilmCategory_findAllByCategory",
-//            query = "SELECT e FROM FilmCategory AS e WHERE e.category = :category")
-@NamedQuery(name = "FilmCategory_findAllByCategoryId",
-            query = "SELECT e FROM FilmCategory AS e WHERE e.categoryId = :categoryId")
+@NamedQuery(name = "FilmCategory_findAllByCategory",
+            query = "SELECT e FROM FilmCategory AS e WHERE e.category = :category")
 @NamedQuery(name = "FilmCategory_findAllByFilm",
             query = "SELECT e FROM FilmCategory AS e WHERE e.film = :film")
+@NamedQuery(name = "FilmCategory_findAllByCategoryId",
+            query = "SELECT e FROM FilmCategory AS e WHERE e.categoryId = :categoryId")
 @NamedQuery(name = "FilmCategory_findAllByFilmId",
             query = "SELECT e FROM FilmCategory AS e WHERE e.filmId = :filmId")
 @Entity
@@ -98,7 +103,7 @@ public class FilmCategory
      *
      * @param filmId new value for the {@link FilmCategory_#filmId filmId} attribute.
      */
-    private void setFilmId(final Integer filmId) {
+    protected void setFilmId(final Integer filmId) {
         this.filmId = filmId;
     }
 
@@ -116,7 +121,7 @@ public class FilmCategory
      *
      * @param categoryId new current value for the {@link FilmCategory_#categoryId categoryId} attribute.
      */
-    private void setCategoryId(final Integer categoryId) {
+    protected void setCategoryId(final Integer categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -168,5 +173,31 @@ public class FilmCategory
     @JoinColumn(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
     private Film film;
 
-    // TODO: Map for the Category!
+    /**
+     * Returns current value of {@link FilmCategory_#category category} attribute.
+     *
+     * @return current value of the {@link FilmCategory_#category category} attribute.
+     */
+    public Category getCategory() {
+        return category;
+    }
+
+    /**
+     * Replaces current value of {@link FilmCategory_#category category} attribute with specified value.
+     *
+     * @param category new value for the {@link FilmCategory_#category category} attribute.
+     */
+    public void setCategory(final Category category) {
+        this.category = category;
+        setCategoryId(
+                Optional.ofNullable(this.category)
+                        .map(Category::getCategoryId)
+                        .orElse(null)
+        );
+    }
+
+    @Valid
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_CATEGORY_ID, nullable = false, insertable = false, updatable = false)
+    private Category category;
 }
