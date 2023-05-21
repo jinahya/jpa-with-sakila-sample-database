@@ -5,11 +5,8 @@ import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
-import javassist.util.proxy.MethodHandler;
-import javassist.util.proxy.Proxy;
-import javassist.util.proxy.ProxyFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.validator.testutil.ValidationInvocationHandler;
+import org.assertj.core.api.Assertions;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -22,52 +19,41 @@ import java.util.function.Function;
 @Slf4j
 abstract class __BaseEntityServiceIT<T extends __BaseEntityService<U, V>, U extends __BaseEntity<V>, V> {
 
+    static {
+        Assertions.setMaxStackTraceElementsDisplayed(1024);
+    }
+
     __BaseEntityServiceIT(final Class<T> queriesClass) {
         super();
         this.serviceClass = Objects.requireNonNull(queriesClass, "queriesClass is null");
     }
 
-    // https://stackoverflow.com/a/57740748/330457
-    private void containerInitialize(@Observes final ContainerInitialized event) {
-        log.debug("container initialized: " + event);
+    void containerInitialize(@Observes final ContainerInitialized event) {
+        // https://stackoverflow.com/a/57740748/330457
+        // onPostConstruct() won't be invoked without this method.
     }
 
     @PostConstruct
-    private void onPostConstruct() {
-        log.debug("constructed...");
-        final var executableValidator = validator.forExecutables();
+    void onPostConstruct() {
+        final var instance = serviceInstance_.select(serviceClass).get();
+        try {
+            serviceInstance = _ValidationUtils.newValidationProxy(serviceClass, instance, validator);
+        } catch (final ReflectiveOperationException roe) {
+            throw new RuntimeException("failed to create a validation proxy of " + instance, roe);
+        }
     }
 
     <R> R applyServiceInstance(final Function<? super T, ? extends R> function) {
-        Objects.requireNonNull(function, "function is null");
-        return function.apply(getServiceInstance());
-    }
-
-    @SuppressWarnings({"unchecked"})
-    private T getServiceInstance() {
-        final var instance = this.serviceInstance.select(serviceClass).get();
-        final var handler = new ValidationInvocationHandler(instance, validator);
-        final Proxy proxy;
-        {
-            final var factory = new ProxyFactory();
-            factory.setSuperclass(serviceClass);
-            factory.setFilter(m -> !m.getName().equals("finalize"));
-            final var c = factory.createClass();
-            try {
-                proxy = (Proxy) c.getDeclaredConstructor().newInstance();
-            } catch (final ReflectiveOperationException roe) {
-                throw new RuntimeException("failed to instantiate the proxy class: " + c, roe);
-            }
-            final MethodHandler mi = (self, thisMethod, proceed, args) -> handler.invoke(instance, thisMethod, args);
-            proxy.setHandler(mi);
-        }
-        return (T) proxy;
+        return Objects.requireNonNull(function, "function is null")
+                .apply(serviceInstance);
     }
 
     final Class<T> serviceClass;
 
     @Inject
-    private Instance<__BaseEntityService<U, V>> serviceInstance;
+    private Instance<__BaseEntityService<U, V>> serviceInstance_;
+
+    private T serviceInstance;
 
     @Inject
     private Validator validator;

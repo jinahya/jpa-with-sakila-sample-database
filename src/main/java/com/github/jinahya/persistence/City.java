@@ -29,12 +29,14 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-city.html">5.1.4 The city Table</a>
  */
-@NamedQuery(name = "City_findAllByCity",
-            query = "SELECT e FROM City AS e WHERE e.city = :city")
-@NamedQuery(name = "City_findAll",
-            query = "SELECT e FROM City AS e")
+@NamedQuery(name = "City_findAllByCountry",
+            query = "SELECT e FROM City AS e WHERE e.country = :country")
+@NamedQuery(name = "City_findAllByCountryId",
+            query = "SELECT e FROM City AS e WHERE e.countryId = :countryId")
 @NamedQuery(name = "City_findByCityId",
             query = "SELECT e FROM City AS e WHERE e.cityId = :cityId")
+@NamedQuery(name = "City_findAll",
+            query = "SELECT e FROM City AS e")
 @Entity
 @Table(name = City.TABLE_NAME)
 public class City
@@ -55,12 +57,24 @@ public class City
      */
     public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
 
+    /**
+     * Creates a new instance withs specified value of {@link City_#cityId cityId} attribute.
+     *
+     * @param cityId the value of {@link City_#cityId cityId} attribute.
+     * @return a new instance with {@code cityId}.
+     */
     public static City of(final Integer cityId) {
         final var instance = new City();
         instance.cityId = cityId;
         return instance;
     }
 
+    /**
+     * Creates a new instance withs specified value of {@link City_#city city} attribute.
+     *
+     * @param city the value of {@link City_#cityId city} attribute.
+     * @return a new instance with {@code city}.
+     */
     public static City of(final String city) {
         final var instance = new City();
         instance.city = city;
@@ -115,6 +129,7 @@ public class City
      * @param cityId new value for the {@link City_#cityId cityId} attribute.
      * @deprecated for removal.
      */
+    // TODO: remove!
     @Deprecated(forRemoval = true)
     private void setCityId(final Integer cityId) {
         this.cityId = cityId;
@@ -157,7 +172,9 @@ public class City
     }
 
     /**
+     * <blockquote>
      * A surrogate primary key used to uniquely identify each city in the table.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
@@ -169,7 +186,9 @@ public class City
     private Integer cityId;
 
     /**
+     * <blockquote>
      * The name of the city.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -177,7 +196,9 @@ public class City
     private String city;
 
     /**
+     * <blockquote>
      * A foreign key identifying the country that the city belongs to.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
@@ -210,7 +231,14 @@ public class City
         );
     }
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    /**
+     * 이 city 의 국가. {@code countryId} attribute 에 더하여, 같은 컬럼({@value #COLUMN_NAME_COUNTRY_ID})에 매핑된 attribute 이다.
+     */
+    @ManyToOne(optional = false, fetch = FetchType.LAZY,
+               cascade = {
+                       // empty!
+               }
+    )
     @JoinColumn(name = COLUMN_NAME_COUNTRY_ID, nullable = false, insertable = false, updatable = false)
     private Country country;
 }

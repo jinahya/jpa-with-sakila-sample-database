@@ -5,10 +5,7 @@ import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 
-import java.util.HexFormat;
-
 import static java.util.concurrent.ThreadLocalRandom.current;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.jeasy.random.FieldPredicates.named;
 
 @Slf4j

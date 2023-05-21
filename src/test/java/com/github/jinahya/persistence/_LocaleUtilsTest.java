@@ -1,5 +1,6 @@
 package com.github.jinahya.persistence;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -8,6 +9,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 class _LocaleUtilsTest {
 
     private static Stream<Locale> getLocaleStream() {
@@ -18,9 +20,27 @@ class _LocaleUtilsTest {
     @ParameterizedTest
     void valueOfDisplayCountry(final Locale inLocale) {
         final var displayCountry = inLocale.getDisplayCountry(inLocale);
-        final var got = _LocaleUtils.valueOfDisplayCountry(inLocale, displayCountry);
-        assertThat(got).hasValueSatisfying(v -> {
-            assertThat(v.getDisplayCountry(inLocale)).isEqualTo(displayCountry);
+        if (displayCountry.strip().isBlank()) {
+            return;
+        }
+        final var value = _LocaleUtils.valueOfDisplayCountry(displayCountry, inLocale);
+        assertThat(value).hasValueSatisfying(v -> {
+            assertThat(v.getDisplayCountry(inLocale))
+                    .isEqualTo(displayCountry);
+        });
+    }
+
+    @MethodSource({"getLocaleStream"})
+    @ParameterizedTest
+    void valueOfDisplayCountryInEnglish(final Locale locale) {
+        final var displayCountryInEnglish = locale.getDisplayCountry(Locale.ENGLISH);
+        if (displayCountryInEnglish.isBlank()) {
+            return;
+        }
+        final var value = _LocaleUtils.valueOfDisplayCountryInEnglish(displayCountryInEnglish);
+        assertThat(value).hasValueSatisfying(v -> {
+            assertThat(v.getDisplayCountry(Locale.ENGLISH))
+                    .isEqualTo(displayCountryInEnglish);
         });
     }
 
@@ -28,9 +48,27 @@ class _LocaleUtilsTest {
     @ParameterizedTest
     void valueOfDisplayLanguage(final Locale inLocale) {
         final var displayLanguage = inLocale.getDisplayLanguage(inLocale);
-        final var got = _LocaleUtils.valueOfDisplayLanguage(inLocale, displayLanguage);
-        assertThat(got).hasValueSatisfying(v -> {
-            assertThat(v.getDisplayLanguage(inLocale)).isEqualTo(displayLanguage);
+        if (displayLanguage.strip().isBlank()) {
+            return;
+        }
+        final var value = _LocaleUtils.valueOfDisplayLanguage(displayLanguage, inLocale);
+        assertThat(value).hasValueSatisfying(v -> {
+            assertThat(v.getDisplayLanguage(inLocale))
+                    .isEqualTo(displayLanguage);
+        });
+    }
+
+    @MethodSource({"getLocaleStream"})
+    @ParameterizedTest
+    void valueOfDisplayLanguageInEnglish(final Locale locale) {
+        final var displayLanguageInEnglish = locale.getDisplayLanguage(Locale.ENGLISH);
+        if (displayLanguageInEnglish.isBlank()) {
+            return;
+        }
+        final var value = _LocaleUtils.valueOfDisplayLanguageInEnglish(displayLanguageInEnglish);
+        assertThat(value).hasValueSatisfying(v -> {
+            assertThat(v.getDisplayLanguage(Locale.ENGLISH))
+                    .isEqualTo(displayLanguageInEnglish);
         });
     }
 }

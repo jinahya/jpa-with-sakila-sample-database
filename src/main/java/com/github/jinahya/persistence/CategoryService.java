@@ -1,25 +1,40 @@
 package com.github.jinahya.persistence;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 public class CategoryService
         extends _BaseEntityService<Category, Integer> {
 
+    /**
+     * Creates a new instance.
+     */
     protected CategoryService() {
         super(Category.class);
     }
 
-    public List<Category> findAll() {
+    /**
+     * Selects all categories.
+     *
+     * @return a list of all categories.
+     */
+    @NotNull
+    public List<@Valid @NotNull Category> findAll() {
         return applyEntityManager(
                 em -> em.createNamedQuery("Category_findAll", Category.class)
                         .getResultList()
         );
     }
 
-    public List<Category> findAll(@PositiveOrZero final int maxResults) {
+    @NotNull
+    public List<@Valid @NotNull Category> findAll(@Positive final int maxResults) {
         return applyEntityManager(
                 em -> em.createNamedQuery("Category_findAll", Category.class)
                         .setMaxResults(maxResults)
@@ -27,7 +42,28 @@ public class CategoryService
         );
     }
 
-    public List<Category> findAllByName(@NotBlank final String name) {
+    public void findAll(@Positive final int maxResults, @NotNull final Predicate<? super List<Category>> predicate,
+                        @PositiveOrZero final int startingCategoryIdMinExclusive) {
+        for (final var i = new AtomicInteger(startingCategoryIdMinExclusive); ; ) {
+            final var list = applyEntityManager(
+                    em -> em.createNamedQuery("Category_findAllByCategoryIdGreaterThan", Category.class)
+                            .setParameter("categoryIdMinExclusive", i.get())
+                            .setMaxResults(maxResults)
+                            .getResultList()
+            );
+            if (!predicate.test(list) || list.isEmpty()) {
+                break;
+            }
+            i.set(i.get() + list.get(list.size() - 1).getCategoryId());
+        }
+    }
+
+    public void findAll(@Positive final int maxResults, @NotNull final Predicate<? super List<Category>> predicate) {
+        findAll(maxResults, predicate, 0);
+    }
+
+    @NotNull
+    public List<@Valid @NotNull Category> findAllByName(@NotBlank final String name) {
         return applyEntityManager(
                 em -> em.createQuery("SELECT e FROM Category AS e WHERE e.name = :name", Category.class)
                         .setParameter("name", name)
@@ -35,15 +71,13 @@ public class CategoryService
         );
     }
 
+    @Valid
+    @NotNull
     public Category locateByName(@NotBlank final String name) {
         return findAllByName(name)
                 .stream()
-                .filter(e -> e.getName().equals(name))
                 .findFirst()
-                .orElseGet(() -> {
-                    final var instance = new Category();
-                    instance.setName(name);
-                    return persist(instance);
-                });
+                .orElseGet(() -> persist(Category.of(name)))
+                ;
     }
 }

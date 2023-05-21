@@ -29,7 +29,8 @@ import java.util.Optional;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a>
  */
 @NamedQuery(name = "Country_findAllByCountry",
-            query = "SELECT e FROM Country AS e WHERE e.country = :country")
+            query = "SELECT e FROM Country AS e"
+                    + " WHERE e.country = :country") // not indexed!
 @NamedQuery(name = "Country_findAll",
             query = "SELECT e FROM Country AS e")
 @NamedQuery(name = "Country_findByCountryId",
@@ -139,7 +140,9 @@ public class Country
     }
 
     /**
+     * <blockquote>
      * A surrogate primary key used to uniquely identify each country in the table.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
@@ -151,7 +154,9 @@ public class Country
     private Integer countryId;
 
     /**
+     * <blockquote>
      * The name of the country.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -165,20 +170,21 @@ public class Country
      * @return {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 가 현재 이 객체가 가지고 있는
      * {@link Country_#country country} attribute 의 값과 같은 locale 값; {@link Country_#country country} attribute 값이
      * {@code null} 이거나 적절한 locale 값을 찾을 수 없으면 {@code null}.
-     * @see _LocaleUtils#valueOfDisplayCountry(Locale, String)
+     * @see _LocaleUtils#valueOfDisplayCountry(String, Locale)
      */
     @Transient
     public Locale getCountryAsLocale() {
         return Optional.ofNullable(getCountry())
-                .flatMap(c -> _LocaleUtils.valueOfDisplayCountry(Locale.ENGLISH, c))
+                .flatMap(c -> _LocaleUtils.valueOfDisplayCountry(c, Locale.ENGLISH))
                 .orElse(null);
     }
 
     /**
-     * 현재 이 객체가 가지고 있는 {@link Country_#country country} attribute 의 값을 명시된 locale 값의
-     * {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 값으로 변경한다.
+     * Replaces current value of {@link Country_#country country} attribute with specified locale's
+     * {@link Locale#getDisplayCountry(Locale) display country} represented in {@link Locale#ENGLISH ENGLISH}.
      *
-     * @param locale {@link Country_#country country} attribute 에 저장될 locale 값.
+     * @param locale the locale whose {@link Locale#getDisplayCountry(Locale) display country} value is used for the
+     *               {@link Country_#country country} attribute.
      * @see Locale#getDisplayCountry(Locale)
      * @see Locale#ENGLISH
      */

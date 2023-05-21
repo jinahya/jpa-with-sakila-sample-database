@@ -26,8 +26,13 @@ import jakarta.validation.constraints.PositiveOrZero;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-category.html">5.1.3 The category Table</a>
  */
+@NamedQuery(name = "Category_findAllByCategoryIdGreaterThan",
+            query = "SELECT e FROM Category AS e"
+                    + " WHERE e.categoryId > :categoryIdMinExclusive"
+                    + " ORDER BY e.categoryId ASC")
 @NamedQuery(name = "Category_findByCategoryId",
-            query = "SELECT e FROM Category AS e WHERE e.categoryId = :categoryId")
+            query = "SELECT e FROM Category AS e"
+                    + " WHERE e.categoryId = :categoryId")
 @NamedQuery(name = "Category_findAll",
             query = "SELECT e FROM Category AS e")
 @Entity
@@ -41,9 +46,16 @@ public class Category
     public static final String TABLE_NAME = "category";
 
     /**
-     * The name of the table column to which the {@value Category_#CATEGORY_ID} attribute maps. The value is {@value}.
+     * The name of the table column to which the {@link Category_#categoryId categoryId} attribute maps. The value is
+     * {@value}.
      */
     public static final String COLUMN_NAME_CATEGORY_ID = "category_id";
+
+    public static Category of(final String name) {
+        final var instance = new Category();
+        instance.name = name;
+        return instance;
+    }
 
     /**
      * Creates a new instance.
@@ -110,7 +122,9 @@ public class Category
     }
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-category.html">
      * A surrogate primary key used to uniquely identify each category in the table.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
@@ -122,7 +136,9 @@ public class Category
     private Integer categoryId;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-category.html">
      * The name of the category.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)

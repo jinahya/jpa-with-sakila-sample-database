@@ -10,8 +10,7 @@ import java.math.BigDecimal;
  * <p>The {@value #VIEW_NAME} view provides a list of total sales, broken down by store.</p>
  * <p>The view returns the store location, manager name, and total sales.</p>
  * <p>The {@value #VIEW_NAME} view incorporates data from the {@value City#TABLE_NAME}, {@value Country#TABLE_NAME},
- * {@value Payment#TABLE_NAME} {@value Rental#TABLE_NAME}, inventory, store, address, and
- * staff tables.</p>
+ * {@value Payment#TABLE_NAME} {@value Rental#TABLE_NAME}, inventory, store, address, and staff tables.</p>
  * </blockquote>
  */
 public class MappedSalesByStore {
