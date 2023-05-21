@@ -37,16 +37,47 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U> {
         });
     }
 
+    /**
+     * Merges specified entity.
+     *
+     * @param entity the entity to merge.
+     * @return a merged instance.
+     * @see EntityManager#merge(Object)
+     */
     public T merge(final T entity) {
         Objects.requireNonNull(entity, "entity is null");
         return applyEntityManagerInTransaction(em -> em.merge(entity));
     }
 
+    /**
+     * Finds the entity identified by specified value.
+     *
+     * @param id the value identifies the entity.
+     * @return an optional of entity identified by {@code id}; empty if not found.
+     */
     public Optional<T> findById(final U id) {
         Objects.requireNonNull(id, "id is null");
         return Optional.ofNullable(
                 applyEntityManager(em -> em.find(entityClass, id))
         );
+    }
+
+    protected <R> R applyConnectionInTransaction(final Function<? super Connection, ? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        return applyEntityManagerInTransaction(em -> {
+            final var connection = em.unwrap(Connection.class);
+            final var uncloseable = _LangUtils.uncloseableProxy(Connection.class, connection);
+            return function.apply(uncloseable);
+        });
+    }
+
+    protected <R> R applyConnection(final Function<? super Connection, ? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        return applyEntityManager(em -> {
+            final var connection = em.unwrap(Connection.class);
+            final var uncloseable = _LangUtils.uncloseableProxy(Connection.class, connection);
+            return function.apply(uncloseable);
+        });
     }
 
     protected <R> R lockTableAndApplyEntityManager(final _JdbcConstants.LockType lockType,

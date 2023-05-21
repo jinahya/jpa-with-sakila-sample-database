@@ -3,7 +3,6 @@ package com.github.jinahya.persistence;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
-import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -28,9 +27,11 @@ import java.util.Set;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @apiNote This class is not annotated with {@link jakarta.persistence.Entity} due to the absence of column(s) suitable
  * for uniquely identifying instances of this class.
+ * @see <a href="https://bugs.mysql.com/bug.php?id=111095">Enhance film_list view by GROUP_CONCATing category.name
+ * column values</a>
  */
 @MappedSuperclass
-//@jakarta.persistence.Entity // no columns(s) for uniquely identifying instance.
+//@jakarta.persistence.Entity // no columns(s) for uniquely identifying instances.
 @Table(name = FilmList.VIEW_NAME)
 public class FilmList {
 
@@ -49,10 +50,21 @@ public class FilmList {
      */
     public static final String COLUMN_NAME_TITLE = Film.COLUMN_NAME_TITLE;
 
+    /**
+     * The name of the view column to which the {@link FilmList_#description description} attribute maps. The value is
+     * {@value}.
+     */
     public static final String COLUMN_NAME_DESCRIPTION = Film.COLUMN_NAME_DESCRIPTION;
 
+    /**
+     * The name of the view column to which the {@link FilmList_#category category} attribute maps. The value is
+     * {@value}.
+     */
     public static final String COLUMN_NAME_CATEGORY = "category";
 
+    /**
+     * The name of the view column to which the {@link FilmList_#length length} attribute maps. The value is {@value}.
+     */
     public static final String COLUMN_NAME_LENGTH = Film.COLUMN_NAME_LENGTH;
 
     /**
@@ -114,11 +126,8 @@ public class FilmList {
     }
 
     @NotNull
-    @Id
-    @Basic
-    @Column(name = COLUMN_NAME_FID, nullable = false,
-            insertable = /*false*/true, // EclipseLink
-            updatable = false)
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_FID, nullable = false, insertable = false, updatable = false)
     private Integer fid;
 
     @NotNull
@@ -131,11 +140,8 @@ public class FilmList {
             insertable = false, updatable = false)
     private String description;
 
-    @Id
     @Basic(optional = true)
-    @Column(name = COLUMN_NAME_CATEGORY, nullable = true, length = 25,
-            insertable = /*false*/true, // EclipseLink
-            updatable = false)
+    @Column(name = COLUMN_NAME_CATEGORY, nullable = true, length = 25, insertable = false, updatable = false)
     private String category;
 
     @NotNull
@@ -159,6 +165,7 @@ public class FilmList {
             updatable = false)
     private String actors;
 
+    @Transient
     public Set<String> getCategories() {
         return categories;
     }

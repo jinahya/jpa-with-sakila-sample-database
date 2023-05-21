@@ -6,23 +6,25 @@ import java.util.Objects;
 
 final class _LangUtils {
 
-    private static Method find_close_method(final Class<?> clazz) {
-        Objects.requireNonNull(clazz, "clazz is null");
-        for (Class<?> c = clazz; c != null; c = c.getSuperclass()) {
+    private static Method findCloseMethod(final Class<?> cls) {
+        Objects.requireNonNull(cls, "cls is null");
+        for (Class<?> c = cls; c != null; c = c.getSuperclass()) {
             try {
                 return c.getMethod("close");
             } catch (final NoSuchMethodException nsme) {
                 // ok.
             }
         }
-        throw new IllegalArgumentException("unable to find the 'close()` method onward " + clazz);
+        throw new IllegalArgumentException("unable to find the 'close()` method onward " + cls);
     }
 
     @SuppressWarnings({"unchecked"})
     static <T> T uncloseableProxy(final Class<T> cls, final T obj) {
-        Objects.requireNonNull(cls, "cls is null");
+        if (!Objects.requireNonNull(cls, "cls is null").isInterface()) {
+            throw new IllegalArgumentException("cls is not an interface: " + cls);
+        }
         Objects.requireNonNull(obj, "obj is null");
-        final Method close = find_close_method(cls);
+        final Method close = findCloseMethod(cls);
         return (T) Proxy.newProxyInstance(
                 cls.getClassLoader(),
                 new Class<?>[]{cls},
@@ -34,6 +36,18 @@ final class _LangUtils {
                 }
         );
     }
+
+//    private static <T> T uncloseableProxyHelper(final Class<T> cls, final Object obj) {
+//        Objects.requireNonNull(cls, "cls is null");
+//        Objects.requireNonNull(obj, "obj is null");
+//        return uncloseableProxy(cls, cls.cast(obj)); // ClassCastException
+//    }
+//
+//    static <T> T uncloseableProxy(final T obj) {
+//        @SuppressWarnings({"unchecked"})
+//        final Class<T> cls = (Class<T>) Objects.requireNonNull(obj, "obj is null").getClass();
+//        return uncloseableProxyHelper(cls, obj);
+//    }
 
     private _LangUtils() {
         throw new AssertionError("instantiation is not allowed");
