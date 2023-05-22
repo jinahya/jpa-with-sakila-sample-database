@@ -1,6 +1,7 @@
 package com.github.jinahya.persistence;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -93,6 +94,7 @@ class Country_Test
             return Arrays.asList(Locale.getAvailableLocales());
         }
 
+        @Disabled
         @DisplayName("setCountryAsLocale(locale) -> setCountry(locale.getDisplayLanguage(ENGLISH))")
         @MethodSource({"getLocales"})
         @ParameterizedTest

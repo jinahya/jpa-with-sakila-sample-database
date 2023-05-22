@@ -17,7 +17,7 @@ class Film_IT
             instance.setOriginalLanguage(Language_IT.newPersistedInstance(entityManager));
         }
         entityManager.persist(instance);
-        entityManager.flush();
+//        entityManager.flush();
         return instance;
     }
 

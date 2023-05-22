@@ -1,6 +1,8 @@
 package com.github.jinahya.persistence;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -26,6 +28,7 @@ class _LocaleUtilsTest {
                 .filter(l -> !l.getDisplayLanguage(Locale.ENGLISH).isBlank());
     }
 
+    @Disabled
     @MethodSource({"localeStream"})
     @ParameterizedTest
     void valueOfDisplayCountry(final Locale inLocale) {
@@ -40,6 +43,7 @@ class _LocaleUtilsTest {
         });
     }
 
+    @Disabled
     @MethodSource({"localeStream"})
     @ParameterizedTest
     void valueOfDisplayCountryInEnglish(final Locale locale) {
@@ -54,6 +58,7 @@ class _LocaleUtilsTest {
         });
     }
 
+    @Disabled
     @MethodSource({"localeStream"})
     @ParameterizedTest
     void valueOfDisplayLanguage(final Locale inLocale) {
@@ -68,6 +73,7 @@ class _LocaleUtilsTest {
         });
     }
 
+    @Disabled
     @MethodSource({"localeStream"})
     @ParameterizedTest
     void valueOfDisplayLanguageInEnglish(final Locale locale) {

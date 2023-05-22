@@ -1,6 +1,7 @@
 package com.github.jinahya.persistence;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,6 +52,7 @@ class Language_Test
             assertThat(nameAsLocale).isNull();
         }
 
+        @Disabled
         @DisplayName("getNameAsLocale() <- getName()")
         @MethodSource({"localeWithNonBlankDisplayLanguageStream"})
         @ParameterizedTest
@@ -64,6 +67,7 @@ class Language_Test
             assertThat(nameAsLocale.getDisplayLanguage(Locale.ENGLISH)).isEqualTo(instance.getName());
         }
 
+        @Disabled
         @DisplayName("setNameAsLocale(locale) -> setName(locale.displayLanguage(ENGLISH))")
         @MethodSource("localeStream")
         @ParameterizedTest

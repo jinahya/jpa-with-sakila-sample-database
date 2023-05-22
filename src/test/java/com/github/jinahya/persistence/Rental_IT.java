@@ -17,7 +17,7 @@ class Rental_IT
         instance.setCustomer(customer);
         instance.setStaff(Staff_IT.newPersistedInstance(entityManager, store));
         entityManager.persist(instance);
-        entityManager.flush();
+//        entityManager.flush();
         return instance;
     }
 

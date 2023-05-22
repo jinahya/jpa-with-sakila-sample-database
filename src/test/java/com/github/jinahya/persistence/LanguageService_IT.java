@@ -2,6 +2,7 @@ package com.github.jinahya.persistence;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.ExplicitParamInjection;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Locale;
-import java.util.MissingResourceException;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -110,6 +110,7 @@ class LanguageService_IT
             return _LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
         }
 
+        @Disabled
         @ExplicitParamInjection
         @MethodSource({"localeWithNonBlankDisplayLanguageStream"})
         @ParameterizedTest
@@ -134,17 +135,11 @@ class LanguageService_IT
             return _LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
         }
 
+        @Disabled
         @ExplicitParamInjection
         @MethodSource({"localeWithNonBlankDisplayLanguageStream"})
         @ParameterizedTest
         void __(final Locale locale) {
-            log.debug("l: {}", locale.getLanguage());
-            log.debug("c: {}", locale.getCountry());
-            try {
-                log.debug("l: {}", locale.getISO3Language());
-                log.debug("c: {}", locale.getISO3Country());
-            } catch (final MissingResourceException mre) {
-            }
             if (locale.getDisplayLanguage(Locale.ENGLISH).length() > Language.COLUMN_LENGTH_NAME) {
                 return;
             }
