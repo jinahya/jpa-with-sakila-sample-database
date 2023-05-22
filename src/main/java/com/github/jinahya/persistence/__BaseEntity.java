@@ -16,7 +16,7 @@ abstract class __BaseEntity<U> {
     /**
      * Creates a new instance.
      */
-    protected __BaseEntity() {
+    __BaseEntity() {
         super();
     }
 
@@ -34,7 +34,7 @@ abstract class __BaseEntity<U> {
      * @return {@code true} if this object's {@link #identifier() identifier} is equals to that of {@code obj}.
      * @see #identifier()
      */
-    protected boolean equals_(final __BaseEntity<?> obj) {
+    boolean equals_(final __BaseEntity<?> obj) {
         return Objects.equals(
                 Objects.requireNonNull(identifier(), "identifier() is null"),
                 obj.identifier()
@@ -51,5 +51,5 @@ abstract class __BaseEntity<U> {
      *
      * @return a value identifying this entity.
      */
-    protected abstract U identifier();
+    abstract U identifier();
 }

@@ -72,7 +72,7 @@ public class Inventory
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getInventoryId();
     }
 

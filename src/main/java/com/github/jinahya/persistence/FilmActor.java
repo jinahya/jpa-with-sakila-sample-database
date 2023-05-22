@@ -71,7 +71,7 @@ public class FilmActor
     }
 
     @Override
-    protected FilmActorId identifier() {
+    FilmActorId identifier() {
         return FilmActorId.of(getActorId(), getFilmId());
     }
 

@@ -18,10 +18,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Slf4j
-class CountryTest
+class Country_Test
         extends _BaseEntityTest<Country, Integer> {
 
-    CountryTest() {
+    Country_Test() {
         super(Country.class, Integer.class);
     }
 

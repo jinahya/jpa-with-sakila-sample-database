@@ -80,12 +80,13 @@ abstract class _BaseEntity<U>
      * Returns current value of {@link _BaseEntity_#lastUpdate lastUpdate} attribute as an instance of
      * {@link LocalDateTime}.
      *
-     * @return current value of {@link _BaseEntity_#lastUpdate lastUpdate} attribute as an instance of
-     * {@link LocalDateTime}.
+     * @return an instance of {@link LocalDateTime} represents current value of the
+     * {@link _BaseEntity_#lastUpdate lastUpdate}.
+     * @see #getLastUpdate()
      * @see Timestamp#toLocalDateTime()
      */
     @Transient
-    public final LocalDateTime getLastUpdateAsLocalDateTime() {
+    public LocalDateTime getLastUpdateAsLocalDateTime() {
         return Optional.ofNullable(getLastUpdate())
                 .map(Timestamp::toLocalDateTime)
                 .orElse(null);

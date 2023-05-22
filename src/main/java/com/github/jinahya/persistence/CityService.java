@@ -11,7 +11,7 @@ public class CityService
         extends _BaseEntityService<City, Integer> {
 
     protected CityService() {
-        super(City.class);
+        super(City.class, Integer.class);
     }
 
     @NotNull

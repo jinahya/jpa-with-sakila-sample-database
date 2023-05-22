@@ -80,7 +80,7 @@ public class Customer
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getCustomerId();
     }
 
@@ -93,11 +93,21 @@ public class Customer
         this.customerId = customerId;
     }
 
+    /**
+     * Returns current value of {@link Customer_#storeId storeId} attribute.
+     *
+     * @return current value of the {@link Customer_#storeId storeId} attribute.
+     */
     public Integer getStoreId() {
         return storeId;
     }
 
-    public void setStoreId(Integer storeId) {
+    /**
+     * Replaces current value of {@link Customer_#storeId storeId} attribute with specified value.
+     *
+     * @param storeId new value for the {@link Customer_#storeId storeId} attribute
+     */
+    protected void setStoreId(final Integer storeId) {
         this.storeId = storeId;
     }
 
@@ -242,10 +252,20 @@ public class Customer
     @Column(name = "create_date", nullable = false, insertable = false, updatable = false)
     private LocalDateTime createDate;
 
+    /**
+     * Returns current value of {@link Customer_#store store} attribute.
+     *
+     * @return current value of the {@link Customer_#store store} attribute.
+     */
     public Store getStore() {
         return store;
     }
 
+    /**
+     * Replaces current value of {@link Customer_#store store} attribute.
+     *
+     * @param store new value for the {@link Customer_#store store} attribute.
+     */
     public void setStore(final Store store) {
         this.store = store;
         setStoreId(
@@ -268,16 +288,26 @@ public class Customer
 
     public void setActiveAsBoolean(final Boolean activeAsBoolean) {
         setActive(
-                Optional.of(activeAsBoolean)
+                Optional.ofNullable(activeAsBoolean)
                         .map(_PersistenceConverters.BooleanConverter::booleanToInt)
                         .orElse(null)
         );
     }
 
+    /**
+     * Returns current value of {@link Customer_#address address} attribute.
+     *
+     * @return current value of the {@link Customer_#address address} attribute.
+     */
     public Address getAddress() {
         return address;
     }
 
+    /**
+     * Replaces current value of {@link Customer_#address address} attribute with specified value.
+     *
+     * @param address new value of the {@link Customer_#address address} attribute.
+     */
     public void setAddress(final Address address) {
         this.address = address;
         setAddressId(

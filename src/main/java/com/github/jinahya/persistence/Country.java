@@ -97,7 +97,7 @@ public class Country
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getCountryId();
     }
 

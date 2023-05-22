@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -36,7 +35,7 @@ abstract class _BaseEntityTest<T extends _BaseEntity<U>, U>
         assertThat(string).isNotBlank();
     }
 
-    @DisplayName("getLastUpdateAsLocalDateTime()")
+    @DisplayName("getLastUpdateAsLocalDateTime")
     @Nested
     class GetLastUpdateAsLocalDateTimeTest {
 
@@ -44,26 +43,26 @@ abstract class _BaseEntityTest<T extends _BaseEntity<U>, U>
         @Test
         void _Null_Null() {
             // GIVEN
-            final T spy = newEntitySpy();
+            final T instance = newEntitySpy();
             // wHEN
-            when(spy.getLastUpdate()).thenReturn(null);
-            final var actual = spy.getLastUpdateAsLocalDateTime();
+            when(instance.getLastUpdate()).thenReturn(null);
+            final var dateTime = instance.getLastUpdateAsLocalDateTime();
             // THEN
-            assertThat(actual).isNull();
+            assertThat(dateTime).isNull();
         }
 
         @DisplayName("getLastUpdate()!null -> !null")
         @Test
         void _NotNull_NonNull() {
             // GIVEN
-            final T spy = newEntitySpy();
+            final T instance = newEntitySpy();
             // WHEN
             final var timestamp = new Timestamp(System.currentTimeMillis());
-            when(spy.getLastUpdate()).thenReturn(timestamp);
+            when(instance.getLastUpdate()).thenReturn(timestamp);
             // THEN
-            final LocalDateTime actual = spy.getLastUpdateAsLocalDateTime();
-            assertThat(actual).isNotNull().satisfies(ldt -> {
-                assertThat(Timestamp.valueOf(ldt)).isEqualTo(timestamp);
+            final var dateTime = instance.getLastUpdateAsLocalDateTime();
+            assertThat(dateTime).isNotNull().satisfies(v -> {
+                assertThat(Timestamp.valueOf(v)).isEqualTo(timestamp);
             });
         }
     }

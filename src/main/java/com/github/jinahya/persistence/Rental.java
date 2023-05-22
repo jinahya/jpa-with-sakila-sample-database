@@ -50,7 +50,7 @@ public class Rental
     public static final String COLUMN_NAME_STAFF_ID = Staff.COLUMN_NAME_STAFF_ID;
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getRentalId();
     }
 

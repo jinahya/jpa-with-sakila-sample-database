@@ -10,7 +10,7 @@ public class CountryService
         extends _BaseEntityService<Country, Integer> {
 
     protected CountryService() {
-        super(Country.class);
+        super(Country.class, Integer.class);
     }
 
     @NotNull

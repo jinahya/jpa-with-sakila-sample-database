@@ -102,7 +102,7 @@ public class Store
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getStoreId();
     }
 

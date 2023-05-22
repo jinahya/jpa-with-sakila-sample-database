@@ -1,10 +1,12 @@
 package com.github.jinahya.persistence;
 
-import java.lang.reflect.Constructor;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Objects;
 
 import static org.mockito.Mockito.spy;
 
+@Slf4j
 abstract class ___BaseEntityTestBase<T extends __BaseEntity<U>, U> {
 
     protected ___BaseEntityTestBase(final Class<T> entityClass, final Class<U> idClass) {
@@ -21,7 +23,7 @@ abstract class ___BaseEntityTestBase<T extends __BaseEntity<U>, U> {
      */
     protected T newEntityInstance() {
         try {
-            final Constructor<T> constructor = entityClass.getConstructor();
+            final var constructor = entityClass.getDeclaredConstructor();
             if (!constructor.canAccess(null)) {
                 constructor.setAccessible(true);
             }

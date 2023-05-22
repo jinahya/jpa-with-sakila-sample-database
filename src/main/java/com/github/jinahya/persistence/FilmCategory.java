@@ -85,7 +85,7 @@ public class FilmCategory
     }
 
     @Override
-    protected FilmCategoryId identifier() {
+    FilmCategoryId identifier() {
         return FilmCategoryId.of(filmId, categoryId);
     }
 

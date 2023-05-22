@@ -85,7 +85,7 @@ public class Category
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getCategoryId();
     }
 

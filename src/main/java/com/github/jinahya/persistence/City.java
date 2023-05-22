@@ -110,7 +110,7 @@ public class City
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getCityId();
     }
 

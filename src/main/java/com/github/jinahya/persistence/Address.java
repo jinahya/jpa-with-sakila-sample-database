@@ -103,7 +103,7 @@ public class Address
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getAddressId();
     }
 

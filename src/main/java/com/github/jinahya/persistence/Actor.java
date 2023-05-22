@@ -84,7 +84,7 @@ public class Actor
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getActorId();
     }
 

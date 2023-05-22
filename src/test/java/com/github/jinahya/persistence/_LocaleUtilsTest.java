@@ -12,11 +12,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 class _LocaleUtilsTest {
 
-    private static Stream<Locale> getLocaleStream() {
+    static Stream<Locale> localeStream() {
         return Stream.of(Locale.getAvailableLocales());
     }
 
-    @MethodSource({"getLocaleStream"})
+    static Stream<Locale> getLocaleWithNonBlankDisplayCountryStream() {
+        return localeStream()
+                .filter(l -> !l.getDisplayCountry(Locale.ENGLISH).isBlank());
+    }
+
+    static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
+        return localeStream()
+                .filter(l -> !l.getDisplayLanguage(Locale.ENGLISH).isBlank());
+    }
+
+    @MethodSource({"localeStream"})
     @ParameterizedTest
     void valueOfDisplayCountry(final Locale inLocale) {
         final var displayCountry = inLocale.getDisplayCountry(inLocale);
@@ -30,7 +40,7 @@ class _LocaleUtilsTest {
         });
     }
 
-    @MethodSource({"getLocaleStream"})
+    @MethodSource({"localeStream"})
     @ParameterizedTest
     void valueOfDisplayCountryInEnglish(final Locale locale) {
         final var displayCountryInEnglish = locale.getDisplayCountry(Locale.ENGLISH);
@@ -44,7 +54,7 @@ class _LocaleUtilsTest {
         });
     }
 
-    @MethodSource({"getLocaleStream"})
+    @MethodSource({"localeStream"})
     @ParameterizedTest
     void valueOfDisplayLanguage(final Locale inLocale) {
         final var displayLanguage = inLocale.getDisplayLanguage(inLocale);
@@ -58,7 +68,7 @@ class _LocaleUtilsTest {
         });
     }
 
-    @MethodSource({"getLocaleStream"})
+    @MethodSource({"localeStream"})
     @ParameterizedTest
     void valueOfDisplayLanguageInEnglish(final Locale locale) {
         final var displayLanguageInEnglish = locale.getDisplayLanguage(Locale.ENGLISH);

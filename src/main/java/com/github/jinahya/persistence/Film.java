@@ -332,7 +332,7 @@ public class Film
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getFilmId();
     }
 
@@ -458,7 +458,7 @@ public class Film
     private String description;
 
     /**
-     * <blockquote site="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">
      * The year in which the movie was released.
      * </blockquote>
      */
@@ -467,7 +467,9 @@ public class Film
     private Integer releaseYear;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">
      * A foreign key pointing at the {@value Language#TABLE_NAME} table; identifies the language of the film.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero

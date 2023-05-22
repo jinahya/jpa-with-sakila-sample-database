@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * An entity class for mapping {@value #VIEW_NAME} view.
  * <p>
- * <blockquote site="https://dev.mysql.com/doc/sakila/en/sakila-structure-views-customer_list.html">
+ * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-views-customer_list.html">
  * The {@code customer_list} view provides a list of customers, with first name and last name concatenated together and
  * address information combined into a single view.<br/>The {@code customer_list} view incorporates data from the
  * {@value Customer#TABLE_NAME}, {@value Address#TABLE_NAME}, {@value City#TABLE_NAME}, and {@value Country#TABLE_NAME}
@@ -71,7 +71,7 @@ public class CustomerList
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getId();
     }
 

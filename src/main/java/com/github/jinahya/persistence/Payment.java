@@ -86,7 +86,7 @@ public class Payment
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getPaymentId();
     }
 

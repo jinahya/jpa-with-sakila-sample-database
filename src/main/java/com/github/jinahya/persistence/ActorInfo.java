@@ -72,7 +72,7 @@ public class ActorInfo
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return actorId;
     }
 

@@ -6,7 +6,6 @@ import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -17,15 +16,18 @@ import java.util.function.Function;
 @AddPackages({EntityManagerFactoryProducer.class, __BaseEntityService.class})
 @EnableAutoWeld
 @Slf4j
-abstract class __BaseEntityServiceIT<T extends __BaseEntityService<U, V>, U extends __BaseEntity<V>, V> {
+abstract class __BaseEntityServiceIT<
+        SERVICE extends __BaseEntityService<ENTITY, ID>,
+        ENTITY extends __BaseEntity<ID>,
+        ID extends Comparable<? super ID>> {
 
-    static {
-        Assertions.setMaxStackTraceElementsDisplayed(1024);
-    }
+//    static {
+//        Assertions.setMaxStackTraceElementsDisplayed(1024);
+//    }
 
-    __BaseEntityServiceIT(final Class<T> queriesClass) {
+    __BaseEntityServiceIT(final Class<SERVICE> serviceClass) {
         super();
-        this.serviceClass = Objects.requireNonNull(queriesClass, "queriesClass is null");
+        this.serviceClass = Objects.requireNonNull(serviceClass, "serviceClass is null");
     }
 
     void containerInitialize(@Observes final ContainerInitialized event) {
@@ -43,17 +45,17 @@ abstract class __BaseEntityServiceIT<T extends __BaseEntityService<U, V>, U exte
         }
     }
 
-    <R> R applyServiceInstance(final Function<? super T, ? extends R> function) {
+    <R> R applyServiceInstance(final Function<? super SERVICE, ? extends R> function) {
         return Objects.requireNonNull(function, "function is null")
                 .apply(serviceInstance);
     }
 
-    final Class<T> serviceClass;
+    final Class<SERVICE> serviceClass;
 
     @Inject
-    private Instance<__BaseEntityService<U, V>> serviceInstance_;
+    private Instance<__BaseEntityService<ENTITY, ID>> serviceInstance_;
 
-    private T serviceInstance;
+    private SERVICE serviceInstance;
 
     @Inject
     private Validator validator;

@@ -18,9 +18,8 @@ class Country_IT
 
     static Country newPersistedInstance(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
-        final var instance = new CountryRandomizer().getRandomValue();
+        final var instance = new Country_Randomizer().getRandomValue();
         entityManager.persist(instance);
-        entityManager.flush();
         return instance;
     }
 

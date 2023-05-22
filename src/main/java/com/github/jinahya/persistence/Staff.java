@@ -110,7 +110,7 @@ public class Staff
     }
 
     @Override
-    protected Integer identifier() {
+    Integer identifier() {
         return getStaffId();
     }
 
