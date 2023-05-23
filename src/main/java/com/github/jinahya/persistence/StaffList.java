@@ -27,6 +27,8 @@ import java.util.Objects;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-views-staff-list.html">5.2.7 The staff_list
  * View</a>
  */
+@NamedQuery(name = StaffListConstants.NAMED_QUERY_FIND_ALL_BY_ID_GREATER_THAN,
+            query = "SELECT e FROM StaffList AS e WHERE e.id > :id ORDER BY e.id ASC")
 @NamedQuery(name = StaffListConstants.NAMED_QUERY_FIND_BY_ID,
             query = "SELECT e FROM StaffList AS e WHERE e.id = :id")
 @NamedQuery(name = StaffListConstants.NAMED_QUERY_FIND_ALL,

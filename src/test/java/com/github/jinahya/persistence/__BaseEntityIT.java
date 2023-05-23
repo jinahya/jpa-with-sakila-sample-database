@@ -7,7 +7,6 @@ import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
 
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 @EnableAutoWeld
@@ -28,34 +27,10 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
      * @return the result of the {@code function}.
      */
     <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
-        return applyEntityManager(function, true);
+        return applyEntityManagerInTransaction(function, true);
     }
 
-    /**
-     * Accepts an injected instance of {@link EntityManager} to specified consumer.
-     *
-     * @param consumer the consumer.
-     */
-    @Deprecated
-    void acceptEntityManager(final Consumer<? super EntityManager> consumer) {
-        applyEntityManager(em -> {
-            consumer.accept(em);
-            return null;
-        });
-    }
-
-    void acceptEntityManager(final Consumer<? super EntityManager> consumer, final boolean rollback) {
-        Objects.requireNonNull(consumer, "consumer is null");
-        applyEntityManager(
-                em -> {
-                    consumer.accept(em);
-                    return null;
-                },
-                rollback
-        );
-    }
-
-    <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function, final boolean rollback) {
+    <R> R applyEntityManagerInTransaction(final Function<? super EntityManager, ? extends R> function, final boolean rollback) {
         Objects.requireNonNull(function, "function is null");
         final EntityManager entityManager = getEntityManager();
         final var transaction = entityManager.getTransaction();
