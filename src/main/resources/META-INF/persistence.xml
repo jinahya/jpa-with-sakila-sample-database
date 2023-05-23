@@ -25,6 +25,7 @@
     <class>com.github.jinahya.persistence.Payment</class>
     <class>com.github.jinahya.persistence.Rental</class>
     <class>com.github.jinahya.persistence.Staff</class>
+    <class>com.github.jinahya.persistence.StaffList</class>
     <class>com.github.jinahya.persistence.Store</class>
     <exclude-unlisted-classes/>
     <properties>

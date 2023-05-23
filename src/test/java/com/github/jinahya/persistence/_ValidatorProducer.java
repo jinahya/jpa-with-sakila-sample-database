@@ -21,7 +21,7 @@ class _ValidatorProducer {
     }
 
     void disposeValidatorFactory(@Disposes final Validator validator) {
-        log.debug("disposing validator factory: {}", validator);
+        log.debug("disposing validator: {}", validator);
     }
 
     @Inject

@@ -4,7 +4,22 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Objects;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.lang.invoke.MethodHandles.privateLookupIn;
+import static java.lang.invoke.MethodType.methodType;
+
 final class _LangUtils {
+
+    static <T> T instantiate(final Class<T> type) throws ReflectiveOperationException {
+        Objects.requireNonNull(type, "type is null");
+        final var lookup = privateLookupIn(type, lookup());
+        final var constructor = lookup.findConstructor(type, methodType(void.class));
+        try {
+            return type.cast(constructor.invoke());
+        } catch (final Throwable t) {
+            throw new RuntimeException("failed to instantiate " + type);
+        }
+    }
 
     private static Method findCloseMethod(final Class<?> cls) {
         Objects.requireNonNull(cls, "cls is null");

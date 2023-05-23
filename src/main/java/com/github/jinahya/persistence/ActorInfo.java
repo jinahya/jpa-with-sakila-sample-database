@@ -16,7 +16,7 @@ import java.util.Objects;
  * <p>
  * <blockquote>
  * The {@value #VIEW_NAME} view provides a list of all actors, including the films in which they have performed, broken
- * down by category.<br/>The {@value MappedStaffList#VIEW_NAME} view incorporates data from the
+ * down by category.<br/>The {@value StaffList#VIEW_NAME} view incorporates data from the
  * {@value Film#TABLE_NAME}, {@value Actor#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and
  * {@value FilmCategory#TABLE_NAME} tables.
  * </blockquote>

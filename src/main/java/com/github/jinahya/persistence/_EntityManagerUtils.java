@@ -13,37 +13,33 @@ import java.util.function.Function;
 class _EntityManagerUtils {
 
     private static Connection unwrapConnection(final EntityManager entityManager) {
-        {
+        try {
             // https://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager
-            try {
-                final Connection connection = entityManager.unwrap(Connection.class);
-                if (connection != null) {
-                    return connection;
-                }
-            } catch (final PersistenceException pe) {
+            final Connection connection = entityManager.unwrap(Connection.class);
+            if (connection != null) {
+                return connection;
             }
+        } catch (final Exception e) {
         }
-        {
+        try {
             // https://thorben-janssen.com/hibernate-tips-get-the-sql-connection-used-by-your-hibernate-session/
-            try {
-                final Class<?> sessionClass = Class.forName("org.hibernate.Session");
-                final Object session = entityManager.unwrap(sessionClass);
-                final Class<?> workClass = Class.forName("org.hibernate.jdbc.ReturningWork");
-                final Method execute = workClass.getMethod("execute", Connection.class);
-                final Object proxy = Proxy.newProxyInstance(
-                        MethodHandles.lookup().lookupClass().getClassLoader(),
-                        new Class[]{workClass},
-                        (p, m, a) -> {
-                            if (m.equals(execute)) {
-                                return (Connection) Objects.requireNonNull(a[0], "a[0] is null");
-                            }
-                            return null;
+            final Class<?> sessionClass = Class.forName("org.hibernate.Session");
+            final Object session = entityManager.unwrap(sessionClass);
+            final Class<?> workClass = Class.forName("org.hibernate.jdbc.ReturningWork");
+            final Method execute = workClass.getMethod("execute", Connection.class);
+            final Object proxy = Proxy.newProxyInstance(
+                    MethodHandles.lookup().lookupClass().getClassLoader(),
+                    new Class[]{workClass},
+                    (p, m, a) -> {
+                        if (m.equals(execute)) {
+                            return (Connection) Objects.requireNonNull(a[0], "a[0] is null");
                         }
-                );
-                final Method doReturningWork = sessionClass.getMethod("doReturningWork", workClass);
-                return (Connection) doReturningWork.invoke(session, proxy);
-            } catch (final ReflectiveOperationException roe) {
-            }
+                        return null;
+                    }
+            );
+            final Method doReturningWork = sessionClass.getMethod("doReturningWork", workClass);
+            return (Connection) doReturningWork.invoke(session, proxy);
+        } catch (final ReflectiveOperationException roe) {
         }
         throw new PersistenceException("failed to unwrap connection from " + entityManager);
     }
@@ -52,15 +48,15 @@ class _EntityManagerUtils {
                                  final Function<? super Connection, ? extends R> function) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         Objects.requireNonNull(function, "function is null");
-        return applyInTransaction(entityManager, em -> {
+        return applyEntityManagerInTransaction(entityManager, em -> {
             final var connection = unwrapConnection(em);
-            final var uncloseable = _LangUtils.uncloseableProxy(Connection.class, connection);
-            return function.apply(uncloseable);
+            final var proxy = _LangUtils.uncloseableProxy(Connection.class, connection);
+            return function.apply(proxy);
         });
     }
 
-    static <R> R applyInTransaction(final EntityManager entityManager,
-                                    final Function<? super EntityManager, ? extends R> function) {
+    static <R> R applyEntityManagerInTransaction(final EntityManager entityManager,
+                                                 final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         Objects.requireNonNull(function, "function is null");
         if (entityManager.isJoinedToTransaction()) {

@@ -1,36 +1,42 @@
 package com.github.jinahya.persistence;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.lang.reflect.InvocationTargetException;
+
+import static java.beans.Introspector.getBeanInfo;
+import static org.assertj.core.api.Assertions.assertThat;
 
 abstract class __BaseEntityTest<T extends __BaseEntity<U>, U>
         extends ___BaseEntityTestBase<T, U> {
 
-    protected __BaseEntityTest(final Class<T> entityClass, final Class<U> idClass) {
+    __BaseEntityTest(final Class<T> entityClass, final Class<U> idClass) {
         super(entityClass, idClass);
     }
 
+    @DisplayName("toString()!blank")
+    @Test
+    void toString_NotBlank_() {
+        final var string = newEntityInstance().toString();
+        assertThat(string).isNotBlank();
+    }
+
+    @DisplayName("get...()")
     @Test
     void getter__() throws IntrospectionException, ReflectiveOperationException {
         final var instance = newEntityInstance();
-        final var beanInfo = Introspector.getBeanInfo(entityClass);
-        for (final var propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-            final var readMethod = propertyDescriptor.getReadMethod();
-            if (readMethod == null) {
+        for (final var descriptor : getBeanInfo(entityClass).getPropertyDescriptors()) {
+            final var reader = descriptor.getReadMethod();
+            if (reader == null) {
                 continue;
             }
-            if (readMethod.canAccess(instance)) {
-                readMethod.setAccessible(true);
-            }
-            final var returnType = readMethod.getReturnType();
-            if (returnType == Void.TYPE) {
-                return;
+            if (!reader.canAccess(instance)) {
+                reader.setAccessible(true);
             }
             try {
-                final var value = readMethod.invoke(instance);
+                final var value = reader.invoke(instance);
             } catch (final InvocationTargetException ite) {
                 if (ite.getTargetException() instanceof UnsupportedOperationException) {
                     continue;
@@ -40,28 +46,28 @@ abstract class __BaseEntityTest<T extends __BaseEntity<U>, U>
         }
     }
 
+    @DisplayName("set..(null)")
     @Test
     void setter__() throws IntrospectionException, ReflectiveOperationException {
         final var instance = newEntityInstance();
-        final var beanInfo = Introspector.getBeanInfo(entityClass);
-        for (final var propertyDescriptor : beanInfo.getPropertyDescriptors()) {
-            final var writeMethod = propertyDescriptor.getWriteMethod();
-            if (writeMethod == null) {
+        for (final var descriptor : getBeanInfo(entityClass).getPropertyDescriptors()) {
+            final var writer = descriptor.getWriteMethod();
+            if (writer == null) {
                 continue;
             }
-            if (writeMethod.canAccess(instance)) {
-                writeMethod.setAccessible(true);
+            if (!writer.canAccess(instance)) {
+                writer.setAccessible(true);
             }
-            final var parameterType = writeMethod.getParameterTypes()[0];
-            if (!parameterType.isPrimitive()) {
-                try {
-                    writeMethod.invoke(instance, new Object[]{null});
-                } catch (final InvocationTargetException ite) {
-                    if (ite.getTargetException() instanceof UnsupportedOperationException) {
-                        continue;
-                    }
-                    throw ite;
+            if (descriptor.getPropertyType().isPrimitive()) {
+                continue;
+            }
+            try {
+                writer.invoke(instance, new Object[]{null});
+            } catch (final InvocationTargetException ite) {
+                if (ite.getTargetException() instanceof UnsupportedOperationException) {
+                    continue;
                 }
+                throw ite;
             }
         }
     }
