@@ -1,3 +1,3 @@
 #!/bin/sh
-mvn -Peclipselink clean test
-mvn -Phibernate clean test
+mvn -Psp-eclipselink clean test
+mvn -Psp-hibernate clean test

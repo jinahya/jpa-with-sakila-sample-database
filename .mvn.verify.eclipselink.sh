@@ -1,2 +1,2 @@
 #!/bin/sh
-mvn -Pfailsafe,eclipselink clean verify
+mvn -Pfailsafe,sp-eclipselink clean verify

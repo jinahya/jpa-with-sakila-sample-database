@@ -110,6 +110,7 @@ public class Actor
      * @param actorId new value for {@value Actor_#ACTOR_ID} attribute.
      * @deprecated for removal.
      */
+    // TODO: remove!
     @Deprecated(forRemoval = true)
     private void setActorId(Integer actorId) {
         this.actorId = actorId;

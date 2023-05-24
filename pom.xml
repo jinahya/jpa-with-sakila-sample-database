@@ -298,6 +298,7 @@
           <version>3.4.0</version>
           <configuration>
             <doclint>all</doclint>
+            <show>package</show>
             <sourceFileExcludes>
               <exclude>**/*_.java</exclude>
             </sourceFileExcludes>
@@ -396,6 +397,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.3.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -539,7 +544,7 @@
       </build>
     </profile>
     <profile>
-      <id>eclipselink</id>
+      <id>sp-eclipselink</id>
       <dependencies>
         <dependency>
           <groupId>org.eclipse.persistence</groupId>
@@ -596,7 +601,7 @@
       </build>
     </profile>
     <profile>
-      <id>hibernate</id>
+      <id>sp-hibernate</id>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
