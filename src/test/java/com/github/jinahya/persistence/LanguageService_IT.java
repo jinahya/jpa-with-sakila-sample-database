@@ -22,7 +22,7 @@ class LanguageService_IT
         extends _BaseEntityServiceIT<LanguageService, Language, Integer> {
 
     LanguageService_IT() {
-        super(LanguageService.class);
+        super(LanguageService.class, Language.class, Integer.class);
     }
 
     @DisplayName("findAll")

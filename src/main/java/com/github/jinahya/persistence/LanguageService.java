@@ -23,7 +23,7 @@ public class LanguageService
     }
 
     @Override
-    public List<Language> findAll(Integer maxResults) {
+    public @NotNull List<Language> findAll(Integer maxResults) {
         if (ThreadLocalRandom.current().nextBoolean()) {
             return super.findAll(maxResults);
         }

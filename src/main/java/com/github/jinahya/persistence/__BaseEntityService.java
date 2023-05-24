@@ -109,7 +109,7 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
     }
 
     @NotNull
-    public List<@Valid @NotNull T> findAllByIdGreaterThan(
+    List<@Valid @NotNull T> findAllByIdGreaterThan(
             @NotNull final Function<? super Root<T>, ? extends Expression<? extends U>> idExpressionMapper,
             @NotNull final U idValueMinExclusive, @Positive final Integer maxResults) {
         return applyEntityManager(em -> {
@@ -125,6 +125,56 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
                     )
             );
             criteria.orderBy(builder.asc(idExpression));
+            final var typed = getEntityManager().createQuery(criteria);
+            if (maxResults != null) {
+                typed.setMaxResults(maxResults);
+            }
+            return typed.getResultList();
+        });
+    }
+
+    @NotNull <V extends Comparable<? super V>> List<@Valid @NotNull T> findAllByAttribute(
+            @NotNull final Function<? super Root<T>, ? extends Expression<? extends V>> expressionMapper,
+            @NotNull final V attributeValue, @Positive final Integer maxResults) {
+        return applyEntityManager(em -> {
+            final var builder = em.getCriteriaBuilder();
+            final var criteria = builder.createQuery(entityClass);
+            final var root = criteria.from(entityClass);
+            criteria.select(root);
+            final var expression = expressionMapper.apply(root);
+            criteria.where(
+                    builder.equal(
+                            expression,
+                            attributeValue
+                    )
+            );
+            final var typed = getEntityManager().createQuery(criteria);
+            if (maxResults != null) {
+                typed.setMaxResults(maxResults);
+            }
+            return typed.getResultList();
+        });
+    }
+
+    @NotNull <V extends Comparable<? super V>> List<@Valid @NotNull T> findAllByAttributeIdGreaterThan(
+            @NotNull final Function<? super Root<T>, ? extends Expression<? extends V>> attributeExpressionMapper,
+            @NotNull final V attributeValue,
+            @NotNull final Function<? super Root<T>, ? extends Expression<? extends U>> idAttributeExpressionMapper,
+            @NotNull final U idValueMinExclusive, @Positive final Integer maxResults) {
+        return applyEntityManager(em -> {
+            final var builder = em.getCriteriaBuilder();
+            final var criteria = builder.createQuery(entityClass);
+            final var root = criteria.from(entityClass);
+            criteria.select(root);
+            final var attributeExpression = attributeExpressionMapper.apply(root);
+            final var idAttributeExpression = idAttributeExpressionMapper.apply(root);
+            criteria.where(
+                    builder.and(
+                            builder.equal(attributeExpression, attributeValue),
+                            builder.equal(idAttributeExpression, idValueMinExclusive)
+                    )
+            );
+            criteria.orderBy(builder.asc(idAttributeExpression));
             final var typed = getEntityManager().createQuery(criteria);
             if (maxResults != null) {
                 typed.setMaxResults(maxResults);

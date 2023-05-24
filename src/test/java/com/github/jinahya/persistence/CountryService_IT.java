@@ -14,7 +14,7 @@ class CountryService_IT
         extends _BaseEntityServiceIT<CountryService, Country, Integer> {
 
     CountryService_IT() {
-        super(CountryService.class);
+        super(CountryService.class, Country.class, Integer.class);
     }
 
     @Nested

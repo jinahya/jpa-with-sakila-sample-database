@@ -7,6 +7,11 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +23,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public final class ActorService
+public class ActorService
         extends _BaseEntityService<Actor, Integer> {
 
     ActorService() {
@@ -133,5 +138,111 @@ public final class ActorService
             throw new IllegalArgumentException("non-positive size: " + size);
         }
         return findAllByLastNameLimit(entityManager, lastName, size * page, size);
+    }
+
+    @Override
+    @NotNull
+    public List<@Valid @NotNull Actor> findAll(@Positive final Integer maxResults) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            return super.findAll(maxResults);
+        }
+        return applyEntityManager(em -> {
+            final var query = em.createNamedQuery(ActorConstants.NAMED_QUERY_FIND_ALL, Actor.class);
+            if (maxResults != null) {
+                query.setMaxResults(maxResults);
+            }
+            return query.getResultList();
+        });
+    }
+
+    @NotNull
+    public Optional<@Valid @NotNull Actor> findByActorId(@Positive final int actorId) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            return findById(actorId);
+        }
+        return applyEntityManager(em -> {
+            try {
+                return Optional.of(
+                        em.createNamedQuery(
+                                        ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID,
+                                        Actor.class
+                                )
+                                .getSingleResult() // NoResultException
+                );
+            } catch (final NoResultException nre) {
+                return Optional.empty();
+            }
+        });
+    }
+
+    @NotNull
+    public List<@Valid @NotNull Actor> findAllByActorIdGreaterThan(@PositiveOrZero final int actorIdMinExclusive,
+                                                                   @Positive final Integer maxResults) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            return findAllByIdGreaterThan(
+                    r -> r.get(Actor_.actorId),
+                    actorIdMinExclusive,
+                    maxResults
+            );
+        }
+        return applyEntityManager(em -> {
+            final var query = em.createNamedQuery(
+                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+                    Actor.class
+            );
+            if (maxResults != null) {
+                query.setMaxResults(maxResults);
+            }
+            return query.getResultList();
+        });
+    }
+
+    @NotNull
+    public List<@Valid @NotNull Actor> findAllByLastName(@NotBlank final String lastName,
+                                                         @Positive final Integer maxResults) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            return findAllByAttribute(
+                    r -> r.get(Actor_.lastName),
+                    lastName,
+                    maxResults
+            );
+        }
+        return applyEntityManager(em -> {
+            final var query = em.createNamedQuery(
+                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME,
+                    Actor.class
+            );
+            if (maxResults != null) {
+                query.setMaxResults(maxResults);
+            }
+            return query.getResultList();
+        });
+    }
+
+    @NotNull
+    public List<@Valid @NotNull Actor> findAllByLastName(@NotBlank final String lastName,
+                                                         @PositiveOrZero final int actorIdMinExclusive,
+                                                         @Positive final Integer maxResults) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
+            return findAllByAttributeIdGreaterThan(
+                    r -> r.get(Actor_.lastName),
+                    lastName,
+                    r -> r.get(Actor_.actorId),
+                    actorIdMinExclusive,
+                    maxResults
+            );
+        }
+        return applyEntityManager(em -> {
+            final var query = em.createNamedQuery(
+                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
+                    Actor.class
+            );
+            query.setParameter("lastName", lastName);
+            query.setParameter("actorIdMinExclusive", actorIdMinExclusive);
+            if (maxResults != null) {
+                query.setMaxResults(maxResults);
+            }
+            return query.getResultList();
+        });
     }
 }

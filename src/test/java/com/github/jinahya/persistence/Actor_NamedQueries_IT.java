@@ -1,11 +1,24 @@
 package com.github.jinahya.persistence;
 
+import jakarta.persistence.NoResultException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+/**
+ * A class for testing named queries defined on {@link Actor} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
+@Slf4j
 class Actor_NamedQueries_IT
         extends _BaseEntityIT<Actor, Integer> {
 
@@ -13,73 +26,221 @@ class Actor_NamedQueries_IT
         super(Actor.class, Integer.class);
     }
 
-    @DisplayName("Actor_findAll")
+    @DisplayName(ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID)
+    @Nested
+    class FindByActorIdTest {
+
+        @Test
+        void _NoResultException_0() {
+            final var actorId = 0;
+            assertThatThrownBy(() -> applyEntityManager(
+                    em -> em.createNamedQuery(
+                                    ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID,
+                                    Actor.class
+                            )
+                            .setParameter("actorId", actorId)
+                            .getSingleResult() // NoResultException
+            )).isInstanceOf(NoResultException.class);
+        }
+
+        @Test
+        void __1() {
+            final var actorId = 1;
+            final var result = applyEntityManager(
+                    em -> em.createNamedQuery(
+                                    ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID,
+                                    Actor.class
+                            )
+                            .setParameter(Actor_.actorId.getName(), actorId)
+                            .getSingleResult()
+            );
+            assertThat(result)
+                    .isNotNull()
+                    .extracting(Actor::getActorId)
+                    .isEqualTo(actorId);
+        }
+    }
+
+    @DisplayName(ActorConstants.NAMED_QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
         @Test
         void __() {
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery("Actor_findAll").getResultList()
+                    em -> em.createNamedQuery(ActorConstants.NAMED_QUERY_FIND_ALL)
+                            .getResultList()
             );
-            assertThat(found).isNotEmpty().doesNotContainNull();
-        }
-    }
-
-    @DisplayName("Actor_findByActorId")
-    @Nested
-    class FindByActorIdTest {
-
-        @DisplayName("Actor_findByActorId(1)")
-        @Test
-        void _NotNull_1() {
-            final var actorId = 1;
-            final var found = applyEntityManager(em -> {
-                final var query = em.createNamedQuery("Actor_findByActorId", Actor.class);
-                query.setParameter(Actor_.actorId.getName(), actorId);
-                return query.getSingleResult();
-            });
             assertThat(found)
-                    .isNotNull()
-                    .extracting(Actor::getActorId)
-                    .isEqualTo(actorId);
+                    .isNotEmpty()
+                    .doesNotContainNull();
         }
 
-        @DisplayName("Actor_findByActorId(234)")
         @Test
-        void _NotNull_234() {
-            final var actorId = 233;
-            final var expectedFirstName = "敏郎";
-            final var expectedLastName = "三船";
-            // TODO: Implement!
+        void __WithMaxResults() {
+            final var maxResults = current().nextInt(8, 16);
+            final var found = applyEntityManager(
+                    em -> em.createNamedQuery(ActorConstants.NAMED_QUERY_FIND_ALL)
+                            .setMaxResults(maxResults)
+                            .getResultList()
+            );
+            assertThat(found)
+                    .isNotEmpty()
+                    .doesNotContainNull()
+                    .hasSizeLessThanOrEqualTo(maxResults);
         }
     }
 
-    @DisplayName("Actor_findAllByLastName")
+    @DisplayName(ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN)
+    @Nested
+    class FindAllByActorIdGreaterThanTest {
+
+        @Test
+        void __10() {
+            final var actorIdMinExclusive = 10;
+            final var list = applyEntityManager(
+                    em -> em.createNamedQuery(
+                                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+                                    Actor.class
+                            )
+                            .setParameter("actorIdMinExclusive", actorIdMinExclusive)
+                            .getResultList()
+            );
+            assertThat(list)
+                    .isNotEmpty()
+                    .doesNotContainNull()
+                    .isSortedAccordingTo(Comparator.comparing(Actor::getActorId))
+                    .extracting(Actor::getActorId)
+                    .allMatch(ai -> ai > actorIdMinExclusive);
+        }
+
+        @Test
+        void __10WithMaxResults() {
+            final var actorIdMinExclusive = 10;
+            final var maxResults = current().nextInt(8, 16);
+            final var list = applyEntityManager(
+                    em -> em.createNamedQuery(
+                                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+                                    Actor.class
+                            )
+                            .setParameter("actorIdMinExclusive", actorIdMinExclusive)
+                            .setMaxResults(maxResults)
+                            .getResultList()
+            );
+            assertThat(list)
+                    .isNotEmpty()
+                    .doesNotContainNull()
+                    .hasSizeLessThanOrEqualTo(maxResults)
+                    .isSortedAccordingTo(Comparator.comparing(Actor::getActorId))
+                    .extracting(Actor::getActorId)
+                    .allMatch(ai -> ai > actorIdMinExclusive);
+        }
+
+        @Test
+        void __() {
+            final var maxResults = current().nextInt(8, 16);
+            for (final var i = new AtomicInteger(0); ; ) {
+                final var actorIdMinExclusive = i.get();
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(
+                                        ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+                                        Actor.class
+                                )
+                                .setParameter("actorIdMinExclusive", actorIdMinExclusive)
+                                .setMaxResults(maxResults)
+                                .getResultList()
+                );
+                assertThat(list)
+                        .doesNotContainNull()
+                        .hasSizeLessThanOrEqualTo(maxResults)
+                        .isSortedAccordingTo(Comparator.comparing(Actor::getActorId))
+                        .extracting(Actor::getActorId)
+                        .allMatch(ai -> ai > actorIdMinExclusive);
+                if (list.isEmpty()) {
+                    break;
+                }
+                i.set(list.get(list.size() - 1).getActorId());
+            }
+        }
+    }
+
+    @DisplayName(ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME)
     @Nested
     class FindAllByLastNameTest {
 
-        @DisplayName("Actor_findAllByLastName(GUINESS)")
         @Test
-        void findAllByLastName_NotEmpty_GUINESS() {
-            final var lastName = "GUINESS";
-            final var found = applyEntityManager(em -> {
-                final var query = em.createNamedQuery("Actor_findAllByLastName", Actor.class);
-                query.setParameter(Actor_.lastName.getName(), lastName);
-                return query.getResultList();
-            });
-            assertThat(found)
+        void __KILMER() {
+            final var lastName = "KILMER";
+            final var list = applyEntityManager(
+                    em -> em.createNamedQuery(
+                                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME,
+                                    Actor.class
+                            )
+                            .setParameter("lastName", lastName)
+                            .getResultList()
+            );
+            assertThat(list)
                     .isNotEmpty()
+                    .doesNotContainNull()
                     .extracting(Actor::getLastName)
                     .containsOnly(lastName);
         }
 
-        @DisplayName("Actor_findAllByLastName(안)")
         @Test
-        void findAllByLastName_NotEmpty_안() {
-            final var lastName = "안";
-            final var oneOfExpectedFirstName = "성기";
-            // TODO: implement!
+        void __KILMERWithMaxResults() {
+            final var lastName = "KILMER";
+            final var maxResults = current().nextInt(1, 5);
+            final var list = applyEntityManager(
+                    em -> em.createNamedQuery(
+                                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME,
+                                    Actor.class
+                            )
+                            .setParameter("lastName", lastName)
+                            .setMaxResults(maxResults)
+                            .getResultList()
+            );
+            assertThat(list)
+                    .isNotEmpty()
+                    .doesNotContainNull()
+                    .hasSizeLessThanOrEqualTo(maxResults)
+                    .extracting(Actor::getLastName)
+                    .containsOnly(lastName);
+        }
+    }
+
+    @DisplayName(ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN)
+    @Nested
+    class FindAllByLastNameActorIdGreaterThanTest {
+
+        @Test
+        void __KILMER() {
+            final var lastName = "KILMER";
+            final var maxResults = current().nextInt(1, 3);
+            for (final var i = new AtomicInteger(0); ; ) {
+                final var actorIdMinExclusive = i.get();
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(
+                                        ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
+                                        Actor.class
+                                )
+                                .setParameter("lastName", lastName)
+                                .setParameter("actorIdMinExclusive", actorIdMinExclusive)
+                                .setMaxResults(maxResults)
+                                .getResultList()
+                );
+                log.debug("lastName(s): {}", list.stream().map(Actor::getLastName).distinct().toList());
+                log.debug("actorIds: {} >? {}", list.stream().map(Actor::getActorId).distinct().toList(), actorIdMinExclusive);
+                assertThat(list)
+                        .doesNotContainNull()
+                        .allSatisfy(e -> {
+                            assertThat(e.getLastName()).isEqualTo(lastName);
+                            assertThat(e.getActorId()).isGreaterThan(actorIdMinExclusive);
+                        });
+                if (list.isEmpty()) {
+                    break;
+                }
+                i.set(list.get(list.size() - 1).getActorId());
+            }
         }
     }
 }

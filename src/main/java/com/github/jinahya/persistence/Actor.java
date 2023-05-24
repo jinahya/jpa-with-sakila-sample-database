@@ -23,12 +23,19 @@ import jakarta.validation.constraints.PositiveOrZero;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-actor.html">5.1.1 The actor Table</a>
+ * @see ActorConstants
  */
-@NamedQuery(name = "Actor_findAllByLastName",
+@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
+            query = "SELECT a FROM Actor AS a"
+                    + " WHERE a.lastName = :lastName AND a.actorId > :actorIdMinExclusive"
+                    + " ORDER BY a.actorId ASC")
+@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME,
             query = "SELECT a FROM Actor AS a WHERE a.lastName = :lastName")
-@NamedQuery(name = "Actor_findAll",
+@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+            query = "SELECT a FROM Actor AS a WHERE a.actorId > :actorIdMinExclusive ORDER BY a.actorId ASC")
+@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL,
             query = "SELECT a FROM Actor AS a")
-@NamedQuery(name = "Actor_findByActorId",
+@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID,
             query = "SELECT a FROM Actor AS a WHERE a.actorId = :actorId")
 @Entity
 @Table(name = Actor.TABLE_NAME, indexes = {@Index(columnList = Actor.COLUMN_NAME_LAST_NAME)})

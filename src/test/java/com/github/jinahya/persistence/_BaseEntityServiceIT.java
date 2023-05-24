@@ -6,7 +6,7 @@ abstract class _BaseEntityServiceIT<
         ID extends Comparable<? super ID>>
         extends __BaseEntityServiceIT<SERVICE, ENTITY, ID> {
 
-    _BaseEntityServiceIT(final Class<SERVICE> queriesClass) {
-        super(queriesClass);
+    _BaseEntityServiceIT(final Class<SERVICE> queriesClass, final Class<ENTITY> entityClass, final Class<ID> idClass) {
+        super(queriesClass, entityClass, idClass);
     }
 }

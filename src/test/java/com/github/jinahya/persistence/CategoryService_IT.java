@@ -8,7 +8,7 @@ class CategoryService_IT
         extends _BaseEntityServiceIT<CategoryService, Category, Integer> {
 
     CategoryService_IT() {
-        super(CategoryService.class);
+        super(CategoryService.class, Category.class, Integer.class);
     }
 
     @Test
