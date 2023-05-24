@@ -377,12 +377,12 @@ public class Staff
             return;
         }
         final byte[] copy = Arrays.copyOf(clientPassword, clientPassword.length);
-        if (Objects.equals(_PersistenceUtils.sha1(copy), password)) {
+        if (Objects.equals(____Utils.sha1(copy), password)) {
 //            log.info("signed in with sha1. updating password with sha2...");
 //            setPassword(_PersistenceUtils.sha2(copy));
             return;
         }
-        if (Objects.equals(_PersistenceUtils.sha2(copy), password)) {
+        if (Objects.equals(____Utils.sha2(copy), password)) {
             return;
         }
         throw new IllegalStateException("unable to sign in");
@@ -400,6 +400,6 @@ public class Staff
         }
         signIn(oldClientPassword);
 //        setPassword(_PersistenceUtils.sha2(newClientPassword));
-        setPassword(_PersistenceUtils.sha1(newClientPassword));
+        setPassword(____Utils.sha1(newClientPassword));
     }
 }

@@ -51,7 +51,7 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
     private EntityManager getEntityManager() {
         var proxy = entityManagerProxy;
         if (proxy == null) {
-            proxy = entityManagerProxy = _LangUtils.uncloseableProxy(EntityManager.class, entityManager);
+            proxy = entityManagerProxy = ____Utils.createUnCloseableProxy(EntityManager.class, entityManager);
         }
         return proxy;
     }

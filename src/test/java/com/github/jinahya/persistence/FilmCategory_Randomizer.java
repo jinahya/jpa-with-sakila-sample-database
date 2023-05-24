@@ -13,7 +13,7 @@ class FilmCategory_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(FilmCategory_.filmId.getName()))
                 .excludeField(named(FilmCategory_.categoryId.getName()))
@@ -23,7 +23,7 @@ class FilmCategory_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

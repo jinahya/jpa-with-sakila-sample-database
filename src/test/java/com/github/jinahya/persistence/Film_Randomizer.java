@@ -74,7 +74,7 @@ class Film_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Film_.filmId.getName()))
                 .randomize(named(Film_.title.getName()), new StringRandomizer(128))
@@ -94,7 +94,7 @@ class Film_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

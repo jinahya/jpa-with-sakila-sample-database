@@ -18,12 +18,12 @@ abstract class ___PersistenceService {
     }
 
     <R> R applyConnection(final Function<? super Connection, ? extends R> function) {
-        return applyEntityManagerInTransaction(em -> _EntityManagerUtils.applyConnection(em, function));
+        return applyEntityManagerInTransaction(em -> ____Utils.applyConnection(em, function));
     }
 
     <R> R applyEntityManagerInTransaction(final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return _EntityManagerUtils.applyEntityManagerInTransaction(getEntityManager(), function);
+        return ____Utils.applyEntityManagerInTransaction(getEntityManager(), function);
     }
 
     <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
@@ -31,10 +31,10 @@ abstract class ___PersistenceService {
         return function.apply(getEntityManager());
     }
 
-    private EntityManager getEntityManager() {
+    EntityManager getEntityManager() {
         var result = entityManagerProxy;
         if (result == null) {
-            result = entityManagerProxy = _LangUtils.uncloseableProxy(EntityManager.class, entityManager);
+            result = entityManagerProxy = ____Utils.createUnCloseableProxy(EntityManager.class, entityManager);
         }
         return result;
     }

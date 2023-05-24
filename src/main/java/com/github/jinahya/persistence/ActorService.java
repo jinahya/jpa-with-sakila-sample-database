@@ -18,7 +18,12 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public final class ActorQueries {
+public final class ActorService
+        extends _BaseEntityService<Actor, Integer> {
+
+    ActorService() {
+        super(Actor.class, Integer.class);
+    }
 
     /**
      * Finds an actor whose {@link Actor_#actorId actorId} attribute matches to specified value.
@@ -128,9 +133,5 @@ public final class ActorQueries {
             throw new IllegalArgumentException("non-positive size: " + size);
         }
         return findAllByLastNameLimit(entityManager, lastName, size * page, size);
-    }
-
-    private ActorQueries() {
-        throw new AssertionError("instantiation is not allowed");
     }
 }

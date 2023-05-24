@@ -13,7 +13,7 @@ class Store_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Store_.storeId.getName()))
                 .excludeField(named(Store_.managerStaffId.getName()))
@@ -25,7 +25,7 @@ class Store_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

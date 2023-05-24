@@ -20,7 +20,7 @@ class Customer_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Customer_.customerId.getName()))
                 .excludeField(named(Customer_.storeId.getName()))
@@ -36,7 +36,7 @@ class Customer_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

@@ -7,10 +7,10 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-public class CityService
+class CityService
         extends _BaseEntityService<City, Integer> {
 
-    protected CityService() {
+    CityService() {
         super(City.class, Integer.class);
     }
 

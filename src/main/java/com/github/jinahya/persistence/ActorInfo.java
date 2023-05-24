@@ -16,8 +16,8 @@ import java.util.Objects;
  * <p>
  * <blockquote>
  * The {@value #VIEW_NAME} view provides a list of all actors, including the films in which they have performed, broken
- * down by category.<br/>The {@value StaffList#VIEW_NAME} view incorporates data from the
- * {@value Film#TABLE_NAME}, {@value Actor#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and
+ * down by category.<br/>The {@value StaffList#VIEW_NAME} view incorporates data from the {@value Film#TABLE_NAME},
+ * {@value Actor#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and
  * {@value FilmCategory#TABLE_NAME} tables.
  * </blockquote>
  *
@@ -31,7 +31,7 @@ public class ActorInfo
         extends _BaseEntity<Integer> {
 
     /**
-     * The name of the database table to which this class maps. The value is {@value}.
+     * The name of the database view to which this class maps. The value is {@value}.
      */
     public static final String VIEW_NAME = "actor_info";
 
@@ -61,55 +61,34 @@ public class ActorInfo
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof ActorInfo that)) return false;
-        if (!super.equals(obj)) return false;
-        return Objects.equals(actorId, that.actorId);
+        if (!(obj instanceof ActorInfo)) return false;
+        return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(actorId);
+        return Objects.hash(identifier());
     }
 
     @Override
     Integer identifier() {
-        return actorId;
+        return getActorId();
     }
 
     public Integer getActorId() {
         return actorId;
     }
 
-    @Deprecated(forRemoval = true)
-    private void setActorId(final Integer actorId) {
-        this.actorId = actorId;
-    }
-
     public String getFirstName() {
         return firstName;
-    }
-
-    @Deprecated(forRemoval = true)
-    private void setFirstName(final String firstName) {
-        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    @Deprecated(forRemoval = true)
-    private void setLastName(final String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getFilmInfo() {
         return filmInfo;
-    }
-
-    @Deprecated(forRemoval = true)
-    private void setFilmInfo(final String filmInfo) {
-        this.filmInfo = filmInfo;
     }
 
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
@@ -117,20 +96,21 @@ public class ActorInfo
     @Id
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_ACTOR_ID, nullable = false)
+    @Column(name = COLUMN_NAME_ACTOR_ID, nullable = false, insertable = false, updatable = false)
     private Integer actorId;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_FIRST_NAME, nullable = false, length = 45)
+    @Column(name = COLUMN_NAME_FIRST_NAME, nullable = false, length = 45, insertable = false, updatable = false)
     private String firstName;
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_LAST_NAME, nullable = false, length = 45)
+    @Column(name = COLUMN_NAME_LAST_NAME, nullable = false, length = 45, insertable = false, updatable = false)
     private String lastName;
 
     @Basic(optional = true)
-    @Column(name = "film_info", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT)
+    @Column(name = "film_info", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT, insertable = false,
+            updatable = false)
     private String filmInfo;
 }

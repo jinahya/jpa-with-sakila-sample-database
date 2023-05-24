@@ -20,7 +20,7 @@ class _PersistenceIT {
     EntityManager getEntityManager() {
         var result = entityManagerProxy;
         if (result == null) {
-            result = entityManagerProxy = _LangUtils.uncloseableProxy(EntityManager.class, entityManager);
+            result = entityManagerProxy = ____Utils.createUnCloseableProxy(EntityManager.class, entityManager);
         }
         return result;
     }

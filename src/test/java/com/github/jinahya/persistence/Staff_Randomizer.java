@@ -28,7 +28,7 @@ class Staff_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Staff_.staffId.getName()))
                 .randomize(named(Staff_.firstName.getName()), new StringRandomizer(25))
@@ -46,7 +46,7 @@ class Staff_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

@@ -155,7 +155,7 @@ public class Language
      */
     public Locale getNameAsLocale() {
         return Optional.ofNullable(getName())
-                .flatMap(_LocaleUtils::valueOfDisplayLanguageInEnglish)
+                .flatMap(____Utils::valueOfDisplayLanguageInEnglish)
                 .orElse(null);
     }
 

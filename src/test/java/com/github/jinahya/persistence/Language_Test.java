@@ -13,7 +13,6 @@ import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,11 +32,11 @@ class Language_Test
     class NameAsLocaleTest {
 
         private Stream<Locale> localeStream() {
-            return _LocaleUtilsTest.localeStream();
+            return ____Utils_Locale_Test.localeStream();
         }
 
         private Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return _LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
+            return ____Utils_Locale_Test.localeWithNonBlankDisplayLanguageStream();
         }
 
         @DisplayName("getNameAsLocale()null")

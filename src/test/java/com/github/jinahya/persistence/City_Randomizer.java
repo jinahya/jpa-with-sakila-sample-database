@@ -14,7 +14,7 @@ class City_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(City_.cityId.getName()))
                 .randomize(named(City_.city.getName()), new StringRandomizer(50))
@@ -24,7 +24,7 @@ class City_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

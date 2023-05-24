@@ -14,7 +14,7 @@ class Country_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Country_.countryId.getName()))
                 .randomize(named(Country_.country.getName()), new StringRandomizer(50))
@@ -22,7 +22,7 @@ class Country_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

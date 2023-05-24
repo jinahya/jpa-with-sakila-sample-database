@@ -29,7 +29,7 @@ class Language_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Language_.languageId.getName()))
 //                .randomize(named(Language_.name.getName()), Language_Randomizer::randomLanguage)
@@ -38,7 +38,7 @@ class Language_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

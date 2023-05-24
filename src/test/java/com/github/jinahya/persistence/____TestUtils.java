@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
-final class _ValidationUtils {
+final class ____TestUtils {
 
     /**
      * Create a new validation proxy of specified object.
@@ -61,7 +61,7 @@ final class _ValidationUtils {
         return loaded.getConstructor().newInstance();
     }
 
-    _ValidationUtils() {
+    ____TestUtils() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

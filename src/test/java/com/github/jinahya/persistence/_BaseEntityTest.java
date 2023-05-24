@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 /**
- * An abstract test class for testing subclasses of {@link _BaseEntity} class.
+ * An abstract test class for unit-testing subclasses of {@link _BaseEntity} class.
  *
  * @param <T> entity type parameter
  * @param <U> id type parameter
@@ -24,7 +24,7 @@ abstract class _BaseEntityTest<T extends _BaseEntity<U>, U>
      * @param entityClass the entity class to test.
      * @param idClass     the type of id of the {@code entityClass}.
      */
-    protected _BaseEntityTest(final Class<T> entityClass, final Class<U> idClass) {
+    _BaseEntityTest(final Class<T> entityClass, final Class<U> idClass) {
         super(entityClass, idClass);
     }
 

@@ -22,7 +22,7 @@ abstract class _BaseEntity<U>
     /**
      * Creates a new instance.
      */
-    protected _BaseEntity() {
+    _BaseEntity() {
         super();
     }
 

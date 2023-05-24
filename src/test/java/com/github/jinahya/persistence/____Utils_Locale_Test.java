@@ -2,7 +2,6 @@ package com.github.jinahya.persistence;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -12,7 +11,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class _LocaleUtilsTest {
+class ____Utils_Locale_Test {
 
     static Stream<Locale> localeStream() {
         return Stream.of(Locale.getAvailableLocales());
@@ -36,7 +35,7 @@ class _LocaleUtilsTest {
         if (displayCountry.strip().isBlank()) {
             return;
         }
-        final var value = _LocaleUtils.valueOfDisplayCountry(displayCountry, inLocale);
+        final var value = ____Utils.valueOfDisplayCountry(displayCountry, inLocale);
         assertThat(value).hasValueSatisfying(v -> {
             assertThat(v.getDisplayCountry(inLocale))
                     .isEqualTo(displayCountry);
@@ -51,7 +50,7 @@ class _LocaleUtilsTest {
         if (displayCountryInEnglish.isBlank()) {
             return;
         }
-        final var value = _LocaleUtils.valueOfDisplayCountryInEnglish(displayCountryInEnglish);
+        final var value = ____Utils.valueOfDisplayCountryInEnglish(displayCountryInEnglish);
         assertThat(value).hasValueSatisfying(v -> {
             assertThat(v.getDisplayCountry(Locale.ENGLISH))
                     .isEqualTo(displayCountryInEnglish);
@@ -66,7 +65,7 @@ class _LocaleUtilsTest {
         if (displayLanguage.strip().isBlank()) {
             return;
         }
-        final var value = _LocaleUtils.valueOfDisplayLanguage(displayLanguage, inLocale);
+        final var value = ____Utils.valueOfDisplayLanguage(displayLanguage, inLocale);
         assertThat(value).hasValueSatisfying(v -> {
             assertThat(v.getDisplayLanguage(inLocale))
                     .isEqualTo(displayLanguage);
@@ -81,7 +80,7 @@ class _LocaleUtilsTest {
         if (displayLanguageInEnglish.isBlank()) {
             return;
         }
-        final var value = _LocaleUtils.valueOfDisplayLanguageInEnglish(displayLanguageInEnglish);
+        final var value = ____Utils.valueOfDisplayLanguageInEnglish(displayLanguageInEnglish);
         assertThat(value).hasValueSatisfying(v -> {
             assertThat(v.getDisplayLanguage(Locale.ENGLISH))
                     .isEqualTo(displayLanguageInEnglish);

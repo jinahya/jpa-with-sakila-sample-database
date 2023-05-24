@@ -42,7 +42,7 @@ public class SalesByStoreService
                 try (var results = statement.executeQuery(builder.toString())) {
                     final var list = new ArrayList<SalesByStore>();
                     while (results.next()) {
-                        list.add(_JdbcUtils.bind(SalesByStore.class, results));
+                        list.add(____Utils.bind(SalesByStore.class, results));
                     }
                     return list;
                 }

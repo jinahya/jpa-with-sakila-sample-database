@@ -13,7 +13,7 @@ class Rental_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Rental_.rentalId.getName()))
                 .excludeField(named(Rental_.rentalDate.getName()))
@@ -28,7 +28,7 @@ class Rental_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

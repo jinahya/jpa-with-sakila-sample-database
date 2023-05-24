@@ -14,7 +14,7 @@ class Category_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Category_.categoryId.getName()))
                 .randomize(named(Category_.name.getName()), new StringRandomizer(25))
@@ -22,7 +22,7 @@ class Category_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

@@ -18,7 +18,7 @@ abstract class _BaseEntityRandomizer<T extends _BaseEntity<?>>
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         final var parameters = super.parameters()
                 .excludeField(named("lastUpdate"));
         parameters.setExclusionPolicy(new ExclusionPolicy() {
@@ -46,7 +46,7 @@ abstract class _BaseEntityRandomizer<T extends _BaseEntity<?>>
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

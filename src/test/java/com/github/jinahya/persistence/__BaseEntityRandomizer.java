@@ -14,11 +14,11 @@ abstract class __BaseEntityRandomizer<T extends __BaseEntity<?>>
         this.entityClass = Objects.requireNonNull(entityClass, "entityClass is null");
     }
 
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return new EasyRandomParameters();
     }
 
-    protected EasyRandom random() {
+    EasyRandom random() {
         return new EasyRandom(parameters());
     }
 

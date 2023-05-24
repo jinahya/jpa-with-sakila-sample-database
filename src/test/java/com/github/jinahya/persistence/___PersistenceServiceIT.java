@@ -18,6 +18,11 @@ import java.util.function.Function;
 @Slf4j
 abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {
 
+    /**
+     * Create a new instance for testing specified service class.
+     *
+     * @param serviceClass the service class to test.
+     */
     ___PersistenceServiceIT(final Class<SERVICE> serviceClass) {
         super();
         this.serviceClass = Objects.requireNonNull(serviceClass, "serviceClass is null");
@@ -32,7 +37,7 @@ abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {
     void onPostConstruct() {
         final var instance = serviceInstance_.select(serviceClass).get();
         try {
-            serviceInstance = _ValidationUtils.newValidationProxy(serviceClass, instance, validator);
+            serviceInstance = ____TestUtils.newValidationProxy(serviceClass, instance, validator);
         } catch (final ReflectiveOperationException roe) {
             throw new RuntimeException("failed to create a validation proxy of " + instance, roe);
         }

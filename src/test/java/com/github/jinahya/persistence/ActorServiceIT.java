@@ -7,17 +7,17 @@ import org.junit.jupiter.api.Test;
 
 import java.util.stream.IntStream;
 
-import static com.github.jinahya.persistence.ActorQueries.findAllByLastName;
-import static com.github.jinahya.persistence.ActorQueries.findAllByLastNameLimit;
-import static com.github.jinahya.persistence.ActorQueries.findAllByLastNamePage;
+import static com.github.jinahya.persistence.ActorService.findAllByLastName;
+import static com.github.jinahya.persistence.ActorService.findAllByLastNameLimit;
+import static com.github.jinahya.persistence.ActorService.findAllByLastNamePage;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-class ActorQueriesIT
+class ActorServiceIT
         extends __BaseEntityIT<Actor, Integer> {
 
-    ActorQueriesIT() {
+    ActorServiceIT() {
         super(Actor.class, Integer.class);
     }
 
@@ -33,7 +33,7 @@ class ActorQueriesIT
             final var expectedFirstName = "PENELOPE";
             final var expectedLastName = "GUINESS";
             // WHEN
-            final var found = applyEntityManager(em -> ActorQueries.findByActorId(em, actorId));
+            final var found = applyEntityManager(em -> ActorService.findByActorId(em, actorId));
             // THEN
             assertThat(found).hasValueSatisfying(v -> {
                 assertThat(v.getActorId()).isEqualTo(actorId);

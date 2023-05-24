@@ -17,7 +17,7 @@ class Address_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Address_.addressId.getName()))
                 .randomize(named(Address_.address.getName()), new StringRandomizer(50))
@@ -33,7 +33,7 @@ class Address_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

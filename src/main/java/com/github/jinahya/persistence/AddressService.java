@@ -1,9 +1,9 @@
 package com.github.jinahya.persistence;
 
-public class AddressService
+class AddressService
         extends _BaseEntityService<Address, Integer> {
 
-    protected AddressService() {
+    AddressService() {
         super(Address.class, Integer.class);
     }
 }

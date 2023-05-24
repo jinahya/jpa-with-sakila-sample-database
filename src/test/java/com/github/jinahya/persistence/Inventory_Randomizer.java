@@ -13,7 +13,7 @@ class Inventory_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Inventory_.inventoryId.getName()))
                 .excludeField(named(Inventory_.filmId.getName()))
@@ -24,7 +24,7 @@ class Inventory_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 

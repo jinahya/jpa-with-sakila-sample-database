@@ -16,7 +16,7 @@ public class CategoryService
     /**
      * Creates a new instance.
      */
-    protected CategoryService() {
+    CategoryService() {
         super(Category.class, Integer.class);
     }
 

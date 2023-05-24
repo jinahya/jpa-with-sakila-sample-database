@@ -107,7 +107,7 @@ class LanguageService_IT
     class LocateByNameTest {
 
         private static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return _LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
+            return ____Utils_Locale_Test.localeWithNonBlankDisplayLanguageStream();
         }
 
         @Disabled
@@ -132,7 +132,7 @@ class LanguageService_IT
     class LocateByLocaleTest {
 
         private static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return _LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
+            return ____Utils_Locale_Test.localeWithNonBlankDisplayLanguageStream();
         }
 
         @Disabled

@@ -20,7 +20,7 @@ class Payment_Randomizer
     }
 
     @Override
-    protected EasyRandomParameters parameters() {
+    EasyRandomParameters parameters() {
         return super.parameters()
                 .excludeField(named(Payment_.paymentId.getName()))
                 .excludeField(named(Payment_.customerId.getName()))
@@ -35,7 +35,7 @@ class Payment_Randomizer
     }
 
     @Override
-    protected EasyRandom random() {
+    EasyRandom random() {
         return super.random();
     }
 
