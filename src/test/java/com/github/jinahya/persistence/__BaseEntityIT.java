@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 @EnableAutoWeld
-@AddPackages({EntityManagerFactoryProducer.class})
+@AddPackages({____EntityManagerFactoryProducer.class})
 @Slf4j
 abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
         extends ___BaseEntityTestBase<T, U> {

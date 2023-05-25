@@ -13,7 +13,7 @@ import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import java.util.Objects;
 import java.util.function.Function;
 
-@AddPackages({EntityManagerProducer.class})
+@AddPackages({____EntityManagerProducer.class})
 @EnableAutoWeld
 @Slf4j
 abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {

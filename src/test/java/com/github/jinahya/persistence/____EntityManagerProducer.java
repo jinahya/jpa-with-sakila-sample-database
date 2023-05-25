@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
 @Slf4j
-class EntityManagerProducer {
+class ____EntityManagerProducer {
 
     @Produces
     EntityManager produceEntityManager() {

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Locale;
 
 class _MyFilmIT
-        extends _PersistenceIT {
+        extends __PersistenceIT {
 
     @Test
     void 나에게오라() {

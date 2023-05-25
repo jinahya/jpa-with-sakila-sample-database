@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@AddPackages({EntityManagerProducer.class, FilmListService.class})
+@AddPackages({____EntityManagerProducer.class, FilmListService.class})
 @EnableAutoWeld
 class FilmListService_IT {
 

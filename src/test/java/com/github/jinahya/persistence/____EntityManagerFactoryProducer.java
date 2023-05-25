@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 @ApplicationScoped
 @Slf4j
-class EntityManagerFactoryProducer {
+class ____EntityManagerFactoryProducer {
 
     @Produces
     @ApplicationScoped

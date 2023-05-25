@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
 @Slf4j
-class _ValidatorFactoryProducer {
+class ____ValidatorFactoryProducer {
 
     @Produces
     @ApplicationScoped
