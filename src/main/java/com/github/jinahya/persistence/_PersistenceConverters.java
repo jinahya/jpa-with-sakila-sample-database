@@ -5,8 +5,55 @@ import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 import java.nio.ByteBuffer;
+import java.util.Objects;
+import java.util.function.Function;
 
 public final class _PersistenceConverters {
+
+    public static class EnumConverter<E extends Enum<E>, Y>
+            implements AttributeConverter<E, Y> {
+
+        public static class OfString<E extends Enum<E>>
+                extends EnumConverter<E, String> {
+
+            public static class UsingName<E extends Enum<E>>
+                    extends OfString<E> {
+
+                public UsingName(final Class<E> enumClass) {
+                    super(enumClass, Enum::name, c -> Enum.valueOf(enumClass, c));
+                }
+            }
+
+            public OfString(final Class<E> enumClass, final Function<? super E, String> toColumnMapper,
+                            final Function<? super String, E> toAttributeMapper) {
+                super(enumClass, toColumnMapper, toAttributeMapper);
+            }
+        }
+
+        public EnumConverter(final Class<E> enumClass, final Function<? super E, ? extends Y> toColumnMapper,
+                             final Function<? super Y, E> toAttributeMapper) {
+            super();
+            this.enumClass = Objects.requireNonNull(enumClass, "enumClass is null");
+            this.toColumnMapper = Objects.requireNonNull(toColumnMapper, "toColumnMapper is null");
+            this.toAttributeMapper = Objects.requireNonNull(toAttributeMapper, "toAttributeMapper is null");
+        }
+
+        @Override
+        public Y convertToDatabaseColumn(final E attribute) {
+            return toColumnMapper.apply(attribute);
+        }
+
+        @Override
+        public E convertToEntityAttribute(final Y dbData) {
+            return toAttributeMapper.apply(dbData);
+        }
+
+        protected final Class<E> enumClass;
+
+        protected final Function<? super E, ? extends Y> toColumnMapper;
+
+        protected final Function<? super Y, E> toAttributeMapper;
+    }
 
     /**
      * An attribute converter for converting from column values of {@code GEOMETRY} to {@link Geometry}, and vice

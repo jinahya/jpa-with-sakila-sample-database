@@ -1,5 +1,6 @@
 package com.github.jinahya.persistence;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
@@ -9,6 +10,11 @@ import java.util.Objects;
 
 @Slf4j
 public final class _PersistenceTypes {
+
+    public interface AttributeEnum<E extends Enum<E> & AttributeEnum<E, A>, A> {
+
+        @NotNull A attribute();
+    }
 
     /**
      * Represents the Well-Known Binary Representation.

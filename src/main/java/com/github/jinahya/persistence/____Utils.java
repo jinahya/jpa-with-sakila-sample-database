@@ -14,6 +14,10 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -292,6 +296,29 @@ final class ____Utils {
             throw new IllegalArgumentException("empty password");
         }
         return digest("SHA-256", password);
+    }
+
+    static long getUnitsOf(final TemporalAmount amount, final Temporal now, final ChronoUnit unit) {
+        Objects.requireNonNull(unit, "unit is null");
+        Objects.requireNonNull(now, "now is null");
+        Objects.requireNonNull(amount, "amount is null");
+        return unit.between(now, now.plus(amount));
+    }
+
+    static long getMinutesOf(final TemporalAmount amount, final Temporal now) {
+        return getUnitsOf(amount, now, ChronoUnit.MINUTES);
+    }
+
+    static long getMinutesOf(final TemporalAmount amount) {
+        return getMinutesOf(amount, Instant.now());
+    }
+
+    static long getDaysOf(final TemporalAmount amount, final Temporal now) {
+        return getUnitsOf(amount, now, ChronoUnit.DAYS);
+    }
+
+    static long getDaysOf(final TemporalAmount amount) {
+        return getDaysOf(amount, Instant.now());
     }
 
     private ____Utils() {

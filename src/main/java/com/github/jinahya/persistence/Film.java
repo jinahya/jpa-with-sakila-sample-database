@@ -24,7 +24,6 @@ import java.time.Duration;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalField;
 import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -424,10 +423,20 @@ public class Film
         this.rating = rating;
     }
 
+    /**
+     * Returns current value of {@link Film_#specialFeatures specialFeatures} attribute.
+     *
+     * @return current value of the {@link Film_#specialFeatures specialFeatures} attribute.
+     */
     public Set<SpecialFeature> getSpecialFeatures() {
         return specialFeatures;
     }
 
+    /**
+     * Replaces current value of {@link Film_#specialFeatures specialFeatures} attribute with specified value.
+     *
+     * @param specialFeatures new value for the {@link Film_#specialFeatures specialFeatures} attribute.
+     */
     public void setSpecialFeatures(final Set<SpecialFeature> specialFeatures) {
         this.specialFeatures = specialFeatures;
     }
@@ -535,18 +544,30 @@ public class Film
     private Rating rating;
 
     /**
+     * <blockquote site="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">
      * Lists which common special features are included on the DVD. Can be zero or more of: {@code Trailers},
      * {@code Commentaries}, {@code Deleted Scenes}, {@code Behind the Scenes}.
+     * </blockquote>
      */
     @Convert(converter = SpecialFeaturesConverter.class)
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_SPECIAL_FEATURES, nullable = true)
     private Set<SpecialFeature> specialFeatures;
 
+    /**
+     * Returns current value of {@link Film_#language language} attribute.
+     *
+     * @return current value of the {@link Film_#language language} attribute.
+     */
     public Language getLanguage() {
         return language;
     }
 
+    /**
+     * Replaces current value of {@link Film_#language language} attribute with specified value.
+     *
+     * @param language new value for the {@link Film_#language language} attribute.
+     */
     public void setLanguage(final Language language) {
         this.language = language;
         setLanguageId(
@@ -604,8 +625,8 @@ public class Film
     public void setRentalDurationAsPeriod(final Period rentalDurationAsPeriod) {
         setRentalDuration(
                 Optional.ofNullable(rentalDurationAsPeriod)
-                        .map(v -> v.get(ChronoUnit.DAYS))
-                        .map(Long::intValue)
+                        .map(____Utils::getDaysOf)
+                        .map(Math::toIntExact)
                         .orElse(null)
         );
     }
@@ -631,14 +652,12 @@ public class Film
      *
      * @param lengthAsDuration the duration, of {@link ChronoUnit#MINUTES minutes}, for the {@link Film_#length length}
      *                         attribute.
-     * @see java.time.temporal.TemporalAccessor#get(TemporalField)
-     * @see ChronoUnit#MINUTES
      */
-    public void getLengthAsDuration(final Duration lengthAsDuration) {
+    public void setLengthAsDuration(final Duration lengthAsDuration) {
         setLength(
                 Optional.ofNullable(lengthAsDuration)
-                        .map(d -> d.get(ChronoUnit.MINUTES))
-                        .map(Long::intValue)
+                        .map(____Utils::getMinutesOf)
+                        .map(Math::toIntExact)
                         .orElse(null)
         );
     }

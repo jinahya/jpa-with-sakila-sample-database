@@ -1,11 +1,15 @@
 package com.github.jinahya.persistence;
 
 import jakarta.persistence.EntityManager;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+
+@Slf4j
 class Film_IT
         extends _BaseEntityIT<Film, Integer> {
 
@@ -16,8 +20,8 @@ class Film_IT
         if (ThreadLocalRandom.current().nextBoolean()) {
             instance.setOriginalLanguage(Language_IT.newPersistedInstance(entityManager));
         }
+        assertThatBean(instance).isValid();
         entityManager.persist(instance);
-//        entityManager.flush();
         return instance;
     }
 
@@ -28,5 +32,6 @@ class Film_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(Film_IT::newPersistedInstance);
+        assertThatBean(instance).isValid();
     }
 }

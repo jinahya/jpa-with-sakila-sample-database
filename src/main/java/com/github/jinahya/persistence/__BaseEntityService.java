@@ -34,9 +34,8 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
     }
 
     /**
-     * Synchronize the persistence context to the underlying database.
+     * Invokes {@link EntityManager#flush() flush()} method on an injected instance of {@link EntityManager}.
      *
-     * @apiNote Documentation copied from {@link EntityManager#flush()}.
      * @see EntityManager#flush()
      */
     public void flush() {
@@ -117,13 +116,13 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
     }
 
     /**
-     * Finds all entity instances whose values of <em>id</em> attribute are greater than specified value.
+     * Finds all entity instances whose <em>id</em> attributes are greater than specified value.
      *
      * @param idExpressionMapper  a function for evaluating the path to the <em>id</em> attribute.
-     * @param idValueMinExclusive the lower exclusive value of the <em>id</em> attribute to compare.
+     * @param idValueMinExclusive the lower <em>exclusive</em> value of the <em>id</em> attribute to compare.
      * @param maxResults          an optional value for limiting the number of results; {@code null} for an unlimited
      *                            number of results.
-     * @return a list of entity instances found, ordered by the <em>id</em> attribute in ascending order.
+     * @return a list of entity instances, ordered by the <em>id</em> attribute in ascending order.
      */
     @NotNull
     List<@Valid @NotNull T> findAllByIdGreaterThan(
@@ -150,7 +149,16 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
         });
     }
 
-    @NotNull <V extends Comparable<? super V>> List<@Valid @NotNull T> findAllByAttribute(
+    /**
+     * Finds all entities by an attribute matching specified value.
+     *
+     * @param expressionMapper a function for evaluating the attribute.
+     * @param attributeValue   the value of the attribute to match.
+     * @param maxResults       a number of results to limit; {@code null} for an unlimited result.
+     * @param <V>              attribute type parameter
+     * @return a list of found entities.
+     */
+    @NotNull <V> List<@Valid @NotNull T> findAllByAttribute(
             @NotNull final Function<? super Root<T>, ? extends Expression<? extends V>> expressionMapper,
             @NotNull final V attributeValue, @Positive final Integer maxResults) {
         return applyEntityManager(em -> {
@@ -173,7 +181,19 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
         });
     }
 
-    @NotNull <V extends Comparable<? super V>> List<@Valid @NotNull T> findAllByAttributeIdGreaterThan(
+    /**
+     * Finds all entities whose specific attribute matches specified value and whose <em>id</em> attribute is greater
+     * than specified value.
+     *
+     * @param attributeExpressionMapper   a function for mapping a path to the attribute to match.
+     * @param attributeValue              the value of the target attribute to match.
+     * @param idAttributeExpressionMapper a function for mapping a path the <em>id</em> attribute.
+     * @param idValueMinExclusive         the lower exclusive <em>id</em> attribute value.
+     * @param maxResults                  a number of results to limit; {@code null} for an unlimited result.
+     * @param <V>                         attribute type parameter
+     * @return a list of found entities ordered by the <em>id</em> attribute in ascending order.
+     */
+    @NotNull <V> List<@Valid @NotNull T> findAllByAttributeIdGreaterThan(
             @NotNull final Function<? super Root<T>, ? extends Expression<? extends V>> attributeExpressionMapper,
             @NotNull final V attributeValue,
             @NotNull final Function<? super Root<T>, ? extends Expression<? extends U>> idAttributeExpressionMapper,
@@ -188,7 +208,7 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
             criteria.where(
                     builder.and(
                             builder.equal(attributeExpression, attributeValue),
-                            builder.equal(idAttributeExpression, idValueMinExclusive)
+                            builder.greaterThan(idAttributeExpression, idValueMinExclusive)
                     )
             );
             criteria.orderBy(builder.asc(idAttributeExpression));
@@ -209,6 +229,4 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
      * The type of id of {@link #entityClass}.
      */
     final Class<U> idClass;
-
-    private String tableName;
 }
