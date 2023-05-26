@@ -10,7 +10,7 @@ class _MyFilmIT
         extends __PersistenceIT {
 
     /**
-     * 영화 '나에게 오라' (1996, 김영빈) 에 대한 정보를 추가한다.
+     * 영화 '나에게 오라 (1996, 김영빈)' 대한 정보를 추가한다.
      *
      * @see <a href="https://movie.daum.net/moviedb/main?movieId=196">나에게 오라 (1996, 김영빈)</a>
      */
