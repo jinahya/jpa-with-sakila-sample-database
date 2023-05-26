@@ -28,8 +28,9 @@ class Language_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(Language_IT::newPersistedInstance);
-        assertThat(instance).isNotNull();
-        assertThat(instance.getLanguageId()).isNotNull();
+        assertThat(instance).isNotNull().satisfies(i -> {
+            assertThat(i.getLanguageId()).isNotNull();
+        });
         assertThatBean(instance).isValid();
     }
 }
