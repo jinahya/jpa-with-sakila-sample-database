@@ -5,10 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 
+import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static org.assertj.core.api.Assertions.assertThat;
+
 class Rental_IT
         extends _BaseEntityIT<Rental, Integer> {
 
-    public static Rental newPersistedInstance(final EntityManager entityManager, final Customer customer) {
+    static Rental newPersistedInstance(final EntityManager entityManager, final Customer customer) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         Objects.requireNonNull(customer, "customer is null");
         final var instance = new Rental_Randomizer().getRandomValue();
@@ -16,24 +19,26 @@ class Rental_IT
         instance.setInventory(Inventory_IT.newPersistedInstance(entityManager, store));
         instance.setCustomer(customer);
         instance.setStaff(Staff_IT.newPersistedInstance(entityManager, store));
+        assertThatBean(instance).isValid();
         entityManager.persist(instance);
-//        entityManager.flush();
+        entityManager.flush();
         return instance;
     }
 
-    public static Rental newPersistedInstance(final EntityManager entityManager, final Store store) {
+    static Rental newPersistedInstance(final EntityManager entityManager, final Store store) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         Objects.requireNonNull(store, "store is null");
         final var instance = new Rental_Randomizer().getRandomValue();
         instance.setInventory(Inventory_IT.newPersistedInstance(entityManager, store));
         instance.setCustomer(Customer_IT.newPersistedInstance(entityManager, store));
         instance.setStaff(Staff_IT.newPersistedInstance(entityManager, store));
+        assertThatBean(instance).isValid();
         entityManager.persist(instance);
         entityManager.flush();
         return instance;
     }
 
-    public static Rental newPersistedInstance(final EntityManager entityManager) {
+    static Rental newPersistedInstance(final EntityManager entityManager) {
         return newPersistedInstance(entityManager, Store_IT.newPersistedInstance(entityManager));
     }
 
@@ -44,5 +49,7 @@ class Rental_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(Rental_IT::newPersistedInstance);
+        assertThat(instance).isNotNull();
+        assertThatBean(instance).isValid();
     }
 }

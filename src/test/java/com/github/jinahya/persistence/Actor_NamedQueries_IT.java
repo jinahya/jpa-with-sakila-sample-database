@@ -91,7 +91,7 @@ class Actor_NamedQueries_IT
         }
     }
 
-    @DisplayName(ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN)
+    @DisplayName(ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN)
     @Nested
     class FindAllByActorIdGreaterThanTest {
 
@@ -100,7 +100,7 @@ class Actor_NamedQueries_IT
             final var actorIdMinExclusive = 10;
             final var list = applyEntityManager(
                     em -> em.createNamedQuery(
-                                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+                                    ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
                                     Actor.class
                             )
                             .setParameter("actorIdMinExclusive", actorIdMinExclusive)
@@ -120,7 +120,7 @@ class Actor_NamedQueries_IT
             final var maxResults = current().nextInt(8, 16);
             final var list = applyEntityManager(
                     em -> em.createNamedQuery(
-                                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+                                    ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
                                     Actor.class
                             )
                             .setParameter("actorIdMinExclusive", actorIdMinExclusive)
@@ -143,7 +143,7 @@ class Actor_NamedQueries_IT
                 final var actorIdMinExclusive = i.get();
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(
-                                        ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+                                        ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
                                         Actor.class
                                 )
                                 .setParameter("actorIdMinExclusive", actorIdMinExclusive)

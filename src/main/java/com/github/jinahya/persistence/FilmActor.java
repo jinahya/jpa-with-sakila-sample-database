@@ -39,8 +39,16 @@ public class FilmActor
      */
     public static final String TABLE_NAME = "film_actor";
 
+    /**
+     * The name of the table column to which the {@link FilmActor_#actorId actorId} attribute maps. The value is
+     * {@value}.
+     */
     public static final String COLUMN_NAME_ACTOR_ID = Actor.COLUMN_NAME_ACTOR_ID;
 
+    /**
+     * The name of the table column to which the {@link FilmActor_#filmId filmId} attribute maps. The value is
+     * {@value}.
+     */
     public static final String COLUMN_NAME_FILM_ID = Film.COLUMN_NAME_FILM_ID;
 
     /**

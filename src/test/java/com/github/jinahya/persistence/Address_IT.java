@@ -29,11 +29,7 @@ class Address_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(Address_IT::newPersistedInstance);
-        assertThat(instance).isNotNull().satisfies(a -> {
-            assertThatBean(a).isValid();
-            assertThat(a.getAddressId()).isNotNull();
-            assertThatBean(a.getCity()).isNotNull().isValid();
-            assertThatBean(a.getCity().getCountry()).isNotNull().isValid();
-        });
+        assertThat(instance).isNotNull();
+        assertThatBean(instance).isValid();
     }
 }

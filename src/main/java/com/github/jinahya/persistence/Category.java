@@ -51,6 +51,12 @@ public class Category
      */
     public static final String COLUMN_NAME_CATEGORY_ID = "category_id";
 
+    public static Category of(final Integer categoryId) {
+        final var instance = new Category();
+        instance.categoryId = categoryId;
+        return instance;
+    }
+
     public static Category of(final String name) {
         final var instance = new Category();
         instance.name = name;

@@ -19,7 +19,7 @@ class Customer_IT
         instance.setAddress(Address_IT.newPersistedInstance(entityManager));
         assertThatBean(instance).isValid();
         entityManager.persist(instance);
-//        entityManager.flush();
+        entityManager.flush();
         return instance;
     }
 

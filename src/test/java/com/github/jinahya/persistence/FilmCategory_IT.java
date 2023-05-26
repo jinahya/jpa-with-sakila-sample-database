@@ -18,7 +18,7 @@ class FilmCategory_IT
         instance.setCategory(Category_IT.newPersistedInstance(entityManager));
         assertThatBean(instance).isValid();
         entityManager.persist(instance);
-//        entityManager.flush();
+        entityManager.flush();
         return instance;
     }
 

@@ -16,8 +16,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 /**
  * An entity class for mapping {@value Actor#TABLE_NAME} table.
  * <p>
- * <blockquote>
- * The {@value Actor#TABLE_NAME} table lists information for all actors. <br/> The {@value Actor#TABLE_NAME} table is
+ * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-actor.html">
+ * The {@value Actor#TABLE_NAME} table lists information for all actors.<br/>The {@value Actor#TABLE_NAME} table is
  * joined to the {@value Film#TABLE_NAME} table by means of the {@value FilmActor#TABLE_NAME} table.
  * </blockquote>
  *
@@ -26,17 +26,36 @@ import jakarta.validation.constraints.PositiveOrZero;
  * @see ActorConstants
  */
 @NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
-            query = "SELECT a FROM Actor AS a"
-                    + " WHERE a.lastName = :lastName AND a.actorId > :actorIdMinExclusive"
-                    + " ORDER BY a.actorId ASC")
+            query = """
+                    SELECT e FROM Actor AS e
+                    WHERE e.lastName = :lastName
+                          AND e.actorId > :actorIdMinExclusive
+                    ORDER BY e.actorId ASC
+                    """)
 @NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME,
-            query = "SELECT a FROM Actor AS a WHERE a.lastName = :lastName")
-@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
-            query = "SELECT a FROM Actor AS a WHERE a.actorId > :actorIdMinExclusive ORDER BY a.actorId ASC")
-@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL,
-            query = "SELECT a FROM Actor AS a")
+            query = """
+                    SELECT e
+                    FROM Actor AS e
+                    WHERE e.lastName = :lastName
+                    """)
+@NamedQuery(name = ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+            query = """
+                    SELECT e
+                    FROM Actor AS e
+                    WHERE e.actorId > :actorIdMinExclusive
+                    ORDER BY e.actorId ASC
+                    """)
 @NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID,
-            query = "SELECT a FROM Actor AS a WHERE a.actorId = :actorId")
+            query = """
+                    SELECT e
+                    FROM Actor AS e
+                    WHERE e.actorId = :actorId
+                    """)
+@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL,
+            query = """
+                    SELECT e
+                    FROM Actor AS e
+                    """)
 @Entity
 @Table(name = Actor.TABLE_NAME, indexes = {@Index(columnList = Actor.COLUMN_NAME_LAST_NAME)})
 public class Actor
@@ -48,17 +67,19 @@ public class Actor
     public static final String TABLE_NAME = "actor";
 
     /**
-     * The name of the table column to which the {@value Actor_#ACTOR_ID} attribute maps. The value is {@value}.
+     * The name of the table column to which the {@link Actor_#actorId actorId} attribute maps. The value is {@value}.
      */
     public static final String COLUMN_NAME_ACTOR_ID = "actor_id";
 
     /**
-     * The name of the table column to which the {@value Actor_#FIRST_NAME} attribute maps. The value is {@value}.
+     * The name of the table column to which the {@link Actor_#firstName firstName} attribute maps. The value is
+     * {@value}.
      */
     public static final String COLUMN_NAME_FIRST_NAME = "first_name";
 
     /**
-     * The name of the table column to which the {@value Actor_#LAST_NAME} attribute maps. The value is {@value}.
+     * The name of the table column to which the {@link Actor_#lastName lastName} attribute maps. The value is
+     * {@value}.
      */
     public static final String COLUMN_NAME_LAST_NAME = "last_name";
 
@@ -153,19 +174,23 @@ public class Actor
     }
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-actor.html">
      * A surrogate primary key used to uniquely identify each actor in the table.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = COLUMN_NAME_ACTOR_ID, nullable = false,
-            insertable = true, // EclipseLink
+            insertable = /*false*/true, // EclipseLink
             updatable = false)
     private Integer actorId;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-actor.html">
      * The actor first name.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -173,7 +198,9 @@ public class Actor
     private String firstName;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-actor.html">
      * The actor last name.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)

@@ -12,12 +12,12 @@ import java.util.Optional;
 /**
  * An abstract mapped superclass with {@link _BaseEntity_#lastUpdate lastUpdate} attribute.
  *
- * @param <U> id type parameter
+ * @param <ID> the type of <em>id</em> of this entity class.
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 @MappedSuperclass
-abstract class _BaseEntity<U>
-        extends __BaseEntity<U> {
+abstract class _BaseEntity<ID extends Comparable<? super ID>>
+        extends __BaseEntity<ID> {
 
     /**
      * Creates a new instance.
@@ -26,6 +26,11 @@ abstract class _BaseEntity<U>
         super();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     public String toString() {
         return super.toString() + '{' +

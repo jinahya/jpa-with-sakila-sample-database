@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import static java.beans.Introspector.getBeanInfo;
 import static org.assertj.core.api.Assertions.assertThat;
 
-abstract class __BaseEntityTest<T extends __BaseEntity<U>, U>
+abstract class __BaseEntityTest<T extends __BaseEntity<U >, U extends Comparable<? super U>>
         extends ___BaseEntityTestBase<T, U> {
 
     __BaseEntityTest(final Class<T> entityClass, final Class<U> idClass) {

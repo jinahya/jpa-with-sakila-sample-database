@@ -67,7 +67,7 @@
     <version.org.projectlombok>1.18.26</version.org.projectlombok>
     <version.jakarta.persistence-api>3.1.0</version.jakarta.persistence-api>
     <version.jakarta.validation-api>3.0.2</version.jakarta.validation-api>
-    <version.jakarta.validation-tck>3.0.1</version.jakarta.validation-tck>
+    <!--    <version.jakarta.validation-tck>3.0.1</version.jakarta.validation-tck>-->
   </properties>
 
   <dependencyManagement>
@@ -178,13 +178,19 @@
       <artifactId>assertj-core</artifactId>
       <version>3.23.1</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>net.bytebuddy</groupId>
+          <artifactId>byte-buddy</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.awaitility</groupId>
-      <artifactId>awaitility</artifactId>
-      <version>4.2.0</version>
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.awaitility</groupId>-->
+<!--      <artifactId>awaitility</artifactId>-->
+<!--      <version>4.2.0</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency> <!-- Jakarta Expression Language; required by hibernate-validator -->
       <groupId>org.glassfish.expressly</groupId>
       <artifactId>expressly</artifactId>
@@ -299,9 +305,9 @@
           <configuration>
             <doclint>all</doclint>
             <show>package</show>
-            <sourceFileExcludes>
-              <exclude>**/*_.java</exclude>
-            </sourceFileExcludes>
+<!--            <sourceFileExcludes>-->
+<!--              <exclude>**/*_.java</exclude>-->
+<!--            </sourceFileExcludes>-->
             <links>
               <link>https://javadoc.io/doc/jakarta.persistence/jakarta.persistence-api/${version.jakarta.persistence-api}</link>
               <link>https://javadoc.io/doc/jakarta.validation/jakarta.validation-api/${version.jakarta.validation-api}</link>
@@ -610,6 +616,12 @@
           <groupId>org.hibernate.orm</groupId>
           <artifactId>hibernate-core</artifactId>
           <scope>test</scope>
+          <exclusions>
+            <exclusion>
+              <groupId>net.bytebuddy</groupId>
+              <artifactId>byte-buddy</artifactId>
+            </exclusion>
+          </exclusions>
         </dependency>
       </dependencies>
       <build>

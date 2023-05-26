@@ -30,6 +30,9 @@ import java.util.Objects;
 public class CustomerList
         extends __BaseEntity<Integer> {
 
+    /**
+     * The name of the database view to which this class maps. The value is {@value}.
+     */
     public static final String VIEW_NAME = "customer_list";
 
     public static final String COLUMN_NAME_ID = "ID";
@@ -131,7 +134,8 @@ public class CustomerList
     private String address;
 
     @Basic(optional = true)
-    @Column(name = "`zip code`", nullable = true, length = 10, insertable = false, updatable = false)
+//    @Column(name = "`zip code`", nullable = true, length = 10, insertable = false, updatable = false)
+    @Column(name = "\"zip code\"", nullable = true, length = 10, insertable = false, updatable = false)
     private String zipCode;
 
     @NotNull

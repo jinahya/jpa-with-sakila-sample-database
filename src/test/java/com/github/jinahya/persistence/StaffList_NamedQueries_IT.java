@@ -18,14 +18,14 @@ class StaffList_NamedQueries_IT
         super(StaffList.class, Integer.class);
     }
 
-    @DisplayName(StaffListConstants.NAMED_QUERY_FIND_ALL)
+    @DisplayName(StaffListConstants.QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
         @Test
         void __() {
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(StaffListConstants.NAMED_QUERY_FIND_ALL, StaffList.class)
+                    em -> em.createNamedQuery(StaffListConstants.QUERY_FIND_ALL, StaffList.class)
                             .getResultList()
             );
             assertThat(list)
@@ -37,7 +37,7 @@ class StaffList_NamedQueries_IT
         void __WithMaxResults() {
             final int maxResults = ThreadLocalRandom.current().nextInt(1, 8);
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(StaffListConstants.NAMED_QUERY_FIND_ALL, StaffList.class)
+                    em -> em.createNamedQuery(StaffListConstants.QUERY_FIND_ALL, StaffList.class)
                             .setMaxResults(maxResults)
                             .getResultList()
             );
@@ -48,7 +48,7 @@ class StaffList_NamedQueries_IT
         }
     }
 
-    @DisplayName(StaffListConstants.NAMED_QUERY_FIND_BY_ID)
+    @DisplayName(StaffListConstants.QUERY_FIND_BY_ID)
     @Nested
     class FindByIdTest {
 
@@ -58,7 +58,7 @@ class StaffList_NamedQueries_IT
             final var id = 0;
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(StaffListConstants.NAMED_QUERY_FIND_BY_ID, StaffList.class)
+                            em -> em.createNamedQuery(StaffListConstants.QUERY_FIND_BY_ID, StaffList.class)
                                     .setParameter("id", id)
                                     .getSingleResult()
                     )
@@ -70,7 +70,7 @@ class StaffList_NamedQueries_IT
         void __1() {
             final var id = 1;
             final var single = applyEntityManager(
-                    em -> em.createNamedQuery(StaffListConstants.NAMED_QUERY_FIND_BY_ID, StaffList.class)
+                    em -> em.createNamedQuery(StaffListConstants.QUERY_FIND_BY_ID, StaffList.class)
                             .setParameter("id", id)
                             .getSingleResult()
             );
@@ -83,12 +83,12 @@ class StaffList_NamedQueries_IT
         @Test
         void __() {
             final var all = applyEntityManager(
-                    em -> em.createNamedQuery(StaffListConstants.NAMED_QUERY_FIND_ALL, StaffList.class)
+                    em -> em.createNamedQuery(StaffListConstants.QUERY_FIND_ALL, StaffList.class)
                             .getResultList()
             );
             for (final var each : all) {
                 final var single = applyEntityManager(
-                        em -> em.createNamedQuery(StaffListConstants.NAMED_QUERY_FIND_BY_ID, StaffList.class)
+                        em -> em.createNamedQuery(StaffListConstants.QUERY_FIND_BY_ID, StaffList.class)
                                 .setParameter("id", each.getId())
                                 .getSingleResult()
                 );
@@ -99,7 +99,7 @@ class StaffList_NamedQueries_IT
         }
     }
 
-    @DisplayName(StaffListConstants.NAMED_QUERY_FIND_ALL_BY_ID_GREATER_THAN)
+    @DisplayName(StaffListConstants.QUERY_FIND_ALL_BY_ID_GREATER_THAN)
     @Nested
     class FindAllByIdGreaterThanTest {
 
@@ -108,8 +108,11 @@ class StaffList_NamedQueries_IT
             final int maxResults = ThreadLocalRandom.current().nextInt(1, 3);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(StaffListConstants.NAMED_QUERY_FIND_ALL_BY_ID_GREATER_THAN, StaffList.class)
-                                .setParameter("id", i.get())
+                        em -> em.createNamedQuery(
+                                        StaffListConstants.QUERY_FIND_ALL_BY_ID_GREATER_THAN,
+                                        StaffList.class
+                                )
+                                .setParameter("idMinExclusive", i.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

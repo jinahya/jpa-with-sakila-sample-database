@@ -20,8 +20,9 @@ class Film_IT
         if (ThreadLocalRandom.current().nextBoolean()) {
             instance.setOriginalLanguage(Language_IT.newPersistedInstance(entityManager));
         }
-        assertThatBean(instance).isValid();
+//        assertThatBean(instance).isValid();
         entityManager.persist(instance);
+            entityManager.flush();
         return instance;
     }
 

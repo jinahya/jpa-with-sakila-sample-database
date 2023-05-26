@@ -28,16 +28,16 @@ HAVING c > 1
 ORDER BY c DESC
 ;
 
--- Actor_findByActorId
-SELECT *
-FROM actor
-WHERE actor_id = :actor_id
-;
-
 -- Actor_findAll
 SELECT *
 FROM actor
 LIMIT :limit
+;
+
+-- Actor_findByActorId
+SELECT *
+FROM actor
+WHERE actor_id = :actor_id
 ;
 
 -- Actor_findAllByActorIdGreaterThan

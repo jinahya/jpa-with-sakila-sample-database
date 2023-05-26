@@ -4,9 +4,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Table;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.security.MessageDigest;
@@ -35,6 +38,7 @@ import java.util.function.Supplier;
 import static java.lang.invoke.MethodHandles.privateLookupIn;
 import static java.lang.invoke.MethodType.methodType;
 
+@Slf4j
 final class ____Utils {
 
     /**
@@ -191,7 +195,16 @@ final class ____Utils {
                     if (m.equals(method)) {
                         throw new UnsupportedOperationException("you're not allowed to method " + obj);
                     }
-                    return m.invoke(obj, a);
+                    try {
+                        return m.invoke(obj, a);
+                    } catch (final InvocationTargetException ite) {
+                        if (ite.getTargetException() instanceof ConstraintViolationException cve) {
+                            cve.getConstraintViolations().forEach(cv -> {
+                                log.error("constraint violation: {}", cv);
+                            });
+                        }
+                        throw ite;
+                    }
                 }
         );
     }

@@ -81,7 +81,7 @@ public class ActorService
         }
         return applyEntityManager(em -> {
             final var query = em.createNamedQuery(
-                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
+                    ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
                     Actor.class
             );
             if (maxResults != null) {

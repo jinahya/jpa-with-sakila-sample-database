@@ -6,18 +6,24 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
  * A class for identifying {@link FilmCategory} entity.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see FilmCategory
  */
 public class FilmCategoryId
-        implements Serializable {
+        implements Serializable, Comparable<FilmCategoryId> {
 
     @Serial
     private static final long serialVersionUID = 3359964322700774044L;
+
+    private static final Comparator<FilmCategoryId> NATUAL_ORDER =
+            Comparator.comparing(FilmCategoryId::getFilmId)
+                    .thenComparing(FilmCategoryId::getCategoryId);
 
     /**
      * Creates a new instance with specified values.
@@ -28,23 +34,23 @@ public class FilmCategoryId
      */
     public static FilmCategoryId of(final Integer filmId, final Integer categoryId) {
         final var instance = new FilmCategoryId();
-        instance.filmId = filmId;
-        instance.categoryId = categoryId;
+        instance.setFilmId(filmId);
+        instance.setCategoryId(categoryId);
         return instance;
     }
 
     /**
      * Creates a new instance.
      */
-    protected FilmCategoryId() {
+    public FilmCategoryId() {
         super();
     }
 
     @Override
     public String toString() {
         return super.toString() + '{' +
-               "filmId=" + filmId +
-               ",categoryId=" + categoryId +
+               "filmId=" + getFilmId() +
+               ",categoryId=" + getCategoryId() +
                '}';
     }
 
@@ -52,31 +58,54 @@ public class FilmCategoryId
     public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof FilmCategoryId that)) return false;
-        return Objects.equals(filmId, that.filmId) &&
-               Objects.equals(categoryId, that.categoryId);
+        return Objects.equals(getFilmId(), that.getFilmId()) &&
+               Objects.equals(getCategoryId(), that.getCategoryId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(filmId, categoryId);
+        return Objects.hash(getFilmId(), getCategoryId());
+    }
+
+    @Override
+    public int compareTo(final FilmCategoryId o) {
+        return NATUAL_ORDER.compare(this, o);
     }
 
     /**
      * Returns current value of {@code filmId} property.
      *
-     * @return current value of {@code filmId} property.
+     * @return current value of the {@code filmId} property.
      */
     public Integer getFilmId() {
         return filmId;
     }
 
     /**
+     * Replaces current value of {@code filmId} property with specified value.
+     *
+     * @param filmId new value for the {@code filmId} property.
+     */
+    void setFilmId(final Integer filmId) {
+        this.filmId = filmId;
+    }
+
+    /**
      * Returns current value of {@code categoryId} property.
      *
-     * @return current value of {@code categoryId} property.
+     * @return current value of the {@code categoryId} property.
      */
     public Integer getCategoryId() {
         return categoryId;
+    }
+
+    /**
+     * Replaces current value of {@code categoryId} property with specified value.
+     *
+     * @param categoryId new value for the {@code categoryId} property.
+     */
+    void setCategoryId(final Integer categoryId) {
+        this.categoryId = categoryId;
     }
 
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)

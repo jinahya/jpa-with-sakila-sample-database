@@ -17,6 +17,7 @@ class Language_IT
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new Language_Randomizer().getRandomValue();
         entityManager.persist(instance);
+        entityManager.flush();
         return instance;
     }
 

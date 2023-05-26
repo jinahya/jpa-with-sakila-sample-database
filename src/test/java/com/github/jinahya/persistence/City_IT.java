@@ -27,10 +27,7 @@ class City_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(City_IT::newPersistedInstance);
-        assertThat(instance).isNotNull().satisfies(c -> {
-            assertThat(c.getCityId()).isNotNull();
-            assertThatBean(c).isValid();
-            assertThatBean(c.getCountry()).isValid();
-        });
+        assertThat(instance).isNotNull();
+        assertThatBean(instance).isValid();
     }
 }

@@ -7,7 +7,7 @@ import java.util.Objects;
 import static org.mockito.Mockito.spy;
 
 @Slf4j
-abstract class ___BaseEntityTestBase<T extends __BaseEntity<U>, U> {
+abstract class ___BaseEntityTestBase<T extends __BaseEntity<U>, U extends Comparable<? super U>> {
 
     ___BaseEntityTestBase(final Class<T> entityClass, final Class<U> idClass) {
         super();

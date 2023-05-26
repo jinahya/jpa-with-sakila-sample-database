@@ -6,6 +6,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Objects;
 
 /**
@@ -14,10 +15,15 @@ import java.util.Objects;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
 public class FilmActorId
-        implements Serializable {
+        implements Serializable,
+                   Comparable<FilmActorId> {
 
     @Serial
     private static final long serialVersionUID = -3335863482033861830L;
+
+    private static final Comparator<FilmActorId> NATURAL_ORDER =
+            Comparator.comparing(FilmActorId::getActorId)
+                    .thenComparing(FilmActorId::getFilmId);
 
     /**
      * Creates a new instance with specified values of {@code actorId} and {@code filmId}.
@@ -28,8 +34,8 @@ public class FilmActorId
      */
     public static FilmActorId of(final Integer actorId, final Integer filmId) {
         final var instance = new FilmActorId();
-        instance.actorId = actorId;
-        instance.filmId = filmId;
+        instance.setActorId(actorId);
+        instance.setFilmId(filmId);
         return instance;
     }
 
@@ -52,12 +58,18 @@ public class FilmActorId
     public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof FilmActorId that)) return false;
-        return Objects.equals(actorId, that.actorId) && Objects.equals(filmId, that.filmId);
+        return Objects.equals(actorId, that.actorId) &&
+               Objects.equals(filmId, that.filmId);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(actorId, filmId);
+    }
+
+    @Override
+    public int compareTo(final FilmActorId o) {
+        return NATURAL_ORDER.compare(this, o);
     }
 
     /**
@@ -74,8 +86,7 @@ public class FilmActorId
      *
      * @param actorId new value for the {@code actorId} property.
      */
-    // TODO: narrow the scope of this method!
-    public void setActorId(final Integer actorId) {
+    void setActorId(final Integer actorId) {
         this.actorId = actorId;
     }
 
@@ -93,8 +104,7 @@ public class FilmActorId
      *
      * @param filmId new value for the {@code filmId} property.
      */
-    // TODO: narrow the scope of this method!
-    public void setFilmId(final Integer filmId) {
+    void setFilmId(final Integer filmId) {
         this.filmId = filmId;
     }
 

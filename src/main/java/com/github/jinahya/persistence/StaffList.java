@@ -27,12 +27,24 @@ import java.util.Objects;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-views-staff-list.html">5.2.7 The staff_list
  * View</a>
  */
-@NamedQuery(name = StaffListConstants.NAMED_QUERY_FIND_ALL_BY_ID_GREATER_THAN,
-            query = "SELECT e FROM StaffList AS e WHERE e.id > :id ORDER BY e.id ASC")
-@NamedQuery(name = StaffListConstants.NAMED_QUERY_FIND_BY_ID,
-            query = "SELECT e FROM StaffList AS e WHERE e.id = :id")
-@NamedQuery(name = StaffListConstants.NAMED_QUERY_FIND_ALL,
-            query = "SELECT e FROM StaffList AS e")
+@NamedQuery(name = StaffListConstants.QUERY_FIND_ALL_BY_ID_GREATER_THAN,
+            query = """
+                    SELECT e
+                    FROM StaffList AS e
+                    WHERE e.id > :idMinExclusive
+                    ORDER BY e.id ASC
+                    """)
+@NamedQuery(name = StaffListConstants.QUERY_FIND_BY_ID,
+            query = """
+                    SELECT e
+                    FROM StaffList AS e
+                    WHERE e.id = :id
+                    """)
+@NamedQuery(name = StaffListConstants.QUERY_FIND_ALL,
+            query = """
+                    SELECT e
+                    FROM StaffList AS e
+                    """)
 @Entity
 @Table(name = StaffList.VIEW_NAME)
 public class StaffList
@@ -118,7 +130,9 @@ public class StaffList
     @NotNull
     @Id
     @Basic(optional = false)
-    @Column(name = "ID", nullable = false, insertable = false, updatable = false)
+    @Column(name = "ID", nullable = false,
+            insertable = /*false*/true, // EclipseLink
+            updatable = false)
     private Integer id;
 
     @Basic(optional = true)
@@ -131,7 +145,8 @@ public class StaffList
     private String address;
 
     @Basic(optional = true)
-    @Column(name = "zip code", nullable = true, length = 10, insertable = false, updatable = false)
+//    @Column(name = "`zip code`", nullable = true, length = 10, insertable = false, updatable = false)
+    @Column(name = "\"zip code\"", nullable = true, length = 10, insertable = false, updatable = false)
     private String zipCode;
 
     @NotNull

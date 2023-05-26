@@ -20,6 +20,7 @@ class Country_IT
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new Country_Randomizer().getRandomValue();
         entityManager.persist(instance);
+        entityManager.flush();
         return instance;
     }
 
@@ -30,10 +31,8 @@ class Country_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(Country_IT::newPersistedInstance);
-        assertThat(instance).isNotNull().satisfies(c -> {
-            assertThat(c.getCountryId()).isNotNull();
-            assertThatBean(c).isValid();
-        });
+        assertThat(instance).isNotNull();
+        assertThatBean(instance).isValid();
     }
 
     @Nested

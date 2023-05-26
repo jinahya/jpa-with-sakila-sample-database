@@ -12,7 +12,7 @@ import java.util.function.Function;
 @EnableAutoWeld
 @AddPackages({____EntityManagerFactoryProducer.class})
 @Slf4j
-abstract class __BaseEntityIT<T extends __BaseEntity<U>, U>
+abstract class __BaseEntityIT<T extends __BaseEntity<U>, U extends Comparable<? super U>>
         extends ___BaseEntityTestBase<T, U> {
 
     __BaseEntityIT(final Class<T> entityClass, final Class<U> idClass) {

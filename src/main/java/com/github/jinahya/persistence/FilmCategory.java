@@ -9,7 +9,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -20,17 +19,15 @@ import java.util.Optional;
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
  * <p>
- * <blockquote>
- * <p>The {@value #TABLE_NAME} table is used to support a many-to-many relationship between films and categories. For
- * each category applied to a film, there will be one row in the {@value #TABLE_NAME} table listing the category and
- * film.</p>
- * <p>The {@value #TABLE_NAME} table refers to the {@value Film#TABLE_NAME} and {@link Category#TABLE_NAME} tables
- * using foreign keys</p>.
- * <cite><a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">5.1.9 The
- * film_category Table</a></cite>
+ * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">
+ * The {@value #TABLE_NAME} table is used to support a many-to-many relationship between films and categories. For each
+ * category applied to a film, there will be one row in the {@value #TABLE_NAME} table listing the category and
+ * film.<br/>The {@value #TABLE_NAME} table refers to the {@value Film#TABLE_NAME} and {@value Category#TABLE_NAME}
+ * tables using foreign keys.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see FilmCategoryId
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">5.1.9 The film_category
  * Table</a>
  */
@@ -42,9 +39,9 @@ import java.util.Optional;
             query = "SELECT e FROM FilmCategory AS e WHERE e.categoryId = :categoryId")
 @NamedQuery(name = "FilmCategory_findAllByFilmId",
             query = "SELECT e FROM FilmCategory AS e WHERE e.filmId = :filmId")
+@IdClass(FilmCategoryId.class)
 @Entity
 @Table(name = FilmCategory.TABLE_NAME)
-@IdClass(FilmCategoryId.class)
 public class FilmCategory
         extends _BaseEntity<FilmCategoryId> {
 
@@ -53,8 +50,16 @@ public class FilmCategory
      */
     public static final String TABLE_NAME = "film_category";
 
+    /**
+     * The name of the table column to which the {@link FilmCategory_#filmId filmId} attribute maps. The value is
+     * {@value}.
+     */
     public static final String COLUMN_NAME_FILM_ID = Film.COLUMN_NAME_FILM_ID;
 
+    /**
+     * The name of the table column to which the {@link FilmCategory_#categoryId categoryId} attribute maps. The value
+     * is {@value}.
+     */
     public static final String COLUMN_NAME_CATEGORY_ID = Category.COLUMN_NAME_CATEGORY_ID;
 
     /**
@@ -64,6 +69,11 @@ public class FilmCategory
         super();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     public String toString() {
         return super.toString() + '{' +
@@ -84,6 +94,11 @@ public class FilmCategory
         return Objects.hashCode(identifier());
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
     @Override
     FilmCategoryId identifier() {
         return FilmCategoryId.of(filmId, categoryId);
@@ -92,7 +107,7 @@ public class FilmCategory
     /**
      * Returns current value of {@link FilmCategory_#filmId filmId} attribute.
      *
-     * @return current value of {@link FilmCategory_#filmId filmId} attribute.
+     * @return current value of the {@link FilmCategory_#filmId filmId} attribute.
      */
     public Integer getFilmId() {
         return filmId;
@@ -103,14 +118,14 @@ public class FilmCategory
      *
      * @param filmId new value for the {@link FilmCategory_#filmId filmId} attribute.
      */
-    protected void setFilmId(final Integer filmId) {
+    void setFilmId(final Integer filmId) {
         this.filmId = filmId;
     }
 
     /**
      * Returns current value of {@link FilmCategory_#categoryId categoryId} attribute.
      *
-     * @return current value of {@link FilmCategory_#categoryId categoryId} attribute.
+     * @return current value of the {@link FilmCategory_#categoryId categoryId} attribute.
      */
     public Integer getCategoryId() {
         return categoryId;
@@ -121,12 +136,14 @@ public class FilmCategory
      *
      * @param categoryId new current value for the {@link FilmCategory_#categoryId categoryId} attribute.
      */
-    protected void setCategoryId(final Integer categoryId) {
+    void setCategoryId(final Integer categoryId) {
         this.categoryId = categoryId;
     }
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">
      * A foreign key identifying the film.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
@@ -136,7 +153,9 @@ public class FilmCategory
     private Integer filmId;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">
      * A foreign key identifying the category.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
@@ -168,7 +187,11 @@ public class FilmCategory
         );
     }
 
-    @Valid
+    /**
+     * .
+     *
+     * @see Film#of(Integer)
+     */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
     private Film film;
@@ -196,7 +219,11 @@ public class FilmCategory
         );
     }
 
-    @Valid
+    /**
+     * .
+     *
+     * @see Category#of(Integer)
+     */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_CATEGORY_ID, nullable = false, insertable = false, updatable = false)
     private Category category;

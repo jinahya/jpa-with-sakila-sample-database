@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
  * @param <T> entity type parameter
  * @param <U> id type parameter
  */
-abstract class _BaseEntityTest<T extends _BaseEntity<U>, U>
+abstract class _BaseEntityTest<T extends _BaseEntity<U>, U extends Comparable<? super U>>
         extends __BaseEntityTest<T, U> {
 
     /**
