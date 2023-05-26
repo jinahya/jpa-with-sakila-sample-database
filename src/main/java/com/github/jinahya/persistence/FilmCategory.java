@@ -62,6 +62,13 @@ public class FilmCategory
      */
     public static final String COLUMN_NAME_CATEGORY_ID = Category.COLUMN_NAME_CATEGORY_ID;
 
+    public static FilmCategory of(final Film film, final Category category) {
+        final var instance = new FilmCategory();
+        instance.setFilm(film);
+        instance.setCategory(category);
+        return instance;
+    }
+
     /**
      * Creates a new instance.
      */

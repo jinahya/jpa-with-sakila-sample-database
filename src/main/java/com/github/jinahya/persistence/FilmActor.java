@@ -8,7 +8,6 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -50,6 +49,13 @@ public class FilmActor
      * {@value}.
      */
     public static final String COLUMN_NAME_FILM_ID = Film.COLUMN_NAME_FILM_ID;
+
+    public static FilmActor of(final Actor actor, final Film film) {
+        final var instance = new FilmActor();
+        instance.setActor(actor);
+        instance.setFilm(film);
+        return instance;
+    }
 
     /**
      * Creates a new instance.
@@ -162,10 +168,24 @@ public class FilmActor
         );
     }
 
-    @Valid // without @NotNull
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_ACTOR_ID, nullable = false, insertable = false, updatable = false)
     private Actor actor;
 
-    // TODO: Map for an Film!
+    public Film getFilm() {
+        return film;
+    }
+
+    public void setFilm(final Film film) {
+        this.film = film;
+        setFilmId(
+                Optional.ofNullable(this.film)
+                        .map(Film::getFilmId)
+                        .orElse(null)
+        );
+    }
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
+    private Film film;
 }

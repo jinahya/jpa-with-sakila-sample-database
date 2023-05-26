@@ -83,6 +83,13 @@ public class Actor
      */
     public static final String COLUMN_NAME_LAST_NAME = "last_name";
 
+    public static Actor of(final String firstName, final String lastName) {
+        final var instance = new Actor();
+        instance.firstName = firstName;
+        instance.lastName = lastName;
+        return instance;
+    }
+
     /**
      * Creates a new instance.
      */

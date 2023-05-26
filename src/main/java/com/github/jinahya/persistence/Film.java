@@ -106,7 +106,7 @@ public class Film
     public static final BigDecimal COLUMN_DEFAULT_REPLACEMENT_COST = BigDecimal.valueOf(19.99d);
 
     /**
-     * The name of the table column to which the {@value Film_#RATING} attributes maps.
+     * The name of the table column to which the {@link Film_#rating rating} attributes maps.
      */
     public static final String COLUMN_NAME_RATING = "rating";
 
@@ -136,7 +136,7 @@ public class Film
     public static final String COLUMN_VALUE_RATING_NC_17 = "NC-17";
 
     /**
-     * Predefined constants for {@value Film_#RATING} attribute.
+     * Predefined constants for {@link Film_#rating rating} attribute.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      * @see <a href="https://en.wikipedia.org/wiki/Motion_Picture_Association_film_rating_system">Motion Picture
@@ -216,12 +216,12 @@ public class Film
     }
 
     /**
-     * The name of the table column to which the {@value Film_#SPECIAL_FEATURES} attribute maps.
+     * The name of the table column to which the {@link Film_#specialFeatures specialFeatures} attribute maps.
      */
     public static final String COLUMN_NAME_SPECIAL_FEATURES = "special_features";
 
     /**
-     * Predefined constants for {@value Film_#SPECIAL_FEATURES} attributes.
+     * Predefined constants for {@link Film_#specialFeatures specialFeatures} attributes.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
