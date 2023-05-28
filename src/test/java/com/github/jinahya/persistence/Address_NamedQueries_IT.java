@@ -21,10 +21,28 @@ class Address_NamedQueries_IT
     class FindAllTest {
 
         @Test
+        void __() {
+            final var found = applyEntityManager(
+                    em -> em.createNamedQuery(AddressConstants.QUERY_FIND_ALL, Address.class)
+                            .getResultList()
+            );
+            assertThat(found)
+                    .isNotNull()
+                    .isNotEmpty()
+                    .doesNotContainNull();
+            found.forEach(a -> {
+                a.getLocationGeometryAsPoint((x, y) -> {
+                    log.debug("point; x: {}, y: {}", x, y);
+                    return null;
+                });
+            });
+        }
+
+        @Test
         void __WithMaxResults() {
             final var maxResults = current().nextInt(1, 8);
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery("Address_findAll", Address.class)
+                    em -> em.createNamedQuery(AddressConstants.QUERY_FIND_ALL, Address.class)
                             .setMaxResults(maxResults)
                             .getResultList()
             );
@@ -33,6 +51,28 @@ class Address_NamedQueries_IT
                     .isNotEmpty()
                     .doesNotContainNull()
                     .hasSizeLessThanOrEqualTo(maxResults);
+        }
+
+        @Test
+        void __AddressAndLocation() {
+            final var found = applyEntityManager(
+                    em -> em.createQuery("""
+                                                 SELECT a
+                                                 FROM Address AS a
+                                                 JOIN FETCH a.city AS c
+                                                 JOIN FETCH c.country AS c2""",
+                                         Address.class)
+                            .getResultList()
+            );
+            found.forEach(a -> {
+                a.getLocationGeometryAsPoint((x, y) -> {
+                    log.debug("{}, {}; location: {}, {}",
+                              a.getCity().getCity(), a.getCity().getCountry().getCountry(),
+                              y, x
+                    );
+                    return null;
+                });
+            });
         }
     }
 
