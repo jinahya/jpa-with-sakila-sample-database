@@ -26,7 +26,7 @@ class Actor_NamedQueries_IT
         super(Actor.class, Integer.class);
     }
 
-    @DisplayName(ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID)
+    @DisplayName(ActorConstants.QUERY_FIND_BY_ACTOR_ID)
     @Nested
     class FindByActorIdTest {
 
@@ -35,7 +35,7 @@ class Actor_NamedQueries_IT
             final var actorId = 0;
             assertThatThrownBy(() -> applyEntityManager(
                     em -> em.createNamedQuery(
-                                    ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID,
+                                    ActorConstants.QUERY_FIND_BY_ACTOR_ID,
                                     Actor.class
                             )
                             .setParameter("actorId", actorId)
@@ -48,7 +48,7 @@ class Actor_NamedQueries_IT
             final var actorId = 1;
             final var result = applyEntityManager(
                     em -> em.createNamedQuery(
-                                    ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID,
+                                    ActorConstants.QUERY_FIND_BY_ACTOR_ID,
                                     Actor.class
                             )
                             .setParameter(Actor_.actorId.getName(), actorId)
@@ -61,14 +61,14 @@ class Actor_NamedQueries_IT
         }
     }
 
-    @DisplayName(ActorConstants.NAMED_QUERY_FIND_ALL)
+    @DisplayName(ActorConstants.QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
         @Test
         void __() {
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(ActorConstants.NAMED_QUERY_FIND_ALL)
+                    em -> em.createNamedQuery(ActorConstants.QUERY_FIND_ALL)
                             .getResultList()
             );
             assertThat(found)
@@ -80,7 +80,7 @@ class Actor_NamedQueries_IT
         void __WithMaxResults() {
             final var maxResults = current().nextInt(8, 16);
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(ActorConstants.NAMED_QUERY_FIND_ALL)
+                    em -> em.createNamedQuery(ActorConstants.QUERY_FIND_ALL)
                             .setMaxResults(maxResults)
                             .getResultList()
             );
@@ -164,7 +164,7 @@ class Actor_NamedQueries_IT
         }
     }
 
-    @DisplayName(ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME)
+    @DisplayName(ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME)
     @Nested
     class FindAllByLastNameTest {
 
@@ -173,7 +173,7 @@ class Actor_NamedQueries_IT
             final var lastName = "KILMER";
             final var list = applyEntityManager(
                     em -> em.createNamedQuery(
-                                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME,
+                                    ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME,
                                     Actor.class
                             )
                             .setParameter("lastName", lastName)
@@ -192,7 +192,7 @@ class Actor_NamedQueries_IT
             final var maxResults = current().nextInt(1, 5);
             final var list = applyEntityManager(
                     em -> em.createNamedQuery(
-                                    ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME,
+                                    ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME,
                                     Actor.class
                             )
                             .setParameter("lastName", lastName)
@@ -208,7 +208,7 @@ class Actor_NamedQueries_IT
         }
     }
 
-    @DisplayName(ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN)
+    @DisplayName(ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN)
     @Nested
     class FindAllByLastNameActorIdGreaterThanTest {
 
@@ -220,7 +220,7 @@ class Actor_NamedQueries_IT
                 final var actorIdMinExclusive = i.get();
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(
-                                        ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
+                                        ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
                                         Actor.class
                                 )
                                 .setParameter("lastName", lastName)

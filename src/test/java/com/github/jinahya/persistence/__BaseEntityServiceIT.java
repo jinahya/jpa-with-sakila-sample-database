@@ -6,7 +6,7 @@ import org.jboss.weld.junit5.auto.EnableAutoWeld;
 
 import java.util.Objects;
 
-@AddPackages({____EntityManagerFactoryProducer.class, __BaseEntityService.class})
+@AddPackages({___EntityManagerFactoryProducer.class, __BaseEntityService.class})
 @EnableAutoWeld
 @Slf4j
 abstract class __BaseEntityServiceIT<

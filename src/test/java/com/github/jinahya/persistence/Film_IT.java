@@ -22,7 +22,7 @@ class Film_IT
         }
 //        assertThatBean(instance).isValid();
         entityManager.persist(instance);
-            entityManager.flush();
+        entityManager.flush();
         return instance;
     }
 

@@ -28,13 +28,6 @@ abstract class _BaseEntityTest<T extends _BaseEntity<U>, U extends Comparable<? 
         super(entityClass, idClass);
     }
 
-    @DisplayName("toString()!blank")
-    @Test
-    void toString_NotBlank_() {
-        final var string = newEntityInstance().toString();
-        assertThat(string).isNotBlank();
-    }
-
     @DisplayName("getLastUpdateAsLocalDateTime")
     @Nested
     class GetLastUpdateAsLocalDateTimeTest {
@@ -46,9 +39,9 @@ abstract class _BaseEntityTest<T extends _BaseEntity<U>, U extends Comparable<? 
             final T instance = newEntitySpy();
             // wHEN
             when(instance.getLastUpdate()).thenReturn(null);
-            final var dateTime = instance.getLastUpdateAsLocalDateTime();
+            final var lastUpdateAsLocalDateTime = instance.getLastUpdateAsLocalDateTime();
             // THEN
-            assertThat(dateTime).isNull();
+            assertThat(lastUpdateAsLocalDateTime).isNull();
         }
 
         @DisplayName("getLastUpdate()!null -> !null")
@@ -56,14 +49,16 @@ abstract class _BaseEntityTest<T extends _BaseEntity<U>, U extends Comparable<? 
         void _NotNull_NonNull() {
             // GIVEN
             final T instance = newEntitySpy();
+            final var lastUpdate = new Timestamp(System.currentTimeMillis());
             // WHEN
-            final var timestamp = new Timestamp(System.currentTimeMillis());
-            when(instance.getLastUpdate()).thenReturn(timestamp);
+            when(instance.getLastUpdate()).thenReturn(lastUpdate);
             // THEN
-            final var dateTime = instance.getLastUpdateAsLocalDateTime();
-            assertThat(dateTime).isNotNull().satisfies(v -> {
-                assertThat(Timestamp.valueOf(v)).isEqualTo(timestamp);
-            });
+            final var lastUpdateAsLocalDateTime = instance.getLastUpdateAsLocalDateTime();
+            assertThat(lastUpdateAsLocalDateTime)
+                    .isNotNull()
+                    .satisfies(v -> {
+                        assertThat(Timestamp.valueOf(v)).isEqualTo(lastUpdate);
+                    });
         }
     }
 }

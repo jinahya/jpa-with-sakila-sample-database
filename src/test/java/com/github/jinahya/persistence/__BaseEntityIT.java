@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 @EnableAutoWeld
-@AddPackages({____EntityManagerFactoryProducer.class})
+@AddPackages({___EntityManagerFactoryProducer.class})
 @Slf4j
 abstract class __BaseEntityIT<T extends __BaseEntity<U>, U extends Comparable<? super U>>
         extends ___BaseEntityTestBase<T, U> {
@@ -32,7 +32,6 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U extends Comparable<? 
 
     <R> R applyEntityManagerInTransaction(final Function<? super EntityManager, ? extends R> function, final boolean rollback) {
         Objects.requireNonNull(function, "function is null");
-        final EntityManager entityManager = getEntityManager();
         final var transaction = entityManager.getTransaction();
         transaction.begin();
         try {
@@ -48,16 +47,7 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U extends Comparable<? 
         }
     }
 
-    private EntityManager getEntityManager() {
-        var proxy = entityManagerProxy;
-        if (proxy == null) {
-            proxy = entityManagerProxy = ____Utils.createUnCloseableProxy(EntityManager.class, entityManager);
-        }
-        return proxy;
-    }
-
+    @___Uncloseable
     @Inject
     private EntityManager entityManager;
-
-    private EntityManager entityManagerProxy;
 }

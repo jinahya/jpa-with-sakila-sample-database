@@ -10,20 +10,21 @@ import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
 @Slf4j
-class ____ValidatorProducer {
+class ___ValidatorProducer {
 
-    @Produces
     @ApplicationScoped
+    @Produces
     Validator produceValidator() {
-        final var validator = validatorFactory.getValidator();
-        log.debug("producing validator: " + validator);
-        return validator;
+        final var bean = validatorFactory.getValidator();
+        log.debug("producing validator: " + bean);
+        return bean;
     }
 
-    void disposeValidatorFactory(@Disposes final Validator validator) {
-        log.debug("disposing validator: {}", validator);
+    void disposeValidator(@Disposes final Validator bean) {
+        log.debug("disposing validator: {}", bean);
     }
 
+    @___Uncloseable
     @Inject
     private ValidatorFactory validatorFactory;
 }

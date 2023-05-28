@@ -41,26 +41,24 @@ abstract class ___PersistenceService {
         return applyEntityManagerInTransaction(em -> ____Utils.applyConnection(em, function));
     }
 
+    /**
+     * Applies an entity manager, as joined to a transaction, to specified function, and returns the result.
+     *
+     * @param function the function to be applied with the entity manager.
+     * @param <R>      result type parameter
+     * @return the result of the {@code function}.
+     */
     <R> R applyEntityManagerInTransaction(final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return ____Utils.applyEntityManagerInTransaction(getEntityManager(), function);
+        return ____Utils.applyEntityManagerInTransaction(entityManager, function);
     }
 
     <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return function.apply(getEntityManager());
+        return function.apply(entityManager);
     }
 
-    private EntityManager getEntityManager() {
-        var result = entityManagerProxy;
-        if (result == null) {
-            entityManagerProxy = result = ____Utils.createUnCloseableProxy(EntityManager.class, entityManager);
-        }
-        return result;
-    }
-
+    @___Uncloseable
     @Inject
     private EntityManager entityManager;
-
-    private EntityManager entityManagerProxy;
 }

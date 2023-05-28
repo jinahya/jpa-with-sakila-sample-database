@@ -24,15 +24,16 @@ import jakarta.validation.constraints.PositiveOrZero;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-actor.html">5.1.1 The actor Table</a>
  * @see ActorConstants
+ * @see ActorService
  */
-@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
+@NamedQuery(name = ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
             query = """
                     SELECT e FROM Actor AS e
                     WHERE e.lastName = :lastName
                           AND e.actorId > :actorIdMinExclusive
                     ORDER BY e.actorId ASC
                     """)
-@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL_BY_LAST_NAME,
+@NamedQuery(name = ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME,
             query = """
                     SELECT e
                     FROM Actor AS e
@@ -45,13 +46,13 @@ import jakarta.validation.constraints.PositiveOrZero;
                     WHERE e.actorId > :actorIdMinExclusive
                     ORDER BY e.actorId ASC
                     """)
-@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_BY_ACTOR_ID,
+@NamedQuery(name = ActorConstants.QUERY_FIND_BY_ACTOR_ID,
             query = """
                     SELECT e
                     FROM Actor AS e
                     WHERE e.actorId = :actorId
                     """)
-@NamedQuery(name = ActorConstants.NAMED_QUERY_FIND_ALL,
+@NamedQuery(name = ActorConstants.QUERY_FIND_ALL,
             query = """
                     SELECT e
                     FROM Actor AS e
@@ -72,17 +73,35 @@ public class Actor
     public static final String COLUMN_NAME_ACTOR_ID = "actor_id";
 
     /**
-     * The name of the table column to which the {@link Actor_#firstName firstName} attribute maps. The value is
-     * {@value}.
-     */
-    public static final String COLUMN_NAME_FIRST_NAME = "first_name";
-
-    /**
      * The name of the table column to which the {@link Actor_#lastName lastName} attribute maps. The value is
      * {@value}.
      */
     public static final String COLUMN_NAME_LAST_NAME = "last_name";
 
+    /**
+     * The length of the {@value #COLUMN_NAME_LAST_NAME} column. The value is {@value}.
+     */
+    public static final int COLUMN_LENGTH_LAST_NAME = 45;
+
+    /**
+     * Creates a new instance with specified {@link Actor_#actorId actorId} attribute value.
+     *
+     * @param actorId the value of {@link Actor_#actorId actorId} attribute.
+     * @return a new instance with {@code actorId}.
+     */
+    static Actor of(final Integer actorId) {
+        final var instance = new Actor();
+        instance.actorId = actorId;
+        return instance;
+    }
+
+    /**
+     * Creates a new instance with specified arguments.
+     *
+     * @param firstName a value for {@link Actor_#firstName firstName} attribute
+     * @param lastName  a value for {@link Actor_#lastName lastName} attribute.
+     * @return a new instance with {@code firstName} and {@code lastName}.
+     */
     public static Actor of(final String firstName, final String lastName) {
         final var instance = new Actor();
         instance.firstName = firstName;
@@ -124,57 +143,57 @@ public class Actor
     }
 
     /**
-     * Returns current value of {@value Actor_#ACTOR_ID} attribute.
+     * Returns current value of {@link Actor_#actorId actorId} attribute.
      *
-     * @return current value of {@value Actor_#ACTOR_ID} attribute.
+     * @return current value of {@link Actor_#actorId actorId} attribute.
      */
     public Integer getActorId() {
         return actorId;
     }
 
     /**
-     * Replaces current value of {@value Actor_#ACTOR_ID} attribute with specified value.
+     * Replaces current value of {@link Actor_#actorId actorId} attribute with specified value.
      *
-     * @param actorId new value for {@value Actor_#ACTOR_ID} attribute.
-     * @deprecated for removal.
+     * @param actorId new value for {@link Actor_#actorId actorId} attribute.
+     * @deprecated for removal; the column is an auto-increment column.
      */
     // TODO: remove!
     @Deprecated(forRemoval = true)
-    private void setActorId(Integer actorId) {
+    private void setActorId(final Integer actorId) {
         this.actorId = actorId;
     }
 
     /**
-     * Returns current value of {@value Actor_#FIRST_NAME} attribute.
+     * Returns current value of {@link Actor_#firstName firstName} attribute.
      *
-     * @return current value of {@value Actor_#FIRST_NAME} attribute.
+     * @return current value of {@link Actor_#firstName firstName} attribute.
      */
     public String getFirstName() {
         return firstName;
     }
 
     /**
-     * Replaces current value of {@value Actor_#FIRST_NAME} attribute with specified value.
+     * Replaces current value of {@link Actor_#firstName firstName} attribute with specified value.
      *
-     * @param firstName new value for the {@value Actor_#FIRST_NAME} attribute.
+     * @param firstName new value for the {@link Actor_#firstName firstName} attribute.
      */
     public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
     /**
-     * Returns current value of {@value Actor_#LAST_NAME} attribute.
+     * Returns current value of {@link Actor_#lastName lastName} attribute.
      *
-     * @return current value of {@value Actor_#LAST_NAME} attribute.
+     * @return current value of {@link Actor_#lastName lastName} attribute.
      */
     public String getLastName() {
         return lastName;
     }
 
     /**
-     * Replaces current value of {@value Actor_#LAST_NAME} attribute with specified value.
+     * Replaces current value of {@link Actor_#lastName lastName} attribute with specified value.
      *
-     * @param lastName new value for the {@value Actor_#LAST_NAME} attribute.
+     * @param lastName new value for the {@link Actor_#lastName lastName} attribute.
      */
     public void setLastName(final String lastName) {
         this.lastName = lastName;
@@ -211,6 +230,6 @@ public class Actor
      */
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_LAST_NAME, nullable = false, length = 45)
+    @Column(name = COLUMN_NAME_LAST_NAME, nullable = false, length = COLUMN_LENGTH_LAST_NAME)
     private String lastName;
 }

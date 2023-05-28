@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
  *
- * <blockquote>
+ * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">
  * The {@value TABLE_NAME} table contains a list of countries.<br/>The {@value TABLE_NAME} table is referred to by a
  * foreign key in the {@value City#TABLE_NAME} table.<br/><cite><a
  * href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a></cite>
@@ -29,12 +29,19 @@ import java.util.Optional;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a>
  */
 @NamedQuery(name = "Country_findAllByCountry",
-            query = "SELECT e FROM Country AS e"
-                    + " WHERE e.country = :country") // not indexed!
-@NamedQuery(name = "Country_findAll",
-            query = "SELECT e FROM Country AS e")
+            query = """
+                    SELECT e
+                    FROM Country AS e
+                    WHERE e.country = :country""") // not indexed!
 @NamedQuery(name = "Country_findByCountryId",
-            query = "SELECT e FROM Country AS e WHERE e.countryId = :countryId")
+            query = """
+                    SELECT e
+                    FROM Country AS e
+                    WHERE e.countryId = :countryId""")
+@NamedQuery(name = "Country_findAll",
+            query = """
+                    SELECT e
+                    FROM Country AS e""")
 @Entity
 @Table(name = Country.TABLE_NAME)
 public class Country
@@ -57,12 +64,18 @@ public class Country
      * @param countryId the {@link Country_#countryId countryId} attribute value.
      * @return a new instance of {@code countryId}.
      */
-    public static Country of(final Integer countryId) {
+    static Country of(final Integer countryId) {
         final var instance = new Country();
         instance.countryId = countryId;
         return instance;
     }
 
+    /**
+     * Creates new instance with specified {@link Country_#countryId countryId} attribute value.
+     *
+     * @param country the value for {@link Country_#countryId countryId} attribute.
+     * @return a new instance of {@code country}.
+     */
     public static Country of(final String country) {
         final var instance = new Country();
         instance.country = country;
@@ -114,7 +127,7 @@ public class Country
      * Replaces current value of {@link Country_#countryId countryId} attribute with specified value.
      *
      * @param countryId new value for the {@link Country_#countryId countryId} attribute.
-     * @deprecated for removal
+     * @deprecated for removal; the column is an <em>auto-increment</em> column.
      */
     @Deprecated(forRemoval = true)
     private void setCountryId(final Integer countryId) {
@@ -140,7 +153,7 @@ public class Country
     }
 
     /**
-     * <blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">
      * A surrogate primary key used to uniquely identify each country in the table.
      * </blockquote>
      */
@@ -154,7 +167,7 @@ public class Country
     private Integer countryId;
 
     /**
-     * <blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">
      * The name of the country.
      * </blockquote>
      */
@@ -170,12 +183,12 @@ public class Country
      * @return {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 가 현재 이 객체가 가지고 있는
      * {@link Country_#country country} attribute 의 값과 같은 locale 값; {@link Country_#country country} attribute 값이
      * {@code null} 이거나 적절한 locale 값을 찾을 수 없으면 {@code null}.
-     * @see _LocaleUtils#valueOfDisplayCountry(String, Locale)
+     * @see ____Utils#valueOfDisplayCountryInEnglish(String)
      */
     @Transient
     public Locale getCountryAsLocale() {
         return Optional.ofNullable(getCountry())
-                .flatMap(c -> ____Utils.valueOfDisplayCountry(c, Locale.ENGLISH))
+                .flatMap(____Utils::valueOfDisplayCountryInEnglish)
                 .orElse(null);
     }
 

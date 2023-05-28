@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * An entity class for mapping {@value ActorInfo#VIEW_NAME} view.
  * <p>
- * <blockquote>
+ * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-views-actor_info.html">
  * The {@value #VIEW_NAME} view provides a list of all actors, including the films in which they have performed, broken
  * down by category.<br/>The {@value StaffList#VIEW_NAME} view incorporates data from the {@value Film#TABLE_NAME},
  * {@value Actor#TABLE_NAME}, {@value Category#TABLE_NAME}, {@value FilmActor#TABLE_NAME}, and
@@ -36,8 +36,6 @@ public class ActorInfo
     public static final String VIEW_NAME = "actor_info";
 
     public static final String COLUMN_NAME_ACTOR_ID = Actor.COLUMN_NAME_ACTOR_ID;
-
-    public static final String COLUMN_NAME_FIRST_NAME = Actor.COLUMN_NAME_FIRST_NAME;
 
     public static final String COLUMN_NAME_LAST_NAME = Actor.COLUMN_NAME_LAST_NAME;
 
@@ -101,7 +99,7 @@ public class ActorInfo
 
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_FIRST_NAME, nullable = false, length = 45, insertable = false, updatable = false)
+    @Column(name = "first_name", nullable = false, length = 45, insertable = false, updatable = false)
     private String firstName;
 
     @NotNull

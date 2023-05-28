@@ -46,8 +46,8 @@ public class SalesByStoreService
                     }
                     return list;
                 }
-            } catch (ReflectiveOperationException | SQLException e) {
-                throw new RuntimeException("failed to find", e);
+            } catch (SQLException sqle) {
+                throw new RuntimeException("failed to find", sqle);
             }
         });
     }

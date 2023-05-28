@@ -1,2 +1,2 @@
 #!/bin/sh
-mvn -Pfailsafe,sp-hibernate clean verify
+mvn -Pfailsafe,hibernate clean verify

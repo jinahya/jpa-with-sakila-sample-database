@@ -24,23 +24,35 @@ import java.util.Optional;
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
  * <p>
- * <blockquote>
+ * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
  * The {@value #TABLE_NAME} table contains address information for customers, staff, and stores.<br/>The
  * {@value TABLE_NAME} table primary key appears as a foreign key in the {@value Customer#TABLE_NAME},
  * {@value Staff#TABLE_NAME}, and {@value Store#TABLE_NAME} tables.
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">5.1.2 The address Table</a>
  * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
  */
-@NamedQuery(name = "Address_findAllByCity",
-            query = "SELECT e FROM Address AS e WHERE e.city = :city")
-@NamedQuery(name = "Address_findAllByCityId",
-            query = "SELECT e FROM Address AS e WHERE e.cityId = :cityId")
-@NamedQuery(name = "Address_findByAddressId",
-            query = "SELECT e FROM Address AS e WHERE e.addressId = :addressId")
-@NamedQuery(name = "Address_findAll",
-            query = "SELECT e FROM Address AS e")
+@NamedQuery(name = AddressConstants.QUERY_FIND_ALL_BY_CITY,
+            query = """
+                    SELECT e
+                    FROM Address AS e
+                    WHERE e.city = :city""")
+@NamedQuery(name = AddressConstants.QUERY_FIND_ALL_BY_CITY_ID,
+            query = """
+                    SELECT e
+                    FROM Address AS e
+                    WHERE e.cityId = :cityId""")
+@NamedQuery(name = AddressConstants.QUERY_FIND_BY_ADDRESS_ID,
+            query = """
+                    SELECT e
+                    FROM Address AS e
+                    WHERE e.addressId = :addressId""")
+@NamedQuery(name = AddressConstants.QUERY_FIND_ALL,
+            query = """
+                    SELECT e
+                    FROM Address AS e""")
 @Entity
 @Table(name = Address.TABLE_NAME)
 @Slf4j
@@ -120,8 +132,9 @@ public class Address
      * Replaces current value of {@link Address_#addressId addressId} attribute with specified value.
      *
      * @param addressId new value for the {@link Address_#addressId addressId} attribute.
-     * @deprecated for removal.
+     * @deprecated for removal; the column is an <em>auto-increment</em> column.
      */
+    // TODO: remove!
     @Deprecated(forRemoval = true)
     private void setAddressId(final Integer addressId) {
         this.addressId = addressId;
@@ -195,16 +208,28 @@ public class Address
         this.phone = phone;
     }
 
-    protected byte[] getLocation() {
+    /**
+     * Returns current value of {@link Address_#location location} attribute.
+     *
+     * @return current value of the {@link Address_#location location} attribute.
+     */
+    byte[] getLocation() {
         return location;
     }
 
-    protected void setLocation(final byte[] location) {
+    /**
+     * Replaces current value of {@link Address_#location location} attribute with specified value.
+     *
+     * @param location new value for the {@link Address_#location location} attribute.
+     */
+    void setLocation(final byte[] location) {
         this.location = location;
     }
 
     /**
-     * 대체 기본 키 - <blockquote>A surrogate primary key used to uniquely identify each address in the table.</blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * A surrogate primary key used to uniquely identify each address in the table.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
@@ -216,7 +241,9 @@ public class Address
     private Integer addressId;
 
     /**
-     * 주소 첫번 째 줄 - <blockquote>The first line of an address.</blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * The first line of an address.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -224,14 +251,18 @@ public class Address
     private String address;
 
     /**
-     * (선택) 주소 두번 째 줄 - <blockquote>An optional second line of an address.</blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * An optional second line of an address.
+     * </blockquote>
      */
     @Basic(optional = true)
     @Column(name = "address2", nullable = true, length = 50)
     private String address2;
 
     /**
-     * 주소 구역 - <blockquote>The region of an address, this may be a state, province, prefecture, etc.</blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * The region of an address, this may be a state, province, prefecture, etc.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -239,8 +270,9 @@ public class Address
     private String district;
 
     /**
-     * {@link City#TABLE_NAME 도시} 테이블 외래키 - <blockquote>A foreign key pointing to the {@link City#TABLE_NAME}
-     * table.</blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * A foreign key pointing to the {@link City#TABLE_NAME} table.
+     * </blockquote>
      */
     @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
@@ -250,14 +282,18 @@ public class Address
     private Integer cityId;
 
     /**
-     * 우편 번호 - <blockquote>The postal code or ZIP code of the address (where applicable).</blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * The postal code or ZIP code of the address (where applicable).
+     * </blockquote>
      */
     @Basic(optional = true)
     @Column(name = "postal_code", nullable = true, length = 10)
     private String postalCode;
 
     /**
-     * 전화 번호 - <blockquote>The telephone number for the address.</blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * The telephone number for the address.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -265,7 +301,9 @@ public class Address
     private String phone;
 
     /**
-     * {@code GEOMETRY} 컬럼 형으로 저장된 위치 정보 - <blockquote>A Geometry column with a spatial index on it.</blockquote>
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * A Geometry column with a spatial index on it.
+     * </blockquote>
      *
      * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
      */
