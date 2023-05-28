@@ -2,6 +2,8 @@
 
 Jakarta Persistence with Sakila sample database.
 
+## How to run Sakila db with Docker
+
 ## Links
 
 
