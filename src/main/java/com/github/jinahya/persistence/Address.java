@@ -19,7 +19,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -223,7 +226,7 @@ public class Address
      * @param location new value for the {@link Address_#location location} attribute.
      */
     void setLocation(final byte[] location) {
-        this.location = location;
+        this.location = Optional.ofNullable(location).map(v -> Arrays.copyOf(v, v.length)).orElse(null);
     }
 
     /**
@@ -360,11 +363,39 @@ public class Address
     @Column(name = COLUMN_NAME_LOCATION, nullable = false, insertable = false, updatable = false)
     private _PersistenceTypes.Geometry locationGeometry;
 
+    /**
+     * Applies current value of {@link Address_#locationGeometry locationGeometry} attribute, as a
+     * {@link _PersistenceTypes.Wkb.Type#POINT} type, to specified function, and returns the result.
+     *
+     * @param function the function applies with coordinates.
+     * @param <R>      result type parameter
+     * @return the result of the {@code function}.
+     */
+    public <R> R getLocationGeometryAsPoint(final BiFunction<? super Double, ? super Double, ? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        return Optional.ofNullable(getLocationGeometry())
+                .map(lg -> {
+                    final var buffer = lg.toByteBuffer();
+                    final var srid = buffer.getInt();
+                    assert srid == 0;
+                    buffer.order(_PersistenceTypes.Wkb.byteOrder(buffer.get()));
+                    final var type = buffer.getInt();
+                    if (type != _PersistenceTypes.Wkb.Type.POINT.type()) {
+                        throw new IllegalArgumentException("not a point type: " + type);
+                    }
+                    final var xCoordinate = buffer.getDouble();
+                    final var yCoordinate = buffer.getDouble();
+                    assert !buffer.hasRemaining();
+                    return function.apply(xCoordinate, yCoordinate);
+                })
+                .orElse(null);
+    }
+
     public void setLocationGeometryAsPoint(final int srid, final double xCoordinate, final double yCoordinate) {
         final var buffer = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + Double.BYTES + Double.BYTES);
         buffer.order(ByteOrder.LITTLE_ENDIAN)
                 .put(_PersistenceTypes.Wkb.endianValue(buffer.order()))
-                .putInt(_PersistenceTypes.Wkb.Type.POINT.getValue())
+                .putInt(_PersistenceTypes.Wkb.Type.POINT.type())
                 .putDouble(xCoordinate)
                 .putDouble(yCoordinate);
         assert !buffer.hasRemaining();

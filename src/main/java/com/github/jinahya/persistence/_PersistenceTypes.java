@@ -50,22 +50,22 @@ public final class _PersistenceTypes {
 
             public static Type valueOfType(final int type) {
                 for (final var value : values()) {
-                    if (value.value == type) {
+                    if (value.type == type) {
                         return value;
                     }
                 }
                 throw new IllegalArgumentException("no value for type: " + type);
             }
 
-            Type(final int value) {
-                this.value = value;
+            Type(final int type) {
+                this.type = type;
             }
 
-            public int getValue() {
-                return value;
+            public int type() {
+                return type;
             }
 
-            private final int value;
+            private final int type;
         }
 
         public static final int ENDIAN_BIG = 0;
@@ -91,6 +91,26 @@ public final class _PersistenceTypes {
             return ByteOrder.LITTLE_ENDIAN;
         }
 
+        public static Wkb newPoint(final ByteOrder order, final double xCoordinate, final double yCoordinate) {
+            Objects.requireNonNull(order, "order is null");
+            final var buffer = ByteBuffer.allocate(Double.BYTES << 1).order(order);
+            buffer.putDouble(xCoordinate);
+            buffer.putDouble(yCoordinate);
+            return new Wkb(order, Type.POINT, buffer.array());
+        }
+
+        public static Wkb newLineString(final ByteOrder order, final Wkb... points) {
+            Objects.requireNonNull(order, "order is null");
+            Objects.requireNonNull(points, "points is null");
+            // TODO: check; should points.length be positive?
+            final var buffer = ByteBuffer.allocate((Double.BYTES << 1) * points.length).order(order);
+            for (var point : points) {
+                buffer.putDouble(point.getDataBuffer().getDouble());
+                buffer.putDouble(point.getDataBuffer().getDouble());
+            }
+            return new Wkb(order, Type.LINE_STRING, buffer.array());
+        }
+
         public static Wkb from(final ByteBuffer buffer) {
             Objects.requireNonNull(buffer, "buffer is null");
             buffer.order(byteOrder(buffer.get()));
@@ -112,7 +132,6 @@ public final class _PersistenceTypes {
             return super.toString() + '{' +
                    "order=" + order +
                    ",type=" + type +
-//                   ",data=" + Arrays.toString(data) +
                    '}';
         }
 
@@ -137,7 +156,7 @@ public final class _PersistenceTypes {
             return buffer
                     .order(order)
                     .put(endianValue(order))
-                    .putInt(type.value)
+                    .putInt(type.type)
                     .put(data)
                     ;
         }
@@ -156,7 +175,7 @@ public final class _PersistenceTypes {
 
         public ByteBuffer getDataBuffer() {
             return ByteBuffer.wrap(data)
-                    .asReadOnlyBuffer()
+                    .asReadOnlyBuffer() // -> BIG_ENDIAN
                     .order(order);
         }
 
