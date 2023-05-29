@@ -38,6 +38,7 @@ Jakarta Persistence with Sakila sample database.
 
 #### EclipseLink
 
+* [UserGuide/JPA/Using the Canonical Model Generator (ELUG)](https://wiki.eclipse.org/UserGuide/JPA/Using_the_Canonical_Model_Generator_(ELUG))
 * [Getting a JDBC Connection from an EntityManager](https://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager)
 * [`@ReadOnly`](https://javadoc.io/doc/org.eclipse.persistence/eclipselink/latest/eclipselink/org/eclipse/persistence/annotations/ReadOnly.html)
 

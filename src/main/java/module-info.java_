@@ -1,11 +1,13 @@
 module com.github.jinahya.persistence.sakila {
-    requires jakarta.annotation;
     requires jakarta.cdi;
     requires jakarta.el;
     requires jakarta.persistence;
     requires jakarta.validation;
+    requires java.compiler;
     requires lombok;
+//    requires org.eclipse.persistence.jpa;
+//    requires eclipselink;
     requires org.slf4j;
-    opens com.github.jinahya.persistence.sakila;
     exports com.github.jinahya.persistence.sakila;
+    opens com.github.jinahya.persistence.sakila;
 }

@@ -178,6 +178,12 @@
         </exclusion>
       </exclusions>
     </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.eclipse.persistence</groupId>-->
+<!--      <artifactId>eclipselink</artifactId>-->
+<!--      <version>${version.org.eclipse.persistence}</version>-->
+<!--      <scope>provided</scope>-->
+<!--    </dependency>-->
     <!--    <dependency>-->
     <!--      <groupId>org.awaitility</groupId>-->
     <!--      <artifactId>awaitility</artifactId>-->
@@ -268,28 +274,9 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <!-- https://wiki.eclipse.org/EclipseLink/UserGuide/JPA/Advanced_JPA_Development/Performance/Weaving/Static_Weaving#Use_the_Maven_plugin -->
-          <!-- https://github.com/empulse-gmbh/eclipselink-static-weave-plugin -->
-          <groupId>de.empulse.eclipselink</groupId>
-          <artifactId>staticweave-maven-plugin</artifactId>
-          <version>1.0.0</version>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.11.0</version>
-          <!--          <configuration>-->
-          <!--            <annotationProcessorPaths>-->
-          <!--              <path>-->
-          <!--                <groupId>org.projectlombok</groupId>-->
-          <!--                <artifactId>lombok</artifactId>-->
-          <!--                <version>${version.org.projectlombok}</version>-->
-          <!--              </path>-->
-          <!--            </annotationProcessorPaths>-->
-          <!--            <compilerArgs>-->
-          <!--              <arg>-Xlint</arg>-->
-          <!--            </compilerArgs>-->
-          <!--          </configuration>-->
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -575,12 +562,15 @@
             </configuration>
           </plugin>
           <plugin>
-            <!-- IDE 에서의 실행은 위해 phase 를 compile 로 바꾼 후에 maven-compiler-plugin 뒤로 내렸다 -->
+            <!-- https://wiki.eclipse.org/EclipseLink/UserGuide/JPA/Advanced_JPA_Development/Performance/Weaving/Static_Weaving#Use_the_Maven_plugin -->
+            <!-- https://github.com/empulse-gmbh/eclipselink-static-weave-plugin -->
             <groupId>de.empulse.eclipselink</groupId>
             <artifactId>staticweave-maven-plugin</artifactId>
+            <version>1.0.0</version>
             <executions>
               <execution>
                 <id>weave</id>
+                <!-- IDE 에서의 실행을 위해 phase 를 compile 로 바꾼 후에 maven-compiler-plugin 아래로 내렸다 -->
                 <!--                <phase>process-classes</phase>-->
                 <phase>compile</phase>
                 <goals>
@@ -638,9 +628,9 @@
                   <version>${version.org.hibernate.orm}</version>
                 </path>
               </annotationProcessorPaths>
-              <compilerArgs>
-                <arg>-AaddGeneratedAnnotation=false</arg> <!-- @javax....Generated -->
-              </compilerArgs>
+              <!--              <compilerArgs>-->
+              <!--                <arg>-AaddGeneratedAnnotation=false</arg> &lt;!&ndash; @javax....Generated &ndash;&gt;-->
+              <!--              </compilerArgs>-->
             </configuration>
           </plugin>
         </plugins>
