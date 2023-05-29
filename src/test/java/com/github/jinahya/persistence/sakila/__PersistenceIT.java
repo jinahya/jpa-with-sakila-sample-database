@@ -10,9 +10,9 @@ import java.util.function.Function;
 
 @AddPackages({___EntityManagerProducer.class})
 @EnableAutoWeld
-class __PersistenceIT {
+public class __PersistenceIT {
 
-    <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
+    protected <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
         return function.apply(entityManager);
     }

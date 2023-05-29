@@ -1,11 +1,11 @@
-package com.github.jinahya.persistence.sakila;
+package com.github.jinahya.persistence.sakila.service;
 
-import com.github.jinahya.persistence.sakila.service.ActorService;
-import com.github.jinahya.persistence.sakila.service.CategoryService;
-import com.github.jinahya.persistence.sakila.service.FilmActorService;
-import com.github.jinahya.persistence.sakila.service.FilmCategoryService;
-import com.github.jinahya.persistence.sakila.service.FilmService;
-import com.github.jinahya.persistence.sakila.service.LanguageService;
+import com.github.jinahya.persistence.sakila.Actor;
+import com.github.jinahya.persistence.sakila.Film;
+import com.github.jinahya.persistence.sakila.FilmActor;
+import com.github.jinahya.persistence.sakila.FilmCategory;
+import com.github.jinahya.persistence.sakila.Film_Randomizer;
+import com.github.jinahya.persistence.sakila.__PersistenceIT;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +29,7 @@ class _MyFilmIT
                 film.setDescription("서울에서 이용만 당하고 내려온 춘근(박상민)은 역전 여관에서 옥희(윤수진)를 만나고 서로에게 관심을 갖는다.");
                 film.setReleaseYear(1996);
                 film.setLanguage(languageService.locateByLocale(Locale.KOREAN));
-                film.setOriginalLanguageId(null);
+                film.setOriginalLanguage(null);
                 film.setLengthAsDuration(Duration.ofMinutes(91));
                 film.setRating(Film.Rating.NC_17);
                 film.setSpecialFeatures(null);

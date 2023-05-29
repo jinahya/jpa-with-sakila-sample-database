@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.jeasy.random.FieldPredicates.named;
 
-class Film_Randomizer
+public class Film_Randomizer
         extends _BaseEntityRandomizer<Film> {
 
     private static String randomDescription() {
@@ -69,7 +69,7 @@ class Film_Randomizer
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Film.SpecialFeature.class)));
     }
 
-    Film_Randomizer() {
+    public Film_Randomizer() {
         super(Film.class);
     }
 
