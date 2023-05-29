@@ -638,6 +638,9 @@
                   <version>${version.org.hibernate.orm}</version>
                 </path>
               </annotationProcessorPaths>
+              <compilerArgs>
+                <arg>-AaddGeneratedAnnotation=false</arg> <!-- @javax....Generated -->
+              </compilerArgs>
             </configuration>
           </plugin>
         </plugins>

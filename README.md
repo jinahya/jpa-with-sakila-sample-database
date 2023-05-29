@@ -26,6 +26,10 @@ Jakarta Persistence with Sakila sample database.
 * [Jakarta Bean Validation](https://beanvalidation.org/)
     * [Jakarta Bean Validation 3.0](https://beanvalidation.org/3.0/)
 
+#### Hibernate Validator
+
+* [Cascaded return value validation causes exception when used with Weld](https://hibernate.atlassian.net/browse/HV-770)
+
 ### Jakarta Persistence
 
 * [Jakarta Persistence](https://jakarta.ee/specifications/persistence/)
