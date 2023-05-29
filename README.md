@@ -26,19 +26,32 @@ Jakarta Persistence with Sakila sample database.
 * [Jakarta Bean Validation](https://beanvalidation.org/)
     * [Jakarta Bean Validation 3.0](https://beanvalidation.org/3.0/)
 
+### Jakarta Persistence
+
+* [Jakarta Persistence](https://jakarta.ee/specifications/persistence/)
+  * [Jakarta Persistence 3.1
+  ](https://jakarta.ee/specifications/persistence/3.1/)
+
 #### EclipseLink
 
+* [Getting a JDBC Connection from an EntityManager](https://wiki.eclipse.org/EclipseLink/Examples/JPA/EMAPI#Getting_a_JDBC_Connection_from_an_EntityManager)
 * [`@ReadOnly`](https://javadoc.io/doc/org.eclipse.persistence/eclipselink/latest/eclipselink/org/eclipse/persistence/annotations/ReadOnly.html)
 
 #### Hibernate
 
 * [`@Immutable`](https://javadoc.io/doc/org.hibernate/hibernate-core/5.6.15.Final/org/hibernate/annotations/Immutable.html)
 
-### Open Geospatial Consortium
+### Geospatial
+
+#### GEOS
+
+* [Well-Known Binary (WKB)](https://libgeos.org/specifications/wkb/#standard-wkb)
+
+#### Open Geospatial Consortium
 
 * [Simple feature access - Part 1 - OGC Portal](https://portal.ogc.org/files/?artifact_id=25355)
 
-### buds.oepnjdk.org
+### bugs.oepnjdk.org
 
 * [maven javadoc shows annotation twice](https://stackoverflow.com/q/64045629/330457)
   * [Documented annotations show up twice in Javadoc for fields and parameters](https://bugs.openjdk.org/browse/JDK-8175533)

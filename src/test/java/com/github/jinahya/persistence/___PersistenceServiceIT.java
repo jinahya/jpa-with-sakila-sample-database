@@ -51,7 +51,13 @@ abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {
      * @return the result of the {@code function}.
      */
     <R> R applyServiceInstance(final Function<? super SERVICE, ? extends R> function) {
-        return Objects.requireNonNull(function, "function is null").apply(serviceInstance);
+        ____Utils.ROLLBACK.set(Boolean.TRUE);
+        try {
+            return Objects.requireNonNull(function, "function is null")
+                    .apply(serviceInstance);
+        } finally {
+            ____Utils.ROLLBACK.remove();
+        }
     }
 
     final Class<SERVICE> serviceClass;
@@ -59,8 +65,8 @@ abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {
     @Inject
     private Instance<___PersistenceService> serviceInstance_;
 
+    private SERVICE serviceInstance;
+
     @Inject
     private Validator validator;
-
-    private SERVICE serviceInstance;
 }

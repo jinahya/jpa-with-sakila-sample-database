@@ -56,19 +56,20 @@ class Address_NamedQueries_IT
         @Test
         void __AddressAndLocation() {
             final var found = applyEntityManager(
-                    em -> em.createQuery("""
-                                                 SELECT a
-                                                 FROM Address AS a
-                                                 JOIN FETCH a.city AS c
-                                                 JOIN FETCH c.country AS c2""",
-                                         Address.class)
-                            .getResultList()
+                    em -> em.createQuery(
+                            """
+                                    SELECT a
+                                    FROM Address AS a
+                                    JOIN FETCH a.city AS c
+                                    JOIN FETCH c.country AS c2""",
+                            Address.class
+                    ).getResultList()
             );
             found.forEach(a -> {
-                a.getLocationGeometryAsPoint((x, y) -> {
-                    log.debug("{}, {}; location: {}, {}",
+                a.getLatitudeLongitude((latitude, longitude) -> {
+                    log.debug("{}, {}; google-maps-location: {}, {}",
                               a.getCity().getCity(), a.getCity().getCountry().getCountry(),
-                              y, x
+                              latitude, longitude
                     );
                     return null;
                 });
@@ -84,8 +85,8 @@ class Address_NamedQueries_IT
             final var addressId = 0;
             assertThatThrownBy(() -> {
                 applyEntityManager(
-                        em -> em.createNamedQuery("Address_findByAddressId", Address.class)
-                                .setParameter("addressId", addressId)
+                        em -> em.createNamedQuery(AddressConstants.QUERY_FIND_BY_ADDRESS_ID, Address.class)
+                                .setParameter(Address_.addressId.getName(), addressId)
                                 .getSingleResult()
                 );
             }).isInstanceOf(NoResultException.class);
@@ -95,8 +96,8 @@ class Address_NamedQueries_IT
         void __1() {
             final var addressId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery("Address_findByAddressId", Address.class)
-                            .setParameter("addressId", addressId)
+                    em -> em.createNamedQuery(AddressConstants.QUERY_FIND_BY_ADDRESS_ID, Address.class)
+                            .setParameter(Address_.addressId.getName(), addressId)
                             .getSingleResult()
             );
             assertThat(found)

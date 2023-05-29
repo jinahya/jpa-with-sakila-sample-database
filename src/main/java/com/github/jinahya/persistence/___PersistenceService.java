@@ -38,7 +38,7 @@ abstract class ___PersistenceService {
      */
     <R> R applyConnection(final Function<? super Connection, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return applyEntityManagerInTransaction(em -> ____Utils.applyConnection(em, function));
+        return ____Utils.applyConnection(entityManager, function);
     }
 
     /**

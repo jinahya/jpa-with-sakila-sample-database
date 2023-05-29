@@ -28,20 +28,30 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a>
  */
-@NamedQuery(name = "Country_findAllByCountry",
+@NamedQuery(name = CountryConstants.QUERY_FIND_ALL_BY_COUNTRY, // not indexed
             query = """
                     SELECT e
                     FROM Country AS e
-                    WHERE e.country = :country""") // not indexed!
-@NamedQuery(name = "Country_findByCountryId",
+                    WHERE e.country = :country
+                    """
+)
+@NamedQuery(name = CountryConstants.QUERY_FIND_ALL_BY_COUNTRY_ID_GREATER_THAN,
+            query = "SELECT e" +
+                    " FROM Country AS e" +
+                    " WHERE e.countryId > :" + CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE +
+                    " ORDER BY e.countryId ASC"
+)
+@NamedQuery(name = CountryConstants.QUERY_FIND_ALL,
             query = """
                     SELECT e
                     FROM Country AS e
-                    WHERE e.countryId = :countryId""")
-@NamedQuery(name = "Country_findAll",
-            query = """
-                    SELECT e
-                    FROM Country AS e""")
+                    """
+)
+@NamedQuery(name = CountryConstants.QUERY_FIND_BY_COUNTRY_ID,
+            query = "SELECT e" +
+                    " FROM Country AS e" +
+                    " WHERE e.countryId = :" + CountryConstants.QUERY_PARAM_COUNTRY_ID
+)
 @Entity
 @Table(name = Country.TABLE_NAME)
 public class Country
@@ -71,9 +81,9 @@ public class Country
     }
 
     /**
-     * Creates new instance with specified {@link Country_#countryId countryId} attribute value.
+     * Creates new instance with specified {@link Country_#country country} attribute value.
      *
-     * @param country the value for {@link Country_#countryId countryId} attribute.
+     * @param country the value for {@link Country_#country country} attribute.
      * @return a new instance of {@code country}.
      */
     public static Country of(final String country) {
@@ -129,6 +139,7 @@ public class Country
      * @param countryId new value for the {@link Country_#countryId countryId} attribute.
      * @deprecated for removal; the column is an <em>auto-increment</em> column.
      */
+    // TODO: remove!
     @Deprecated(forRemoval = true)
     private void setCountryId(final Integer countryId) {
         this.countryId = countryId;
@@ -177,12 +188,12 @@ public class Country
     private String country;
 
     /**
-     * {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 가 현재 이 객체가 가지고 있는
-     * {@link Country_#country country} attribute 의 값과 같은 {@link Locale} 을 반환한다.
+     * Returns a locale whose {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to current value
+     * of {@link Country_#country} attribute.
      *
-     * @return {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} 가 현재 이 객체가 가지고 있는
-     * {@link Country_#country country} attribute 의 값과 같은 locale 값; {@link Country_#country country} attribute 값이
-     * {@code null} 이거나 적절한 locale 값을 찾을 수 없으면 {@code null}.
+     * @return a locale whose {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to current value
+     * of {@link Country_#country} attribute; {@code null} if current value of {@link Country_#country} attribute is
+     * {@code null} or no locale matched.
      * @see ____Utils#valueOfDisplayCountryInEnglish(String)
      */
     @Transient

@@ -32,19 +32,7 @@ abstract class __BaseEntityIT<T extends __BaseEntity<U>, U extends Comparable<? 
 
     <R> R applyEntityManagerInTransaction(final Function<? super EntityManager, ? extends R> function, final boolean rollback) {
         Objects.requireNonNull(function, "function is null");
-        final var transaction = entityManager.getTransaction();
-        transaction.begin();
-        try {
-            return function.apply(entityManager);
-        } finally {
-            if (rollback) {
-                log.debug("rolling back...");
-                transaction.rollback();
-            } else {
-                log.debug("committing...");
-                transaction.commit();
-            }
-        }
+        return ____Utils.applyEntityManagerInTransaction(entityManager, function);
     }
 
     @___Uncloseable

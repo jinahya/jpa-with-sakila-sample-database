@@ -46,6 +46,8 @@ import static java.lang.invoke.MethodType.methodType;
 @Slf4j
 final class ____Utils {
 
+    static final ThreadLocal<Boolean> ROLLBACK = new ThreadLocal<>();
+
     /**
      * Finds the value of {@link Table#name() @Table#name} from specified class.
      *
@@ -145,15 +147,32 @@ final class ____Utils {
                                                  final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         Objects.requireNonNull(function, "function is null");
+        final boolean rollback = Optional.ofNullable(ROLLBACK.get()).orElse(false);
+        ROLLBACK.remove();
         if (entityManager.isJoinedToTransaction()) {
-            return function.apply(entityManager);
+            try {
+                return function.apply(entityManager);
+            } finally {
+                final var transaction = entityManager.getTransaction();
+                if (rollback) {
+                    transaction.rollback();
+                    log.debug("rolled back");
+                } else {
+                    transaction.commit();
+                }
+            }
         }
         final var transaction = entityManager.getTransaction();
         transaction.begin();
         try {
             return function.apply(entityManager);
         } finally {
-            transaction.commit();
+            if (rollback) {
+                transaction.rollback();
+                log.debug("rolled back");
+            } else {
+                transaction.commit();
+            }
         }
     }
 

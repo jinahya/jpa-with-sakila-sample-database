@@ -410,4 +410,27 @@ public class Address
     public void setLocationGeometryAsPoint(final double xCoordinate, final double yCoordinate) {
         setLocationGeometryAsPoint(0, xCoordinate, yCoordinate);
     }
+
+    /**
+     * Applies coordinates(<em>latitude</em> and <em>longitude</em>), parsed from current value of
+     * {@link Address_#locationGeometry locationGeometry} attribute, to specified function, and returns the result.
+     *
+     * @param function the function to be applied with <em>latitude</em> and <em>longitude</em>.
+     * @param <R>      result type parameter
+     * @return the result of the {@code function}.
+     */
+    public <R> R getLatitudeLongitude(final BiFunction<? super Double, ? super Double, ? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        return getLocationGeometryAsPoint((x, y) -> function.apply(y, x));
+    }
+
+    /**
+     * Replaces current value of {@link Address_#locationGeometry locationGeometry} attribute with specified values.
+     *
+     * @param latitude  a value of <em>latitude</em>.
+     * @param longitude a value of <em>longitude</em>.
+     */
+    public void setLatitudeLongitude(final double latitude, final double longitude) {
+        setLocationGeometryAsPoint(longitude, latitude);
+    }
 }
