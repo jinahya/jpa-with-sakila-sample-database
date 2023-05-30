@@ -17,20 +17,12 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.WeakHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -176,6 +168,21 @@ public final class ____Utils {
         }
     }
 
+    public static <R> R setRollbackAndGet(final Supplier<? extends R> supplier) {
+        Objects.requireNonNull(supplier, "supplier is null");
+        ROLLBACK.set(Boolean.TRUE);
+        try {
+            return supplier.get();
+        } finally {
+            ROLLBACK.remove();
+        }
+    }
+
+    public static <R> R applyEntityManagerInTransactionAndRollback(
+            final EntityManager entityManager, final Function<? super EntityManager, ? extends R> function) {
+        return setRollbackAndGet(() -> applyEntityManagerInTransaction(entityManager, function));
+    }
+
     enum LockType {
         READ,
         WRITE
@@ -285,66 +292,6 @@ public final class ____Utils {
         );
     }
 
-    private static final Map<Locale, Map<String, Locale>> DISPLAY_COUNTRIES_AND_LOCALES = new WeakHashMap<>();
-
-    /**
-     * Returns the locale whose {@link Locale#getDisplayCountry(Locale) display country} in specified locale matches to
-     * specified value.
-     *
-     * @param displayCountry the value to match.
-     * @param inLocale       the locale to get the display language of candidates.
-     * @return an optional of matched locale; {@link Optional#empty()} is not found.
-     */
-    static Optional<Locale> valueOfDisplayCountry(final String displayCountry, final Locale inLocale) {
-        Objects.requireNonNull(displayCountry, "displayCountry is null");
-        Objects.requireNonNull(inLocale, "inLocale is null");
-        return Optional.ofNullable(
-                DISPLAY_COUNTRIES_AND_LOCALES
-                        .computeIfAbsent((Locale) inLocale.clone(), k -> new HashMap<>())
-                        .computeIfAbsent(
-                                displayCountry,
-                                k -> Arrays.stream(Locale.getAvailableLocales())
-                                        .filter(l -> Objects.equals(l.getDisplayCountry(inLocale), k))
-                                        .findFirst()
-                                        .orElse(null)
-                        )
-        );
-    }
-
-    public static Optional<Locale> valueOfDisplayCountryInEnglish(final String displayCountryInEnglish) {
-        return valueOfDisplayCountry(displayCountryInEnglish, Locale.ENGLISH);
-    }
-
-    private static final Map<Locale, Map<String, Locale>> DISPLAY_LANGUAGES_AND_LOCALES = new WeakHashMap<>();
-
-    static Optional<Locale> valueOfDisplayLanguage(final String displayLanguage, final Locale inLocale) {
-        if (Objects.requireNonNull(displayLanguage, "displayLanguage is null").strip().isBlank()) {
-            throw new IllegalStateException("displayLanguage is blank");
-        }
-        Objects.requireNonNull(inLocale, "inLocale is null");
-        return Optional.ofNullable(
-                DISPLAY_LANGUAGES_AND_LOCALES
-                        .computeIfAbsent((Locale) inLocale.clone(), k -> new HashMap<>())
-                        .computeIfAbsent(
-                                displayLanguage,
-                                k -> Arrays.stream(Locale.getAvailableLocales())
-                                        .filter(l -> {
-                                            final var displayLanguageInLocale = l.getDisplayLanguage(inLocale);
-                                            if (displayLanguageInLocale.isBlank()) {
-                                                return false;
-                                            }
-                                            return Objects.equals(displayLanguageInLocale, k);
-                                        })
-                                        .findFirst()
-                                        .orElse(null)
-                        )
-        );
-    }
-
-    public static Optional<Locale> valueOfDisplayLanguageInEnglish(final String displayLanguageInEnglish) {
-        return valueOfDisplayLanguage(displayLanguageInEnglish, Locale.ENGLISH);
-    }
-
     static void acceptFieldsAnnotatedWithColumns(final Class<?> cls, final Consumer<? super Field> consumer) {
         Objects.requireNonNull(cls, "cls is null");
         Objects.requireNonNull(consumer, "consumer is null");
@@ -385,29 +332,6 @@ public final class ____Utils {
             throw new IllegalArgumentException("empty password");
         }
         return digest("SHA-256", password);
-    }
-
-    static long getUnitsOf(final TemporalAmount amount, final Temporal now, final ChronoUnit unit) {
-        Objects.requireNonNull(unit, "unit is null");
-        Objects.requireNonNull(now, "now is null");
-        Objects.requireNonNull(amount, "amount is null");
-        return unit.between(now, now.plus(amount));
-    }
-
-    static long getMinutesOf(final TemporalAmount amount, final Temporal now) {
-        return getUnitsOf(amount, now, ChronoUnit.MINUTES);
-    }
-
-    public static long getMinutesOf(final TemporalAmount amount) {
-        return getMinutesOf(amount, Instant.now());
-    }
-
-    static long getDaysOf(final TemporalAmount amount, final Temporal now) {
-        return getUnitsOf(amount, now, ChronoUnit.DAYS);
-    }
-
-    public static long getDaysOf(final TemporalAmount amount) {
-        return getDaysOf(amount, Instant.now());
     }
 
     private ____Utils() {

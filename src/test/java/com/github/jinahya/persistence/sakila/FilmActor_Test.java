@@ -10,10 +10,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class FilmActorTest
+class FilmActor_Test
         extends _BaseEntityTest<FilmActor, FilmActorId> {
 
-    FilmActorTest() {
+    FilmActor_Test() {
         super(FilmActor.class, FilmActorId.class);
     }
 

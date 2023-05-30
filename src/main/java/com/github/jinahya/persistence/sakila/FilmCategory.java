@@ -184,20 +184,20 @@ public class FilmCategory
      * Replaces current value of {@link FilmCategory_#film film} attribute with specified value.
      *
      * @param film new value for the {@link FilmCategory_#film film} attribute.
+     * @apiNote This method also replaces current value of {@link FilmCategory_#filmId filmId} with
+     * {@code film?.filmId}.
      */
     public void setFilm(final Film film) {
         this.film = film;
         setFilmId(
-                Optional.ofNullable(film)
+                Optional.ofNullable(this.film)
                         .map(Film::getFilmId)
                         .orElse(null)
         );
     }
 
     /**
-     * .
-     *
-     * @see Film#of(Integer)
+     * 이 매핑 엔터티의 영화.
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
@@ -216,6 +216,8 @@ public class FilmCategory
      * Replaces current value of {@link FilmCategory_#category category} attribute with specified value.
      *
      * @param category new value for the {@link FilmCategory_#category category} attribute.
+     * @apiNote Then method also replaces current value of {@link FilmCategory_#categoryId categoryId} attribute with
+     * {@code category?.categoryId}.
      */
     public void setCategory(final Category category) {
         this.category = category;
@@ -227,9 +229,7 @@ public class FilmCategory
     }
 
     /**
-     * .
-     *
-     * @see Category#of(Integer)
+     * 이 매핑 엔터티의 카테고리.
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_CATEGORY_ID, nullable = false, insertable = false, updatable = false)

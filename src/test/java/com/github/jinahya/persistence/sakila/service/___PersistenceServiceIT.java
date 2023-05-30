@@ -54,6 +54,10 @@ abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {
      * @return the result of the {@code function}.
      */
     <R> R applyServiceInstance(final Function<? super SERVICE, ? extends R> function) {
+        Objects.requireNonNull(function, "function is null");
+        if (false) {
+            return ____Utils.setRollbackAndGet(() -> function.apply(serviceInstance));
+        }
         ____Utils.ROLLBACK.set(Boolean.TRUE);
         try {
             return Objects.requireNonNull(function, "function is null")

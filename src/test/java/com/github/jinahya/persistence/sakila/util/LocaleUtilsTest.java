@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-public class ____Utils_Locale_Test {
+public class LocaleUtilsTest {
 
     public static Stream<Locale> localeStream() {
         return Stream.of(Locale.getAvailableLocales());
@@ -35,7 +35,7 @@ public class ____Utils_Locale_Test {
         if (displayCountry.strip().isBlank()) {
             return;
         }
-        final var value = ____Utils.valueOfDisplayCountry(displayCountry, inLocale);
+        final var value = LocaleUtils.valueOfDisplayCountry(displayCountry, inLocale);
         assertThat(value).hasValueSatisfying(v -> {
             assertThat(v.getDisplayCountry(inLocale))
                     .isEqualTo(displayCountry);
@@ -50,7 +50,7 @@ public class ____Utils_Locale_Test {
         if (displayCountryInEnglish.isBlank()) {
             return;
         }
-        final var value = ____Utils.valueOfDisplayCountryInEnglish(displayCountryInEnglish);
+        final var value = LocaleUtils.valueOfDisplayCountryInEnglish(displayCountryInEnglish);
         assertThat(value).hasValueSatisfying(v -> {
             assertThat(v.getDisplayCountry(Locale.ENGLISH))
                     .isEqualTo(displayCountryInEnglish);
@@ -65,7 +65,7 @@ public class ____Utils_Locale_Test {
         if (displayLanguage.strip().isBlank()) {
             return;
         }
-        final var value = ____Utils.valueOfDisplayLanguage(displayLanguage, inLocale);
+        final var value = LocaleUtils.valueOfDisplayLanguage(displayLanguage, inLocale);
         assertThat(value).hasValueSatisfying(v -> {
             assertThat(v.getDisplayLanguage(inLocale))
                     .isEqualTo(displayLanguage);
@@ -80,7 +80,7 @@ public class ____Utils_Locale_Test {
         if (displayLanguageInEnglish.isBlank()) {
             return;
         }
-        final var value = ____Utils.valueOfDisplayLanguageInEnglish(displayLanguageInEnglish);
+        final var value = LocaleUtils.valueOfDisplayLanguageInEnglish(displayLanguageInEnglish);
         assertThat(value).hasValueSatisfying(v -> {
             assertThat(v.getDisplayLanguage(Locale.ENGLISH))
                     .isEqualTo(displayLanguageInEnglish);

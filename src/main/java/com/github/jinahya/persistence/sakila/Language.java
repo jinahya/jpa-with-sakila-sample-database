@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.LocaleUtils;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -50,7 +50,8 @@ public class Language
     public static final String TABLE_NAME = "language";
 
     /**
-     * The name of the table column to which the {@value Language_#LANGUAGE_ID} attribute maps. That value is {@value}.
+     * The name of the table column to which the {@link Language_#languageId languageId} attribute maps. That value is
+     * {@value}.
      */
     public static final String COLUMN_NAME_LANGUAGE_ID = "language_id";
 
@@ -156,16 +157,16 @@ public class Language
      */
     public Locale getNameAsLocale() {
         return Optional.ofNullable(getName())
-                .flatMap(____Utils::valueOfDisplayLanguageInEnglish)
+                .flatMap(LocaleUtils::valueOfDisplayLanguageInEnglish)
                 .orElse(null);
     }
 
     /**
-     * Replaces current value of {@value Language_#NAME} attribute with specified locale's
+     * Replaces current value of {@link Language_#name name} attribute with specified locale's
      * {@link Locale#getDisplayLanguage(Locale) display language} retrieved for {@link Locale#ENGLISH}.
      *
      * @param locale the locale whose {@link Locale#getDisplayLanguage(Locale) display language} is set on the
-     *               {@value Language_#NAME} attribute.
+     *               {@link Language_#name name} attribute.
      * @see Locale#getDisplayLanguage(Locale)
      * @see Locale#ENGLISH
      */

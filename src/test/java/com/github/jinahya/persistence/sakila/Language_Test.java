@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.____Utils_Locale_Test;
+import com.github.jinahya.persistence.sakila.util.LocaleUtilsTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -33,11 +33,11 @@ class Language_Test
     class NameAsLocaleTest {
 
         private Stream<Locale> localeStream() {
-            return ____Utils_Locale_Test.localeStream();
+            return LocaleUtilsTest.localeStream();
         }
 
         private Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return ____Utils_Locale_Test.localeWithNonBlankDisplayLanguageStream();
+            return LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
         }
 
         @DisplayName("getNameAsLocale()null")

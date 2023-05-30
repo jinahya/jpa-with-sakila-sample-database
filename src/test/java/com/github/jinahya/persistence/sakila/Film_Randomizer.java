@@ -90,6 +90,7 @@ public class Film_Randomizer
                 .randomize(named(Film_.specialFeatures.getName()), Film_Randomizer::randomSpecialFeatures)
                 .excludeField(named(Film_.language.getName()))
                 .excludeField(named(Film_.originalLanguage.getName()))
+                .excludeField(named(Film_.actors.getName()))
                 ;
     }
 

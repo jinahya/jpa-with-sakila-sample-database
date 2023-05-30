@@ -7,8 +7,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -26,9 +28,47 @@ import java.util.Optional;
  * </blockquote>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-inventory.html">5.1.11 The inventory
+ * Table</a>
+ * @see InventoryConstants
  */
+@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID,
+            query = """
+                    SELECT e
+                    FROM Inventory AS e
+                    WHERE e.storeId > :storeId AND e.filmId > :filmIdMinExclusive
+                    ORDER BY e.filmId ASC""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID,
+            query = """
+                    SELECT e
+                    FROM Inventory AS e
+                    WHERE e.filmId > :filmId AND e.storeId > :storeIdMinExclusive
+                    ORDER BY e.storeId ASC""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID_AND_STORE_ID,
+            query = """
+                    SELECT e
+                    FROM Inventory AS e
+                    WHERE e.filmId = :filmId AND e.storeId = :storeId
+                    ORDER BY e.filmId ASC, e.storeId ASC""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_INVENTORY_ID_GREATER_THAN,
+            query = """
+                    SELECT e
+                    FROM Inventory AS e
+                    WHERE e.inventoryId > :inventoryIdMinExclusive
+                    ORDER BY e.inventoryId ASC""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL,
+            query = """
+                    SELECT e
+                    FROM Inventory AS e""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_BY_INVENTORY_ID,
+            query = "SELECT e FROM Inventory AS e WHERE e.inventoryId = :inventoryId")
 @Entity
-@Table(name = Inventory.TABLE_NAME)
+@Table(name = Inventory.TABLE_NAME,
+       indexes = {
+               @Index(columnList = Inventory.COLUMN_NAME_FILM_ID),
+               @Index(columnList = Inventory.COLUMN_NAME_STORE_ID + ',' + Inventory.COLUMN_NAME_FILM_ID)
+       }
+)
 public class Inventory
         extends _BaseEntity<Integer> {
 
@@ -37,6 +77,10 @@ public class Inventory
      */
     public static final String TABLE_NAME = "inventory";
 
+    /**
+     * The name of the table column to which {@link Inventory_#inventoryId inventoryId} attribute maps. The value is
+     * {@value}.
+     */
     public static final String COLUMN_NAME_INVENTORY_ID = "inventory_id";
 
     public static final String COLUMN_NAME_FILM_ID = Film.COLUMN_NAME_FILM_ID;
@@ -89,7 +133,7 @@ public class Inventory
         return filmId;
     }
 
-    protected void setFilmId(final Integer filmId) {
+    void setFilmId(final Integer filmId) {
         this.filmId = filmId;
     }
 
@@ -107,7 +151,7 @@ public class Inventory
      *
      * @param storeId new value for the {@link Inventory_#storeId storeId} attribute.
      */
-    protected void setStoreId(final Integer storeId) {
+    void setStoreId(final Integer storeId) {
         this.storeId = storeId;
     }
 
@@ -171,7 +215,7 @@ public class Inventory
     }
 
     /**
-     * 이 인벤토리 엔터티에 연결된 필름.
+     * 이 인벤토리 항목의 영화.
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
@@ -203,7 +247,7 @@ public class Inventory
     }
 
     /**
-     * 이 인벤토리 엔터티에 연결된 스토어.
+     * 이 인벤토리 항목의 점포.
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false, insertable = false, updatable = false)

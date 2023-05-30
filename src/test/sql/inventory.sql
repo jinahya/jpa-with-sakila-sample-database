@@ -7,7 +7,7 @@ SELECT *
 FROM inventory
 ;
 
--- DVDs in stores
+-- disks in stores
 SELECT store_id, COUNT(1) AS disks
 FROM inventory
 GROUP BY store_id

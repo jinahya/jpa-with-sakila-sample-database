@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.TemporalUtils;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -12,10 +12,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -28,6 +31,7 @@ import java.time.temporal.TemporalAmount;
 import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -622,11 +626,12 @@ public class Film
      *                               {@link Film_#rentalDuration rentalDuration} attribute.
      * @see TemporalAmount#get(TemporalUnit)
      * @see ChronoUnit#DAYS
+     * @see TemporalUtils#getDaysOf(TemporalAmount)
      */
     public void setRentalDurationAsPeriod(final Period rentalDurationAsPeriod) {
         setRentalDuration(
                 Optional.ofNullable(rentalDurationAsPeriod)
-                        .map(____Utils::getDaysOf)
+                        .map(TemporalUtils::getDaysOf)
                         .map(Math::toIntExact)
                         .orElse(null)
         );
@@ -653,13 +658,28 @@ public class Film
      *
      * @param lengthAsDuration the duration, of {@link ChronoUnit#MINUTES minutes}, for the {@link Film_#length length}
      *                         attribute.
+     * @see TemporalUtils#getMinutesOf(TemporalAmount)
      */
     public void setLengthAsDuration(final Duration lengthAsDuration) {
         setLength(
                 Optional.ofNullable(lengthAsDuration)
-                        .map(____Utils::getMinutesOf)
+                        .map(TemporalUtils::getMinutesOf)
                         .map(Math::toIntExact)
                         .orElse(null)
         );
     }
+
+    /**
+     * 이 영화에 출연한 배우 목록.
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = FilmActor.TABLE_NAME,
+               joinColumns = {
+                       @JoinColumn(name = FilmActor.COLUMN_NAME_FILM_ID)
+               },
+               inverseJoinColumns = {
+                       @JoinColumn(name = FilmActor.COLUMN_NAME_ACTOR_ID)
+               }
+    )
+    private List<@Valid @NotNull Actor> actors;
 }

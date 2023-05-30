@@ -4,15 +4,22 @@ import com.github.jinahya.persistence.sakila.service.ActorService;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+
+import java.util.List;
 
 /**
  * An entity class for mapping {@value Actor#TABLE_NAME} table.
@@ -233,4 +240,18 @@ public class Actor
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_LAST_NAME, nullable = false, length = COLUMN_LENGTH_LAST_NAME)
     private String lastName;
+
+    /**
+     * 이 배우가 출연한 영화 목록.
+     */
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = FilmActor.TABLE_NAME,
+               joinColumns = {
+                       @JoinColumn(name = FilmActor.COLUMN_NAME_ACTOR_ID)
+               },
+               inverseJoinColumns = {
+                       @JoinColumn(name = FilmActor.COLUMN_NAME_FILM_ID)
+               }
+    )
+    private List<@Valid @NotNull Film> films;
 }

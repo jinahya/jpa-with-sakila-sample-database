@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.LocaleUtils;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -195,12 +195,12 @@ public class Country
      * @return a locale whose {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to current value
      * of {@link Country_#country} attribute; {@code null} if current value of {@link Country_#country} attribute is
      * {@code null} or no locale matched.
-     * @see ____Utils#valueOfDisplayCountryInEnglish(String)
+     * @see LocaleUtils#valueOfDisplayCountryInEnglish(String)
      */
     @Transient
     public Locale getCountryAsLocale() {
         return Optional.ofNullable(getCountry())
-                .flatMap(____Utils::valueOfDisplayCountryInEnglish)
+                .flatMap(LocaleUtils::valueOfDisplayCountryInEnglish)
                 .orElse(null);
     }
 

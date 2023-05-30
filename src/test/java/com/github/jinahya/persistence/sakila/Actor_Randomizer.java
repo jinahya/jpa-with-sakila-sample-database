@@ -16,8 +16,10 @@ class Actor_Randomizer
     @Override
     EasyRandomParameters parameters() {
         return super.parameters()
+                .excludeField(named(Actor_.actorId.getName()))
                 .randomize(named(Actor_.firstName.getName()), new StringRandomizer(45))
                 .randomize(named(Actor_.lastName.getName()), new StringRandomizer(45))
+                .excludeField(named(Actor_.films.getName()))
                 ;
     }
 

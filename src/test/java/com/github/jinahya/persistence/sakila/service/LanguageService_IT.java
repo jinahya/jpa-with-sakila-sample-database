@@ -1,7 +1,7 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.Language;
-import com.github.jinahya.persistence.sakila.util.____Utils_Locale_Test;
+import com.github.jinahya.persistence.sakila.util.LocaleUtilsTest;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.ExplicitParamInjection;
 import org.junit.jupiter.api.Disabled;
@@ -109,7 +109,7 @@ class LanguageService_IT
     class LocateByNameTest {
 
         private static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return ____Utils_Locale_Test.localeWithNonBlankDisplayLanguageStream();
+            return LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
         }
 
         @Disabled
@@ -134,7 +134,7 @@ class LanguageService_IT
     class LocateByLocaleTest {
 
         private static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return ____Utils_Locale_Test.localeWithNonBlankDisplayLanguageStream();
+            return LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
         }
 
         @Disabled

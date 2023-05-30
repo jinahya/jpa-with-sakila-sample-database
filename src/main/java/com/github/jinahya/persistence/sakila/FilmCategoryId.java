@@ -16,7 +16,8 @@ import java.util.Objects;
  * @see FilmCategory
  */
 public class FilmCategoryId
-        implements Serializable, Comparable<FilmCategoryId> {
+        implements Serializable,
+                   Comparable<FilmCategoryId> {
 
     @Serial
     private static final long serialVersionUID = 3359964322700774044L;
@@ -49,8 +50,8 @@ public class FilmCategoryId
     @Override
     public String toString() {
         return super.toString() + '{' +
-               "filmId=" + getFilmId() +
-               ",categoryId=" + getCategoryId() +
+               "filmId=" + filmId +
+               ",categoryId=" + categoryId +
                '}';
     }
 
@@ -58,13 +59,13 @@ public class FilmCategoryId
     public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof FilmCategoryId that)) return false;
-        return Objects.equals(getFilmId(), that.getFilmId()) &&
-               Objects.equals(getCategoryId(), that.getCategoryId());
+        return Objects.equals(filmId, that.filmId) &&
+               Objects.equals(categoryId, that.categoryId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getFilmId(), getCategoryId());
+        return Objects.hash(filmId, categoryId);
     }
 
     @Override
