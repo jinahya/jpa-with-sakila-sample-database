@@ -6,6 +6,9 @@ Jakarta Persistence with Sakila sample database.
 
 ## Links
 
+### SQL
+
+* [How to Select the First/Least/Max Row per Group in SQL](https://www.xaprb.com/blog/2006/12/07/how-to-select-the-firstleastmax-row-per-group-in-sql/)
 
 ### MySQL
 

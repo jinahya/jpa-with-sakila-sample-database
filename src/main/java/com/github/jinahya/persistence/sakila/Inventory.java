@@ -32,24 +32,56 @@ import java.util.Optional;
  * Table</a>
  * @see InventoryConstants
  */
+@NamedQuery(name = InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE,
+            query = """
+                    SELECT DISTINCT e.film
+                    FROM Inventory AS e
+                    WHERE e.store = :store
+                          AND e.filmId > :filmIdMinExclusive
+                    ORDER BY e.filmId ASC""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID,
+            query = """
+                    SELECT DISTINCT e.film
+                    FROM Inventory AS e
+                    WHERE e.storeId = :storeId
+                          AND e.filmId > :filmIdMinExclusive
+                    ORDER BY e.filmId ASC""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_STORE,
+            query = """
+                    SELECT e
+                    FROM Inventory AS e
+                    WHERE e.store = :store
+                          AND e.inventoryId > :inventoryIdMinExclusive
+                    ORDER BY e.inventoryId ASC""")
 @NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID,
             query = """
                     SELECT e
                     FROM Inventory AS e
-                    WHERE e.storeId > :storeId AND e.filmId > :filmIdMinExclusive
-                    ORDER BY e.filmId ASC""")
+                    WHERE e.storeId = :storeId
+                          AND e.inventoryId > :inventoryIdMinExclusive
+                    ORDER BY e.inventoryId ASC""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_FILM,
+            query = """
+                    SELECT e
+                    FROM Inventory AS e
+                    WHERE e.film = :film
+                          AND e.inventoryId > :inventoryIdMinExclusive
+                    ORDER BY e.inventoryId ASC""")
 @NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID,
             query = """
                     SELECT e
                     FROM Inventory AS e
-                    WHERE e.filmId > :filmId AND e.storeId > :storeIdMinExclusive
-                    ORDER BY e.storeId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID_AND_STORE_ID,
+                    WHERE e.filmId = :filmId
+                          AND e.inventoryId > :inventoryIdMinExclusive
+                    ORDER BY e.inventoryId ASC""")
+@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID,
             query = """
                     SELECT e
                     FROM Inventory AS e
-                    WHERE e.filmId = :filmId AND e.storeId = :storeId
-                    ORDER BY e.filmId ASC, e.storeId ASC""")
+                    WHERE e.storeId = :storeId
+                          AND e.filmId = :filmId
+                          AND e.inventoryId > :inventoryIdMinExclusive
+                    ORDER BY e.inventoryId ASC""")
 @NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_INVENTORY_ID_GREATER_THAN,
             query = """
                     SELECT e
@@ -203,7 +235,7 @@ public class Inventory
      *
      * @param film new value for the {@link Inventory_#film film} attribute.
      * @apiNote This method also replaces {@link Inventory#filmId filmId} attribute with {@code film?.filmId}.
-     * @see Film#of(Integer)
+     * @see Film#ofFilmId(Integer)
      */
     public void setFilm(final Film film) {
         this.film = film;
@@ -235,7 +267,7 @@ public class Inventory
      *
      * @param store new value for the {@link Inventory_#store store} attribute.
      * @apiNote This method also replaces {@link Inventory#storeId storeId} attribute with {@code store?.storeId}.
-     * @see Store#of(Integer)
+     * @see Store#ofStoreId(Integer)
      */
     public void setStore(final Store store) {
         this.store = store;

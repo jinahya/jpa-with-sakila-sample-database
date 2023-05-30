@@ -18,7 +18,7 @@ class FilmCategory_IT
         instance.setCategory(Category_IT.newPersistedInstance(entityManager));
         assertThatBean(instance).isValid();
         entityManager.persist(instance);
-        entityManager.flush();
+//        entityManager.flush();
         return instance;
     }
 
@@ -29,9 +29,9 @@ class FilmCategory_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(FilmCategory_IT::newPersistedInstance);
+        assertThatBean(instance).isValid();
         assertThat(instance).isNotNull().satisfies(e -> {
             assertThat(e.getCategoryId()).isNotNull();
         });
-        assertThatBean(instance).isValid();
     }
 }

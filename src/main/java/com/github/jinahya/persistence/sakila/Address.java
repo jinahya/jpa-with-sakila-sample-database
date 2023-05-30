@@ -47,15 +47,15 @@ import java.util.function.BiFunction;
                     SELECT e
                     FROM Address AS e
                     WHERE e.cityId = :cityId""")
+@NamedQuery(name = AddressConstants.QUERY_FIND_ALL,
+            query = """
+                    SELECT e
+                    FROM Address AS e""")
 @NamedQuery(name = AddressConstants.QUERY_FIND_BY_ADDRESS_ID,
             query = """
                     SELECT e
                     FROM Address AS e
                     WHERE e.addressId = :addressId""")
-@NamedQuery(name = AddressConstants.QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM Address AS e""")
 @Entity
 @Table(name = Address.TABLE_NAME)
 @Slf4j

@@ -67,7 +67,7 @@ public class Store
      * @param storeId the value of the {@link Store_#storeId storeId} attribute.
      * @return a new instance.
      */
-    public static Store of(final Integer storeId) {
+    public static Store ofStoreId(final Integer storeId) {
         final var instance = new Store();
         instance.storeId = storeId;
         return instance;
