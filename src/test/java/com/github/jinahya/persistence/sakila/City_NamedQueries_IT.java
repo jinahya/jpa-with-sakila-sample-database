@@ -14,11 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 class City_NamedQueries_IT
-        extends __BaseEntityIT<City, Integer> {
-
-    City_NamedQueries_IT() {
-        super(City.class, Integer.class);
-    }
+        extends __PersistenceIT {
 
     @DisplayName(CityConstants.QUERY_FIND_BY_CITY_ID)
     @Nested
@@ -238,7 +234,7 @@ class City_NamedQueries_IT
         @DisplayName("(Country(44))+")
         @Test
         void __44WithMaxResults() {
-            final var country = Country.of(44); // India
+            final var country = Country.ofCountryId(44); // India
             final var maxResults = ThreadLocalRandom.current().nextInt(8, 16);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var cityIdMinExclusive = i.get();

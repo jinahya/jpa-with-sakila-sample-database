@@ -2,7 +2,6 @@ package com.github.jinahya.persistence.sakila;
 
 import com.github.jinahya.persistence.sakila.util.LocaleUtilsTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,16 +27,15 @@ class Language_Test
     }
 
     @DisplayName("NameAsLocale(locale)")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     @Nested
     class NameAsLocaleTest {
 
-        private Stream<Locale> localeStream() {
-            return LocaleUtilsTest.localeStream();
+        private static Stream<Locale> getLocaleStream() {
+            return LocaleUtilsTest.getLocaleStream();
         }
 
-        private Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return LocaleUtilsTest.localeWithNonBlankDisplayLanguageStream();
+        private static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
+            return LocaleUtilsTest.getLocaleWithNonBlankDisplayLanguageStream();
         }
 
         @DisplayName("getNameAsLocale()null")
@@ -48,11 +46,10 @@ class Language_Test
             // WHEN
             final var nameAsLocale = instance.getNameAsLocale();
             // THEN
-            verify(instance, times(1)).getName();
             assertThat(nameAsLocale).isNull();
+            verify(instance, times(1)).getName();
         }
 
-        @Disabled
         @DisplayName("getNameAsLocale() <- getName()")
         @MethodSource({"localeWithNonBlankDisplayLanguageStream"})
         @ParameterizedTest
@@ -63,13 +60,12 @@ class Language_Test
             // WHEN
             final var nameAsLocale = instance.getNameAsLocale();
             // THEN
-            verify(instance, times(1)).getName();
-            assertThat(nameAsLocale.getDisplayLanguage(Locale.ENGLISH)).isEqualTo(instance.getName());
+            assertThat(nameAsLocale.getDisplayLanguage(Locale.ENGLISH))
+                    .isEqualTo(instance.getName());
         }
 
-        @Disabled
         @DisplayName("setNameAsLocale(locale) -> setName(locale.displayLanguage(ENGLISH))")
-        @MethodSource("localeStream")
+        @MethodSource("getLocaleStream")
         @ParameterizedTest
         void setNameAsLocale_InvokeNameWithLocaleDisplayLanguage_(final Locale locale) {
             // GIVEN

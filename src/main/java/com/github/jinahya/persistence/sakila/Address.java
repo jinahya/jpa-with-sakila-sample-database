@@ -15,8 +15,10 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -36,17 +38,29 @@ import java.util.function.BiFunction;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">5.1.2 The address Table</a>
  * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
+ * @see Address_
+ * @see AddressConstants
  */
 @NamedQuery(name = AddressConstants.QUERY_FIND_ALL_BY_CITY,
             query = """
                     SELECT e
                     FROM Address AS e
-                    WHERE e.city = :city""")
+                    WHERE e.city = :city
+                          AND e.addressId > :addressIdMinExclusive
+                    ORDER BY e.addressId ASC""")
 @NamedQuery(name = AddressConstants.QUERY_FIND_ALL_BY_CITY_ID,
             query = """
                     SELECT e
                     FROM Address AS e
-                    WHERE e.cityId = :cityId""")
+                    WHERE e.cityId = :cityId
+                          AND e.addressId > :addressIdMinExclusive
+                    ORDER BY e.addressId ASC""")
+@NamedQuery(name = AddressConstants.QUERY_FIND_ALL_ADDRESS_ID_GREATER_THAN,
+            query = """
+                    SELECT e
+                    FROM Address AS e
+                    WHERE e.addressId > :addressIdMinExclusive
+                    ORDER BY e.addressId ASC""")
 @NamedQuery(name = AddressConstants.QUERY_FIND_ALL,
             query = """
                     SELECT e
@@ -58,9 +72,10 @@ import java.util.function.BiFunction;
                     WHERE e.addressId = :addressId""")
 @Entity
 @Table(name = Address.TABLE_NAME)
-@Slf4j
 public class Address
         extends _BaseEntity<Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -101,7 +116,6 @@ public class Address
                ",cityId=" + cityId +
                ",postalCode='" + postalCode +
                ",phone='" + phone +
-//               ",location=" + Arrays.toString(location) +
                '}';
     }
 
@@ -179,10 +193,20 @@ public class Address
         this.address2 = address2;
     }
 
+    /**
+     * Returns current value of {@link Address_#district district} attribute.
+     *
+     * @return current value of the {@link Address_#district district} attribute.
+     */
     public String getDistrict() {
         return district;
     }
 
+    /**
+     * Replaces current value of {@link Address_#district district} attribute with specified value.
+     *
+     * @param district new value for the {@link Address_#district district} attribute.
+     */
     public void setDistrict(final String district) {
         this.district = district;
     }
@@ -234,7 +258,7 @@ public class Address
      * A surrogate primary key used to uniquely identify each address in the table.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -277,7 +301,7 @@ public class Address
      * A foreign key pointing to the {@link City#TABLE_NAME} table.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
@@ -340,32 +364,35 @@ public class Address
         );
     }
 
+    /**
+     * 이 주소(Address)를 포함하는 도시(City).
+     */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_CITY_ID, nullable = false, insertable = false, updatable = false)
     private City city;
 
-    public _PersistenceTypes.Geometry getLocationGeometry() {
+    public _DomainTypes.Geometry getLocationGeometry() {
         return locationGeometry;
     }
 
-    public void setLocationGeometry(final _PersistenceTypes.Geometry locationGeometry) {
+    public void setLocationGeometry(final _DomainTypes.Geometry locationGeometry) {
         this.locationGeometry = locationGeometry;
         setLocation(
                 Optional.ofNullable(this.locationGeometry)
-                        .map(_PersistenceTypes.Geometry::toByteArray)
+                        .map(_DomainTypes.Geometry::toByteArray)
                         .orElse(null)
 
         );
     }
 
-    @Convert(converter = _PersistenceConverters.GeometryConverter.class)
+    @Convert(converter = _DomainConverters.GeometryConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_LOCATION, nullable = false, insertable = false, updatable = false)
-    private _PersistenceTypes.Geometry locationGeometry;
+    private _DomainTypes.Geometry locationGeometry;
 
     /**
      * Applies current value of {@link Address_#locationGeometry locationGeometry} attribute, as a
-     * {@link _PersistenceTypes.Wkb.Type#POINT} type, to specified function, and returns the result.
+     * {@link _DomainTypes.Wkb.Type#POINT} type, to specified function, and returns the result.
      *
      * @param function the function applies with coordinates.
      * @param <R>      result type parameter
@@ -378,9 +405,9 @@ public class Address
                     final var buffer = lg.toByteBuffer();
                     final var srid = buffer.getInt();
                     assert srid == 0;
-                    buffer.order(_PersistenceTypes.Wkb.byteOrder(buffer.get()));
+                    buffer.order(_DomainTypes.Wkb.byteOrder(buffer.get()));
                     final var type = buffer.getInt();
-                    if (type != _PersistenceTypes.Wkb.Type.POINT.type()) {
+                    if (type != _DomainTypes.Wkb.Type.POINT.type()) {
                         throw new IllegalArgumentException("not a point type: " + type);
                     }
                     final var xCoordinate = buffer.getDouble();
@@ -394,15 +421,15 @@ public class Address
     public void setLocationGeometryAsPoint(final int srid, final double xCoordinate, final double yCoordinate) {
         final var buffer = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + Double.BYTES + Double.BYTES);
         buffer.order(ByteOrder.LITTLE_ENDIAN)
-                .put(_PersistenceTypes.Wkb.endianValue(buffer.order()))
-                .putInt(_PersistenceTypes.Wkb.Type.POINT.type())
+                .put(_DomainTypes.Wkb.endianValue(buffer.order()))
+                .putInt(_DomainTypes.Wkb.Type.POINT.type())
                 .putDouble(xCoordinate)
                 .putDouble(yCoordinate);
         assert !buffer.hasRemaining();
         setLocationGeometry(
-                _PersistenceTypes.Geometry.of(
+                _DomainTypes.Geometry.of(
                         srid,
-                        _PersistenceTypes.Wkb.from(buffer.flip())
+                        _DomainTypes.Wkb.from(buffer.flip())
                 )
         );
     }

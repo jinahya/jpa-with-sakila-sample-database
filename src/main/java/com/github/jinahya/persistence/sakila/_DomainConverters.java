@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 import java.util.function.Function;
 
-public final class _PersistenceConverters {
+public final class _DomainConverters {
 
     public static class EnumConverter<E extends Enum<E>, Y>
             implements AttributeConverter<E, Y> {
@@ -55,17 +55,17 @@ public final class _PersistenceConverters {
     }
 
     /**
-     * An attribute converter for converting from column values of {@code GEOMETRY} to
-     * {@link _PersistenceTypes.Geometry}, and vice versa.
+     * An attribute converter for converting from column values of {@code GEOMETRY} to {@link _DomainTypes.Geometry},
+     * and vice versa.
      *
      * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
      */
     @Converter
     public static class GeometryConverter
-            implements AttributeConverter<_PersistenceTypes.Geometry, byte[]> {
+            implements AttributeConverter<_DomainTypes.Geometry, byte[]> {
 
         @Override
-        public byte[] convertToDatabaseColumn(final _PersistenceTypes.Geometry attribute) {
+        public byte[] convertToDatabaseColumn(final _DomainTypes.Geometry attribute) {
             if (attribute == null) {
                 return null;
             }
@@ -73,11 +73,11 @@ public final class _PersistenceConverters {
         }
 
         @Override
-        public _PersistenceTypes.Geometry convertToEntityAttribute(final byte[] dbData) {
+        public _DomainTypes.Geometry convertToEntityAttribute(final byte[] dbData) {
             if (dbData == null) {
                 return null;
             }
-            return _PersistenceTypes.Geometry.from(ByteBuffer.wrap(dbData));
+            return _DomainTypes.Geometry.from(ByteBuffer.wrap(dbData));
         }
     }
 
@@ -115,7 +115,7 @@ public final class _PersistenceConverters {
         }
     }
 
-    private _PersistenceConverters() {
+    private _DomainConverters() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

@@ -147,7 +147,7 @@ public class Rental
      * The item being rented.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_MEDIUMINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_MEDIUMINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
@@ -159,7 +159,7 @@ public class Rental
      * The customer renting the item.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
@@ -180,7 +180,7 @@ public class Rental
      * The staff member who processed the rental.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)

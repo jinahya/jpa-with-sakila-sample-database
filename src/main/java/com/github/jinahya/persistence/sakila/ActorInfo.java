@@ -89,7 +89,7 @@ public class ActorInfo
         return filmInfo;
     }
 
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @NotNull
@@ -108,7 +108,7 @@ public class ActorInfo
     private String lastName;
 
     @Basic(optional = true)
-    @Column(name = "film_info", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT, insertable = false,
+    @Column(name = "film_info", nullable = true, length = _DomainConstants.COLUMN_LENGTH_TEXT, insertable = false,
             updatable = false)
     private String filmInfo;
 }

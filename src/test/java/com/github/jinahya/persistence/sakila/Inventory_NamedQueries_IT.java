@@ -27,10 +27,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class Inventory_NamedQueries_IT
         extends __PersistenceIT {
 
-    Inventory_NamedQueries_IT() {
-        super();
-    }
-
     @DisplayName(InventoryConstants.QUERY_FIND_BY_INVENTORY_ID)
     @Nested
     class FindByInventoryIdTest {

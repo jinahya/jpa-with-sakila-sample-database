@@ -18,11 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @Slf4j
 class Country_NamedQueries_IT
-        extends _BaseEntityIT<Country, Integer> {
-
-    Country_NamedQueries_IT() {
-        super(Country.class, Integer.class);
-    }
+        extends __PersistenceIT {
 
     @DisplayName(CountryConstants.QUERY_FIND_BY_COUNTRY_ID)
     @Nested

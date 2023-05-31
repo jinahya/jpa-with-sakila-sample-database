@@ -14,6 +14,7 @@ class FilmActor_IT
         instance.setActor(Actor_IT.newPersistedInstance(entityManager));
         instance.setFilm(Film_IT.newPersistedInstance(entityManager));
         entityManager.persist(instance);
+        entityManager.flush();
         return instance;
     }
 

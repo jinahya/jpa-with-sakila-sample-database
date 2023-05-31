@@ -19,8 +19,10 @@ Jakarta Persistence with Sakila sample database.
     * [How "YEAR" data type take only 1 byte in mysql server](https://stackoverflow.com/q/23074989/330457) (
       StackOverflow.com)
 
-#### Sakila
+#### Sakila Sample Database
 
+* [Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/)
+  * [5 Structure](https://dev.mysql.com/doc/sakila/en/sakila-structure.html)
 * [Motion Picture Association film rating system](https://en.wikipedia.org/wiki/Motion_Picture_Association_film_rating_system) (
   Wikipedia.com)
 
@@ -29,7 +31,7 @@ Jakarta Persistence with Sakila sample database.
 * [Jakarta Bean Validation](https://beanvalidation.org/)
     * [Jakarta Bean Validation 3.0](https://beanvalidation.org/3.0/)
 
-#### Hibernate Validator
+#### Hibernate Validator (The Bean Validation reference implementation)
 
 * [Cascaded return value validation causes exception when used with Weld](https://hibernate.atlassian.net/browse/HV-770)
 

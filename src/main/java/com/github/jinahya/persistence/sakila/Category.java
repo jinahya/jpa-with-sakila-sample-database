@@ -132,7 +132,7 @@ public class Category
      * A surrogate primary key used to uniquely identify each category in the table.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

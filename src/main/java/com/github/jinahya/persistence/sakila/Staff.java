@@ -17,8 +17,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,9 +40,10 @@ import java.util.Optional;
  */
 @Entity
 @Table(name = Staff.TABLE_NAME)
-@Slf4j
 public class Staff
         extends _BaseEntity<Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -220,7 +223,7 @@ public class Staff
     /**
      * A surrogate primary key that uniquely identifies the staff member.
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -248,7 +251,7 @@ public class Staff
     /**
      * A foreign key to the staff member {@value Address#TABLE_NAME} in the address table.
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
@@ -274,7 +277,7 @@ public class Staff
      * The staff member “home store.” The employee can work at other stores but is generally assigned to the store
      * listed.
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)

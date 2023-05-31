@@ -194,7 +194,7 @@ public class City
      * A surrogate primary key used to uniquely identify each city in the table.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -218,7 +218,7 @@ public class City
      * A foreign key identifying the country that the city belongs to.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)

@@ -125,7 +125,7 @@ public class StaffList
         return sid;
     }
 
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Id
@@ -164,7 +164,7 @@ public class StaffList
     @Column(name = "country", nullable = false, length = 50, insertable = false, updatable = false)
     private String country;
 
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @Basic(optional = false)
     @Column(name = "SID", nullable = false, insertable = false, updatable = false)

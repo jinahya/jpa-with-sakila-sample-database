@@ -212,7 +212,7 @@ public class Actor
      * A surrogate primary key used to uniquely identify each actor in the table.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -241,17 +241,33 @@ public class Actor
     @Column(name = COLUMN_NAME_LAST_NAME, nullable = false, length = COLUMN_LENGTH_LAST_NAME)
     private String lastName;
 
+    static final String ATTRIBUTE_NAME_FILMS = "films";
+
+    static {
+        try {
+//            assert ATTRIBUTE_NAME_FILMS.equals(Actor_.films.getName());
+        } catch (final NumberFormatException npe) {
+        }
+    }
+
     /**
      * 이 배우가 출연한 영화 목록.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = FilmActor.TABLE_NAME,
-               joinColumns = {
-                       @JoinColumn(name = FilmActor.COLUMN_NAME_ACTOR_ID)
-               },
-               inverseJoinColumns = {
-                       @JoinColumn(name = FilmActor.COLUMN_NAME_FILM_ID)
-               }
+    @ManyToMany(
+            cascade = {
+            },
+            fetch = FetchType.LAZY, // default
+//            mappedBy = Film.ATTRIBUTE_NAME_ACTORS,
+            targetEntity = Film.class
+    )
+    @JoinTable(
+            name = FilmActor.TABLE_NAME,
+            joinColumns = {
+                    @JoinColumn(name = FilmActor.COLUMN_NAME_ACTOR_ID)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = FilmActor.COLUMN_NAME_FILM_ID)
+            }
     )
     private List<@Valid @NotNull Film> films;
 }

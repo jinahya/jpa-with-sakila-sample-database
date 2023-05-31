@@ -12,7 +12,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
+
+import static java.util.concurrent.ThreadLocalRandom.current;
 
 /**
  * A service for querying {@link Country} class.
@@ -36,7 +37,7 @@ class CountryService
      * @return an optional of found entity; {@code empty} if not found.
      */
     Optional<@Valid Country> findByCountryId(@Positive final int countryId) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
+        if (current().nextBoolean()) {
             return super.findById(countryId);
         }
         return Optional.ofNullable(
@@ -55,7 +56,7 @@ class CountryService
     @Override
     // https://hibernate.atlassian.net/browse/HV-770
     public @NotNull List</*@Valid @NotNull*/ Country> findAll(@Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
+        if (current().nextBoolean()) {
             return super.findAll(maxResults);
         }
         return applyEntityManager(em -> {
@@ -70,7 +71,7 @@ class CountryService
     public @NotNull List<@Valid @NotNull Country> findAllByCountryIdGreaterThan(
             @PositiveOrZero int countryIdMinExclusive,
             @Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
+        if (current().nextBoolean()) {
             return super.findAllByIdGreaterThan(
                     r -> r.get(Country_.countryId),
                     countryIdMinExclusive,
@@ -89,7 +90,7 @@ class CountryService
 
     public List<@Valid @NotNull Country> findAllByCountry(@NotBlank final String country,
                                                           @Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
+        if (current().nextBoolean()) {
             return super.findAllByAttribute(
                     r -> r.get(Country_.country),
                     country,
@@ -110,6 +111,6 @@ class CountryService
         return findAllByCountry(country, 1)
                 .stream()
                 .findFirst()
-                .orElseGet(() -> persist(Country.of(country)));
+                .orElseGet(() -> persist(Country.ofCountry(country)));
     }
 }

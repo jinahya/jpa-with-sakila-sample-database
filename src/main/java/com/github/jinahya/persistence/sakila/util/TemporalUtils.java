@@ -1,7 +1,9 @@
 package com.github.jinahya.persistence.sakila.util;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
@@ -13,8 +15,9 @@ import java.util.Objects;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-@Slf4j
 public final class TemporalUtils {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static long getUnitsOf(final TemporalAmount amount, final Temporal now, final ChronoUnit unit) {
         Objects.requireNonNull(unit, "unit is null");

@@ -6,7 +6,7 @@
     <description>Sakila Persistence Unit</description>
     <class>com.github.jinahya.persistence.sakila.__BaseEntity</class>
     <class>com.github.jinahya.persistence.sakila._BaseEntity</class>
-    <class>com.github.jinahya.persistence.sakila._PersistenceConverters$GeometryConverter</class>
+    <class>com.github.jinahya.persistence.sakila._DomainConverters$GeometryConverter</class>
     <class>com.github.jinahya.persistence.sakila.Actor</class>
     <class>com.github.jinahya.persistence.sakila.Address</class>
     <class>com.github.jinahya.persistence.sakila.Category</class>

@@ -1,7 +1,7 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.City;
-import com.github.jinahya.persistence.sakila._PersistenceConstants;
+import com.github.jinahya.persistence.sakila._DomainConstants;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +32,7 @@ class CityService_IT
 
         @Test
         void _NotEmpty_65536() {
-            final var cityId = _PersistenceConstants.MAX_SMALLINT_UNSIGNED;
+            final var cityId = _DomainConstants.MAX_SMALLINT_UNSIGNED;
             final var found = applyServiceInstance(s -> s.findByCityId(cityId));
             Assertions.assertThat(found).isEmpty();
         }

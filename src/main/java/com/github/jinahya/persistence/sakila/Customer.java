@@ -165,7 +165,7 @@ public class Customer
      * A surrogate primary key used to uniquely identify each customer in the table.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -180,7 +180,7 @@ public class Customer
      * but this is the store at which they generally shop.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
@@ -222,7 +222,7 @@ public class Customer
      * A foreign key identifying the customer address in the {@value Address#TABLE_NAME} table.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
@@ -282,14 +282,14 @@ public class Customer
     @Transient
     public Boolean getActiveAsBoolean() {
         return Optional.ofNullable(getActive())
-                .map(_PersistenceConverters.BooleanConverter::intToBoolean)
+                .map(_DomainConverters.BooleanConverter::intToBoolean)
                 .orElse(null);
     }
 
     public void setActiveAsBoolean(final Boolean activeAsBoolean) {
         setActive(
                 Optional.ofNullable(activeAsBoolean)
-                        .map(_PersistenceConverters.BooleanConverter::booleanToInt)
+                        .map(_DomainConverters.BooleanConverter::booleanToInt)
                         .orElse(null)
         );
     }

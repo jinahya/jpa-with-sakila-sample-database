@@ -11,11 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 class Address_NamedQueries_IT
-        extends _BaseEntityIT<Address, Integer> {
-
-    Address_NamedQueries_IT() {
-        super(Address.class, Integer.class);
-    }
+        extends __PersistenceIT {
 
     @Nested
     class FindAllTest {

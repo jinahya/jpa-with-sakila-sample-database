@@ -12,11 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class StaffList_NamedQueries_IT
-        extends __BaseEntityIT<StaffList, Integer> {
-
-    StaffList_NamedQueries_IT() {
-        super(StaffList.class, Integer.class);
-    }
+        extends __PersistenceIT {
 
     @DisplayName(StaffListConstants.QUERY_FIND_ALL)
     @Nested

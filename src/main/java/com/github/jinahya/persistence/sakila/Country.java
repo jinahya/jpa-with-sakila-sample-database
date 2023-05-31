@@ -75,7 +75,7 @@ public class Country
      * @param countryId the {@link Country_#countryId countryId} attribute value.
      * @return a new instance of {@code countryId}.
      */
-    static Country of(final Integer countryId) {
+    static Country ofCountryId(final Integer countryId) {
         final var instance = new Country();
         instance.countryId = countryId;
         return instance;
@@ -87,7 +87,7 @@ public class Country
      * @param country the value for {@link Country_#country country} attribute.
      * @return a new instance of {@code country}.
      */
-    public static Country of(final String country) {
+    public static Country ofCountry(final String country) {
         final var instance = new Country();
         instance.country = country;
         return instance;
@@ -169,7 +169,7 @@ public class Country
      * A surrogate primary key used to uniquely identify each country in the table.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

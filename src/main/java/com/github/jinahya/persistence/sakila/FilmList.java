@@ -139,7 +139,7 @@ public class FilmList {
     private String title;
 
     @Basic(optional = true)
-    @Column(name = COLUMN_NAME_DESCRIPTION, nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT,
+    @Column(name = COLUMN_NAME_DESCRIPTION, nullable = true, length = _DomainConstants.COLUMN_LENGTH_TEXT,
             insertable = false, updatable = false)
     private String description;
 
@@ -152,7 +152,7 @@ public class FilmList {
     @Column(name = "price", nullable = false, precision = 4, scale = 2, insertable = false, updatable = false)
     private BigDecimal price;
 
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_LENGTH, nullable = true, insertable = false, updatable = false)
@@ -167,7 +167,7 @@ public class FilmList {
     private String rating;
 
     @Basic(optional = true)
-    @Column(name = "actors", nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT, insertable = false,
+    @Column(name = "actors", nullable = true, length = _DomainConstants.COLUMN_LENGTH_TEXT, insertable = false,
             updatable = false)
     private String actors;
 

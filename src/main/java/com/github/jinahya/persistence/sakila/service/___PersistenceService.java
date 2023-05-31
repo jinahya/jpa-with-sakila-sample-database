@@ -1,14 +1,16 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.___Uncloseable;
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.PersistenceUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.validation.executable.ExecutableType;
 import jakarta.validation.executable.ValidateOnExecution;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.sql.Connection;
 import java.util.Objects;
 import java.util.function.Function;
@@ -20,8 +22,9 @@ import java.util.function.Function;
  */
 @ValidateOnExecution(type = {ExecutableType.ALL})
 @ApplicationScoped
-@Slf4j
 abstract class ___PersistenceService {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Creates a new instance.
@@ -40,7 +43,7 @@ abstract class ___PersistenceService {
      */
     <R> R applyConnection(final Function<? super Connection, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return ____Utils.applyConnection(entityManager, function);
+        return PersistenceUtils.applyConnection(entityManager, function);
     }
 
     /**
@@ -52,7 +55,7 @@ abstract class ___PersistenceService {
      */
     <R> R applyEntityManagerInTransaction(final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return ____Utils.applyEntityManagerInTransaction(entityManager, function);
+        return PersistenceUtils.applyEntityManagerInTransaction(entityManager, function);
     }
 
     <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {

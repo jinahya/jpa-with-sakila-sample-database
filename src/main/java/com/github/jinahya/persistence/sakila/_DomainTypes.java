@@ -1,15 +1,18 @@
 package com.github.jinahya.persistence.sakila;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Objects;
 
-@Slf4j
-public final class _PersistenceTypes {
+public final class _DomainTypes {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public interface AttributeEnum<E extends Enum<E> & AttributeEnum<E, A>, A> {
 
@@ -266,7 +269,7 @@ public final class _PersistenceTypes {
         private final Wkb binary;
     }
 
-    private _PersistenceTypes() {
+    private _DomainTypes() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

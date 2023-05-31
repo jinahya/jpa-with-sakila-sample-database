@@ -192,7 +192,7 @@ public class Inventory
      * A surrogate primary key used to uniquely identify each item in inventory.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_MEDIUMINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_MEDIUMINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -204,7 +204,7 @@ public class Inventory
      * A foreign key pointing to the film this item represents.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_FILM_ID, nullable = false)
@@ -215,7 +215,7 @@ public class Inventory
      * A foreign key pointing to the store stocking this item.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_STORE_ID, nullable = false)

@@ -169,7 +169,7 @@ public class Store
         this.addressId = addressId;
     }
 
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -178,14 +178,14 @@ public class Store
             updatable = false)
     private Integer storeId;
 
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_MANAGER_STAFF_ID, nullable = false)
     private Integer managerStaffId;
 
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)

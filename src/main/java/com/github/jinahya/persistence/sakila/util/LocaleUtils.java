@@ -1,7 +1,9 @@
 package com.github.jinahya.persistence.sakila.util;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -9,16 +11,19 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Utilities related to {@link Locale}.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-@Slf4j
 public final class LocaleUtils {
 
-    private static final Map<Locale, Map<String, Locale>> DISPLAY_COUNTRIES_AND_LOCALES = new WeakHashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    private static final Map<Locale, Map<String, Locale>> DISPLAY_COUNTRIES_AND_LOCALES
+            = new ConcurrentHashMap<>(new WeakHashMap<>());
 
     /**
      * Returns the locale whose {@link Locale#getDisplayCountry(Locale) display country} in specified locale matches to
@@ -29,7 +34,9 @@ public final class LocaleUtils {
      * @return an optional of matched locale; {@link Optional#empty()} is not found.
      */
     static Optional<Locale> valueOfDisplayCountry(final String displayCountry, final Locale inLocale) {
-        Objects.requireNonNull(displayCountry, "displayCountry is null");
+        if (Objects.requireNonNull(displayCountry, "displayCountry is null").isBlank()) {
+            throw new IllegalArgumentException("displayCountry is blank");
+        }
         Objects.requireNonNull(inLocale, "inLocale is null");
         return Optional.ofNullable(
                 DISPLAY_COUNTRIES_AND_LOCALES
@@ -48,10 +55,11 @@ public final class LocaleUtils {
         return valueOfDisplayCountry(displayCountryInEnglish, Locale.ENGLISH);
     }
 
-    private static final Map<Locale, Map<String, Locale>> DISPLAY_LANGUAGES_AND_LOCALES = new WeakHashMap<>();
+    private static final Map<Locale, Map<String, Locale>> DISPLAY_LANGUAGES_AND_LOCALES
+            = new ConcurrentHashMap<>(new WeakHashMap<>());
 
     static Optional<Locale> valueOfDisplayLanguage(final String displayLanguage, final Locale inLocale) {
-        if (Objects.requireNonNull(displayLanguage, "displayLanguage is null").strip().isBlank()) {
+        if (Objects.requireNonNull(displayLanguage, "displayLanguage is null").isBlank()) {
             throw new IllegalStateException("displayLanguage is blank");
         }
         Objects.requireNonNull(inLocale, "inLocale is null");

@@ -11,11 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 class Language_NamedQueries_IT
-        extends _BaseEntityIT<Language, Integer> {
-
-    Language_NamedQueries_IT() {
-        super(Language.class, Integer.class);
-    }
+        extends __PersistenceIT {
 
     @DisplayName("Language_findAll")
     @Nested

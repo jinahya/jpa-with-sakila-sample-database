@@ -25,7 +25,7 @@ public class ___EntityManagerFactoryProducer {
     @Produces
     EntityManagerFactory produceEntityManagerFactory() {
         final var bean = Persistence.createEntityManagerFactory(
-                _PersistenceConstants.PERSISTENCE_UNIT_NAME,
+                _DomainConstants.PERSISTENCE_UNIT_NAME,
                 new HashMap<>()
         );
         log.debug("producing entity manager factory: {}", bean);

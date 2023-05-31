@@ -3,7 +3,7 @@ package com.github.jinahya.persistence.sakila.service;
 import com.github.jinahya.persistence.sakila.City;
 import com.github.jinahya.persistence.sakila.CityConstants;
 import com.github.jinahya.persistence.sakila.City_;
-import com.github.jinahya.persistence.sakila._PersistenceConstants;
+import com.github.jinahya.persistence.sakila._DomainConstants;
 import jakarta.persistence.NoResultException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -24,7 +24,7 @@ public class CityService
     }
 
     public Optional<@Valid City> findByCityId(
-            @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED) @Positive final int cityId) {
+            @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED) @Positive final int cityId) {
         if (ThreadLocalRandom.current().nextBoolean()) {
             return super.findById(cityId);
         }
@@ -45,7 +45,7 @@ public class CityService
     public List<@Valid @NotNull City> findAllByCity(@NotBlank final String city) {
         Objects.requireNonNull(city, "city is null");
         return applyEntityManager(
-                em -> em.createNamedQuery("City_findAllByCity", City.class)
+                em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_CITY, City.class)
                         .setParameter("city", city)
                         .getResultList()
         );

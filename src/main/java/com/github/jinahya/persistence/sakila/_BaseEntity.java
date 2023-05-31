@@ -76,7 +76,7 @@ public abstract class _BaseEntity<ID extends Comparable<? super ID>>
      * </blockquote>
      */
     @Basic(optional = false)
-    @Column(name = _PersistenceConstants.COLUMN_NAME_LAST_UPDATE, nullable = false,
+    @Column(name = _DomainConstants.COLUMN_NAME_LAST_UPDATE, nullable = false,
             insertable = false, // default CURRENT_TIMESTAMP
             updatable = false) // on update CURRENT_TIMESTAMP
     private Timestamp lastUpdate;

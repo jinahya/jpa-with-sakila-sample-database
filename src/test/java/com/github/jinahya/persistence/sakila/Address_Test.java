@@ -137,7 +137,7 @@ class Address_Test
                 assertThat(g.getSrid()).isEqualTo(srid);
                 assertThat(g.getBinary()).isNotNull().satisfies(b -> {
                     assertThat(b.getOrder()).isSameAs(ByteOrder.LITTLE_ENDIAN);
-                    assertThat(b.getType()).isSameAs(_PersistenceTypes.Wkb.Type.POINT);
+                    assertThat(b.getType()).isSameAs(_DomainTypes.Wkb.Type.POINT);
                     final var buffer = b.getDataBuffer();
                     assertThat(buffer.order()).isSameAs(ByteOrder.LITTLE_ENDIAN);
                     assertThat(buffer.remaining()).isEqualTo(Double.BYTES << 1);

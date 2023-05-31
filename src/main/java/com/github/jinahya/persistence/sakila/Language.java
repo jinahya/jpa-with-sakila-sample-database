@@ -133,7 +133,7 @@ public class Language
      * Surrogate primary key used to uniquely identify each language.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @Positive
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

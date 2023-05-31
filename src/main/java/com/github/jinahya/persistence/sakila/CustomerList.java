@@ -114,7 +114,7 @@ public class CustomerList
         return sid;
     }
 
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @NotNull
@@ -158,7 +158,7 @@ public class CustomerList
     @Column(name = "notes", nullable = false, length = 6, insertable = false, updatable = false)
     private String notes;
 
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)

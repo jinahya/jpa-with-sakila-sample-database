@@ -449,7 +449,7 @@ public class Film
     /**
      * A surrogate primary key used to uniquely identify each film in the table.
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -468,7 +468,7 @@ public class Film
      * A short description or plot summary of the film.
      */
     @Basic(optional = true)
-    @Column(name = COLUMN_NAME_DESCRIPTION, nullable = true, length = _PersistenceConstants.COLUMN_LENGTH_TEXT)
+    @Column(name = COLUMN_NAME_DESCRIPTION, nullable = true, length = _DomainConstants.COLUMN_LENGTH_TEXT)
     private String description;
 
     /**
@@ -485,7 +485,7 @@ public class Film
      * A foreign key pointing at the {@value Language#TABLE_NAME} table; identifies the language of the film.
      * </blockquote>
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
@@ -496,7 +496,7 @@ public class Film
      * A foreign key pointing at the {@value Language#TABLE_NAME} table; identifies the original language of the film.
      * Used when a film has been dubbed into a new language.
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_ORIGINAL_LANGUAGE_ID, nullable = true)
@@ -505,7 +505,7 @@ public class Film
     /**
      * The length of the rental period, in days.
      */
-    @Max(_PersistenceConstants.MAX_TINYINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
@@ -524,7 +524,7 @@ public class Film
     /**
      * The duration of the film, in minutes.
      */
-    @Max(_PersistenceConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Basic(optional = true)
     @Column(name = COLUMN_NAME_LENGTH, nullable = true)
@@ -669,17 +669,32 @@ public class Film
         );
     }
 
+    static final String ATTRIBUTE_NAME_ACTORS = "actors";
+
+    static {
+        try {
+//            assert ATTRIBUTE_NAME_ACTORS.equals(Film_.actors.getName());
+        } catch (final NullPointerException npe) {
+        }
+    }
+
     /**
      * 이 영화에 출연한 배우 목록.
      */
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = FilmActor.TABLE_NAME,
-               joinColumns = {
-                       @JoinColumn(name = FilmActor.COLUMN_NAME_FILM_ID)
-               },
-               inverseJoinColumns = {
-                       @JoinColumn(name = FilmActor.COLUMN_NAME_ACTOR_ID)
-               }
+    @ManyToMany(
+            cascade = {},
+            fetch = FetchType.LAZY,
+//            mappedBy = Actor.ATTRIBUTE_NAME_FILMS,
+            targetEntity = Actor.class
+    )
+    @JoinTable(
+            name = FilmActor.TABLE_NAME,
+            joinColumns = {
+                    @JoinColumn(name = FilmActor.COLUMN_NAME_FILM_ID)
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = FilmActor.COLUMN_NAME_ACTOR_ID)
+            }
     )
     private List<@Valid @NotNull Actor> actors;
 }

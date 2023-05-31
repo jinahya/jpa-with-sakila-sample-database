@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.PersistenceUtils;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import org.jboss.weld.junit5.auto.AddPackages;
@@ -22,7 +22,7 @@ public class __PersistenceIT {
      */
     protected <R> R applyEntityManager(final Function<? super EntityManager, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return ____Utils.applyEntityManagerInTransactionAndRollback(entityManager, function);
+        return PersistenceUtils.applyEntityManagerInTransactionAndRollback(entityManager, function);
     }
 
     @___Uncloseable

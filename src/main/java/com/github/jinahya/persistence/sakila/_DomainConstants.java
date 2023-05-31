@@ -5,7 +5,7 @@ package com.github.jinahya.persistence.sakila;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-public final class _PersistenceConstants {
+public final class _DomainConstants {
 
     /**
      * The name of the sakila persistence unit. The value is {@value}.
@@ -28,7 +28,7 @@ public final class _PersistenceConstants {
 
     static final int MAX_TINYINT_UNSIGNED = 256;
 
-    private _PersistenceConstants() {
+    private _DomainConstants() {
         throw new AssertionError("instantiation is not allowed");
     }
 }

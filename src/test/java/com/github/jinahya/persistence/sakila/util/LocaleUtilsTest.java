@@ -1,7 +1,6 @@
 package com.github.jinahya.persistence.sakila.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -13,26 +12,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 public class LocaleUtilsTest {
 
-    public static Stream<Locale> localeStream() {
+    public static Stream<Locale> getLocaleStream() {
         return Stream.of(Locale.getAvailableLocales());
     }
 
-    static Stream<Locale> getLocaleWithNonBlankDisplayCountryStream() {
-        return localeStream()
+    public static Stream<Locale> getLocaleWithNonBlankDisplayCountryStream() {
+        return getLocaleStream()
                 .filter(l -> !l.getDisplayCountry(Locale.ENGLISH).isBlank());
     }
 
-    public static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-        return localeStream()
+    public static Stream<Locale> getLocaleWithNonBlankDisplayLanguageStream() {
+        return getLocaleStream()
                 .filter(l -> !l.getDisplayLanguage(Locale.ENGLISH).isBlank());
     }
 
-    @Disabled
-    @MethodSource({"localeStream"})
+    @MethodSource({"getLocaleStream"})
     @ParameterizedTest
     void valueOfDisplayCountry(final Locale inLocale) {
         final var displayCountry = inLocale.getDisplayCountry(inLocale);
-        if (displayCountry.strip().isBlank()) {
+        if (displayCountry.isBlank()) {
             return;
         }
         final var value = LocaleUtils.valueOfDisplayCountry(displayCountry, inLocale);
@@ -42,8 +40,7 @@ public class LocaleUtilsTest {
         });
     }
 
-    @Disabled
-    @MethodSource({"localeStream"})
+    @MethodSource({"getLocaleStream"})
     @ParameterizedTest
     void valueOfDisplayCountryInEnglish(final Locale locale) {
         final var displayCountryInEnglish = locale.getDisplayCountry(Locale.ENGLISH);
@@ -57,12 +54,11 @@ public class LocaleUtilsTest {
         });
     }
 
-    @Disabled
-    @MethodSource({"localeStream"})
+    @MethodSource({"getLocaleStream"})
     @ParameterizedTest
     void valueOfDisplayLanguage(final Locale inLocale) {
         final var displayLanguage = inLocale.getDisplayLanguage(inLocale);
-        if (displayLanguage.strip().isBlank()) {
+        if (displayLanguage.isBlank()) {
             return;
         }
         final var value = LocaleUtils.valueOfDisplayLanguage(displayLanguage, inLocale);
@@ -72,8 +68,7 @@ public class LocaleUtilsTest {
         });
     }
 
-    @Disabled
-    @MethodSource({"localeStream"})
+    @MethodSource({"getLocaleStream"})
     @ParameterizedTest
     void valueOfDisplayLanguageInEnglish(final Locale locale) {
         final var displayLanguageInEnglish = locale.getDisplayLanguage(Locale.ENGLISH);

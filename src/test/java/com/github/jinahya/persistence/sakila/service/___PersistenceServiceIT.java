@@ -1,8 +1,8 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.___EntityManagerProducer;
+import com.github.jinahya.persistence.sakila.util.PersistenceUtils;
 import com.github.jinahya.persistence.sakila.util.____TestUtils;
-import com.github.jinahya.persistence.sakila.util.____Utils;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
@@ -55,16 +55,7 @@ abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {
      */
     <R> R applyServiceInstance(final Function<? super SERVICE, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        if (false) {
-            return ____Utils.setRollbackAndGet(() -> function.apply(serviceInstance));
-        }
-        ____Utils.ROLLBACK.set(Boolean.TRUE);
-        try {
-            return Objects.requireNonNull(function, "function is null")
-                    .apply(serviceInstance);
-        } finally {
-            ____Utils.ROLLBACK.remove();
-        }
+        return PersistenceUtils.setRollbackAndGet(() -> function.apply(serviceInstance));
     }
 
     final Class<SERVICE> serviceClass;

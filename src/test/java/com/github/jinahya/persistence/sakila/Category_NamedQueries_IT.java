@@ -15,11 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Slf4j
 class Category_NamedQueries_IT
-        extends __BaseEntityIT<Category, Integer> {
-
-    Category_NamedQueries_IT() {
-        super(Category.class, Integer.class);
-    }
+        extends __PersistenceIT {
 
     @DisplayName("Category_findAll")
     @Nested
