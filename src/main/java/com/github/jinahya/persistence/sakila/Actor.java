@@ -97,7 +97,7 @@ public class Actor
      * @param actorId the value of {@link Actor_#actorId actorId} attribute.
      * @return a new instance with {@code actorId}.
      */
-    static Actor of(final Integer actorId) {
+    static Actor ofActorId(final Integer actorId) {
         final var instance = new Actor();
         instance.actorId = actorId;
         return instance;

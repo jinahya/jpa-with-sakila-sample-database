@@ -5,10 +5,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 class FilmActor_Test
         extends _BaseEntityTest<FilmActor, FilmActorId> {
@@ -17,20 +15,25 @@ class FilmActor_Test
         super(FilmActor.class, FilmActorId.class);
     }
 
-    @DisplayName("(get|set)Actor")
+    @DisplayName("getActor")
     @Nested
-    class ActorTest {
+    class GetActorTest {
 
-        @DisplayName("new.getActor()null")
+        @DisplayName("()null")
         @Test
-        void getActor_Null_() {
+        void _Null_New() {
             // GIVEN
-            final var filmActor = newEntityInstance();
+            final var instance = newEntityInstance();
             // WHEN / THEN
-            assertThat(filmActor.getActor()).isNull();
+            assertThat(instance.getActor()).isNull();
         }
+    }
 
-        @DisplayName("setActor(null) -> setActorId(null)")
+    @DisplayName("setActor")
+    @Nested
+    class SetActorTest {
+
+        @DisplayName("(null) -> setActorId(null)")
         @Test
         void setActor_SetActorIdNull_Null() {
             // GIVEN
@@ -41,17 +44,29 @@ class FilmActor_Test
             verify(filmActor, times(1)).setActorId(null);
         }
 
-        @DisplayName("setActor(actorIdWithNullActorId) -> setActorId(null)")
+        @DisplayName("(actor_withNullActorId) -> setActorId(null)")
         @Test
-        void setActor_SetActorIdNull_ActorWithNullActorId() {
+        void setActor_SetActorIdWithNull_ActorWithNullActorId() {
             // GIVEN
             final var filmActor = newEntitySpy();
-            final var actor = spy(Actor.class);
-            when(actor.getActorId()).thenReturn(null);
+            final var actor = Actor.ofActorId(null);
             // WHEN
             filmActor.setActor(actor);
             // THEN
             verify(filmActor, times(1)).setActorId(null);
+        }
+
+        @DisplayName("(actor_withNonNullActorId) -> setActorId(actor.actorId)")
+        @Test
+        void setActor_SetActorIdWithNonNull_ActorWithNonNullActorId() {
+            // GIVEN
+            final var instance = newEntitySpy();
+            final var actorId = 1;
+            final var actor = Actor.ofActorId(actorId);
+            // WHEN
+            instance.setActor(actor);
+            // THEN
+            verify(instance, times(1)).setActorId(actorId);
         }
     }
 }

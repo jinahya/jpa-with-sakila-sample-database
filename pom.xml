@@ -67,7 +67,7 @@
     <version.org.junit.jupiter>${version.org.junit}</version.org.junit.jupiter>
     <version.org.mockito>5.3.1</version.org.mockito> <!-- https://search.maven.org/artifact/org.mockito/mockito-junit-jupiter -->
     <!--    <version.org.mockito-inline>5.2.0</version.org.mockito-inline> &lt;!&ndash; https://search.maven.org/artifact/org.mockito/mockito-inline &ndash;&gt;-->
-    <version.org.projectlombok>1.18.26</version.org.projectlombok>
+<!--    <version.org.projectlombok>1.18.26</version.org.projectlombok>-->
     <version.jakarta.persistence-api>3.1.0</version.jakarta.persistence-api>
     <version.jakarta.validation-api>3.0.2</version.jakarta.validation-api>
   </properties>
@@ -258,13 +258,13 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>${version.org.projectlombok}</version>
-<!--      <scope>provided</scope>-->
-      <scope>test</scope>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.projectlombok</groupId>-->
+<!--      <artifactId>lombok</artifactId>-->
+<!--      <version>${version.org.projectlombok}</version>-->
+<!--&lt;!&ndash;      <scope>provided</scope>&ndash;&gt;-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -551,11 +551,11 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
               <annotationProcessorPaths>
-                <path>
-                  <groupId>org.projectlombok</groupId>
-                  <artifactId>lombok</artifactId>
-                  <version>${version.org.projectlombok}</version>
-                </path>
+<!--                <path>-->
+<!--                  <groupId>org.projectlombok</groupId>-->
+<!--                  <artifactId>lombok</artifactId>-->
+<!--                  <version>${version.org.projectlombok}</version>-->
+<!--                </path>-->
                 <path>
                   <groupId>org.eclipse.persistence</groupId>
                   <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
@@ -620,11 +620,11 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
               <annotationProcessorPaths>
-                <path>
-                  <groupId>org.projectlombok</groupId>
-                  <artifactId>lombok</artifactId>
-                  <version>${version.org.projectlombok}</version>
-                </path>
+<!--                <path>-->
+<!--                  <groupId>org.projectlombok</groupId>-->
+<!--                  <artifactId>lombok</artifactId>-->
+<!--                  <version>${version.org.projectlombok}</version>-->
+<!--                </path>-->
                 <path>
                   <groupId>org.hibernate.orm</groupId>
                   <artifactId>hibernate-jpamodelgen</artifactId>
