@@ -14,12 +14,14 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.metamodel.Attribute;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * An entity class for mapping {@value Actor#TABLE_NAME} table.
@@ -243,12 +245,11 @@ public class Actor
 
     static final String ATTRIBUTE_NAME_FILMS = "films";
 
-    static {
-        try {
-//            assert ATTRIBUTE_NAME_FILMS.equals(Actor_.films.getName());
-        } catch (final NumberFormatException npe) {
-        }
-    }
+//    static {
+//        Optional.ofNullable(Actor_.films).map(Attribute::getName).ifPresent(v -> {
+//            assert v.equals(ATTRIBUTE_NAME_FILMS);
+//        });
+//    }
 
     /**
      * 이 배우가 출연한 영화 목록.

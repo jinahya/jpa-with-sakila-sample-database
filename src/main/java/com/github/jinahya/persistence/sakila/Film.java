@@ -18,6 +18,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.persistence.metamodel.Attribute;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -671,12 +672,11 @@ public class Film
 
     static final String ATTRIBUTE_NAME_ACTORS = "actors";
 
-    static {
-        try {
-//            assert ATTRIBUTE_NAME_ACTORS.equals(Film_.actors.getName());
-        } catch (final NullPointerException npe) {
-        }
-    }
+//    static {
+//        Optional.ofNullable(Film_.actors).map(Attribute::getName).ifPresent(v -> {
+//            assert v.equals(ATTRIBUTE_NAME_ACTORS);
+//        });
+//    }
 
     /**
      * 이 영화에 출연한 배우 목록.
