@@ -405,7 +405,7 @@ public class Address
                     final var buffer = lg.toByteBuffer();
                     final var srid = buffer.getInt();
                     assert srid == 0;
-                    buffer.order(_DomainTypes.Wkb.byteOrder(buffer.get()));
+                    buffer.order(_DomainTypes.Wkb.endianToOrder(buffer.get()));
                     final var type = buffer.getInt();
                     if (type != _DomainTypes.Wkb.Type.POINT.type()) {
                         throw new IllegalArgumentException("not a point type: " + type);
@@ -421,7 +421,7 @@ public class Address
     public void setLocationGeometryAsPoint(final int srid, final double xCoordinate, final double yCoordinate) {
         final var buffer = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + Double.BYTES + Double.BYTES);
         buffer.order(ByteOrder.LITTLE_ENDIAN)
-                .put(_DomainTypes.Wkb.endianValue(buffer.order()))
+                .put(_DomainTypes.Wkb.orderToEndian(buffer.order()))
                 .putInt(_DomainTypes.Wkb.Type.POINT.type())
                 .putDouble(xCoordinate)
                 .putDouble(yCoordinate);

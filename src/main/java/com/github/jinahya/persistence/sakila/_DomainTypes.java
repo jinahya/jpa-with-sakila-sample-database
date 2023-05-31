@@ -76,17 +76,25 @@ public final class _DomainTypes {
         public static final int ENDIAN_LITTLE = 1;
 
         /**
-         * Returns a numeric value for specified byte order.
+         * Returns a endian value which is corresponding to specified byte order.
          *
          * @param byteOrder the byte order to convert.
-         * @return {@code 0} if {@code order} is {@link ByteOrder#BIG_ENDIAN}; {@code 1} otherwise.
+         * @return {@value #ENDIAN_BIG} if {@code byteOrder} is {@link ByteOrder#BIG_ENDIAN}; {@value #ENDIAN_LITTLE}
+         * otherwise.
          */
-        public static byte endianValue(final ByteOrder byteOrder) {
+        public static byte orderToEndian(final ByteOrder byteOrder) {
             Objects.requireNonNull(byteOrder, "order is null");
             return (byte) (byteOrder == ByteOrder.BIG_ENDIAN ? ENDIAN_BIG : ENDIAN_LITTLE);
         }
 
-        public static ByteOrder byteOrder(final byte endianValue) {
+        /**
+         * Returns a byte order which is corresponding to specified endian value.
+         *
+         * @param endianValue the endian value.
+         * @return {@link ByteOrder#BIG_ENDIAN} if {@code endian} is {@value #ENDIAN_BIG};
+         * {@link ByteOrder#LITTLE_ENDIAN} otherwise.
+         */
+        public static ByteOrder endianToOrder(final byte endianValue) {
             if (endianValue == ENDIAN_BIG) {
                 return ByteOrder.BIG_ENDIAN;
             }
@@ -116,7 +124,7 @@ public final class _DomainTypes {
 
         public static Wkb from(final ByteBuffer buffer) {
             Objects.requireNonNull(buffer, "buffer is null");
-            buffer.order(byteOrder(buffer.get()));
+            buffer.order(endianToOrder(buffer.get()));
             final var type = Type.valueOfType(buffer.getInt());
             final var data = new byte[buffer.remaining()];
             buffer.get(data);
@@ -158,7 +166,7 @@ public final class _DomainTypes {
             Objects.requireNonNull(buffer, "buffer is null");
             return buffer
                     .order(order)
-                    .put(endianValue(order))
+                    .put(orderToEndian(order))
                     .putInt(type.type)
                     .put(data)
                     ;

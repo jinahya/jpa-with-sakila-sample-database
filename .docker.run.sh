@@ -1,7 +1,9 @@
 #!/bin/sh
 . $(dirname $0)/..docker.common.sh
+echo trying to stop running container...
 sh ./.docker.stop.sh
 echo sleeping...
 sleep 5
 echo running...
 docker run -e LANG=C.UTF-8 --rm -d --name "$db" -p "$port":3306 "$image"
+echo will take few seconds to be fully up and running.

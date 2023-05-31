@@ -1,6 +1,8 @@
-# jpa-with-sakila-sample-database
+# sakila-persistence
 
-Defines entity classes for [Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/).
+A persistence-unit for the [Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/).
+
+----
 
 ## Docker
 
@@ -8,11 +10,15 @@ Defines entity classes for [Sakila Sample Database](https://dev.mysql.com/doc/sa
 
 #### [docker build](https://docs.docker.com/engine/reference/commandline/build/)
 
+Build an image from the `Dockerfile`. You don't have to do this every time.
+
 ```shell
 $ sh ./.docker.build.sh
 ```
 
 #### [docker run](https://docs.docker.com/engine/reference/commandline/run/)
+
+Create and run a new container, named `sakila`, from the image built.
 
 ```shell
 $ sh ./.docker.run.sh
@@ -20,11 +26,15 @@ $ sh ./.docker.run.sh
 
 #### [docker exec](https://docs.docker.com/engine/reference/commandline/exec/)
 
+Execute the `mysql` command to connect to the MySQL instance running inside the `sakila` container.
+
 ```shell
 $ sh ./.docker.connect.sh
 ```
 
 #### [docker stop](https://docs.docker.com/engine/reference/commandline/stop/)
+
+Stops the `sakila` container.
 
 ```shell
 $ sh ./.docker.stop.sh
@@ -34,13 +44,9 @@ $ sh ./.docker.stop.sh
 
 ## Links
 
-----
-
 ### SQL
 
 * [How to Select the First/Least/Max Row per Group in SQL](https://www.xaprb.com/blog/2006/12/07/how-to-select-the-firstleastmax-row-per-group-in-sql/)
-
-----
 
 ### MySQL
 
@@ -58,8 +64,6 @@ $ sh ./.docker.stop.sh
 * [Motion Picture Association film rating system](https://en.wikipedia.org/wiki/Motion_Picture_Association_film_rating_system) (
   Wikipedia.com)
 
-----
-
 ### [Jakarta Bean Validation](https://beanvalidation.org/)
 
 #### [Jakarta Bean Validation 3.0](https://beanvalidation.org/3.0/)
@@ -67,8 +71,6 @@ $ sh ./.docker.stop.sh
 #### [Hibernate Validator](https://hibernate.org/validator/)
 
 * [Cascaded return value validation causes exception when used with Weld](https://hibernate.atlassian.net/browse/HV-770)
-
-----
 
 ### [Jakarta Persistence](https://jakarta.ee/specifications/persistence/)
 
@@ -87,8 +89,6 @@ $ sh ./.docker.stop.sh
 
 * [`@Immutable`](https://javadoc.io/doc/org.hibernate/hibernate-core/5.6.15.Final/org/hibernate/annotations/Immutable.html)
 
-----
-
 ### Geospatial
 
 #### GEOS
@@ -99,19 +99,13 @@ $ sh ./.docker.stop.sh
 
 * [Simple feature access - Part 1 - OGC Portal](https://portal.ogc.org/files/?artifact_id=25355)
 
-----
-
-### bugs.oepnjdk.org
-
-* [maven javadoc shows annotation twice](https://stackoverflow.com/q/64045629/330457)
-    * [Documented annotations show up twice in Javadoc for fields and parameters](https://bugs.openjdk.org/browse/JDK-8175533)
-
-----
-
 ### Miscellaneous
 
+* [maven javadoc shows annotation twice](https://stackoverflow.com/q/64045629/330457) (StackOverflow.com)
+    * [Documented annotations show up twice in Javadoc for fields and parameters](https://bugs.openjdk.org/browse/JDK-8175533) (
+      bugs.openjdk.org)
 * [Random Address](https://www.bestrandoms.com/random-address)
     * [in United States](https://www.bestrandoms.com/random-address-in-us)
     * [in Korean](https://www.bestrandoms.com/random-address-in-ko)
-* [JPA Metamodel generation missing attributes](https://stackoverflow.com/q/27333779/330457)
+* [JPA Metamodel generation missing attributes](https://stackoverflow.com/q/27333779/330457) (StackOverflow.com)
     * [`@Basic`](https://stackoverflow.com/a/41720695/330457)
