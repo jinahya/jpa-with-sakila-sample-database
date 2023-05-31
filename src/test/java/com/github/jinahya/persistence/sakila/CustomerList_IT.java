@@ -1,14 +1,18 @@
 package com.github.jinahya.persistence.sakila;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 class CustomerList_IT
         extends __BaseEntityIT<CustomerList, Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     CustomerList_IT() {
         super(CustomerList.class, Integer.class);

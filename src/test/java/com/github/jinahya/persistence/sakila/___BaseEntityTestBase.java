@@ -1,13 +1,16 @@
 package com.github.jinahya.persistence.sakila;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
 import static org.mockito.Mockito.spy;
 
-@Slf4j
 abstract class ___BaseEntityTestBase<T extends __BaseEntity<U>, U extends Comparable<? super U>> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     ___BaseEntityTestBase(final Class<T> entityClass, final Class<U> idClass) {
         super();

@@ -29,17 +29,18 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-city.html">5.1.4 The city Table</a>
  */
-@NamedQuery(name = CityConstants.QUERY_FIND_ALL_BY_COUNTRY_CITY_ID_GREATER_THAN,
-            query = "SELECT e" +
-                    " FROM City AS e" +
-                    " WHERE e.country = :country" +
-                    " AND e.cityId > :cityIdMinExclusive" +
-                    " ORDER BY e.cityId ASC")
-@NamedQuery(name = CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID_CITY_ID_GREATER_THAN,
+@NamedQuery(name = CityConstants.QUERY_FIND_ALL_BY_COUNTRY,
+            query = """
+                    SELECT e
+                    FROM City AS e
+                    WHERE e.country = :country
+                          AND e.cityId > :cityIdMinExclusive
+                    ORDER BY e.cityId ASC""")
+@NamedQuery(name = CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID,
             query = "SELECT e" +
                     " FROM City AS e" +
                     " WHERE e.countryId = :" + CityConstants.QUERY_PARAM_COUNTRY_ID +
-                    " AND e.cityId > :cityIdMinExclusive" +
+                    " AND e.cityId > :" + CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE +
                     " ORDER BY e.cityId ASC")
 @NamedQuery(name = CityConstants.QUERY_FIND_ALL_BY_CITY_ID_GREATER_THAN,
             query = "SELECT e" +
@@ -47,10 +48,7 @@ import java.util.Optional;
                     " WHERE e.cityId > :" + CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE +
                     " ORDER BY e.cityId ASC")
 @NamedQuery(name = CityConstants.QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM City AS e
-                    """)
+            query = "SELECT e FROM City AS e") // No ORDER BY clause!
 @NamedQuery(name = CityConstants.QUERY_FIND_BY_CITY_ID,
             query = "SELECT e" +
                     " FROM City AS e" +
@@ -81,7 +79,7 @@ public class City
      * @param cityId the value of {@link City_#cityId cityId} attribute.
      * @return a new instance with {@code cityId}.
      */
-    static City of(final Integer cityId) {
+    static City ofCityId(final Integer cityId) {
         final var instance = new City();
         instance.cityId = cityId;
         return instance;
@@ -93,7 +91,7 @@ public class City
      * @param city the value of {@link City_#cityId city} attribute.
      * @return a new instance with {@code city}.
      */
-    public static City of(final String city) {
+    public static City ofCity(final String city) {
         final var instance = new City();
         instance.city = city;
         return instance;
@@ -250,7 +248,7 @@ public class City
     }
 
     /**
-     * 이 city 를 포함하는 국가. {@link Country_#countryId countryId} attribute 에 더하여, 같은 컬럼({@value #COLUMN_NAME_COUNTRY_ID})에
+     * 이 도시가 포함된 국가. {@link Country_#countryId countryId} attribute 에 더하여, 같은 컬럼({@value #COLUMN_NAME_COUNTRY_ID})에
      * 매핑된 attribute 이다.
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)

@@ -58,6 +58,6 @@ public class CityService
         return findAllByCity(city)
                 .stream()
                 .findFirst()
-                .orElseGet(() -> persist(City.of(city)));
+                .orElseGet(() -> persist(City.ofCity(city)));
     }
 }

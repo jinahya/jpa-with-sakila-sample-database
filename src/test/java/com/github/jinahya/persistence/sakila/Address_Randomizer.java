@@ -1,16 +1,20 @@
 package com.github.jinahya.persistence.sakila;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.text.StringRandomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.jeasy.random.FieldPredicates.named;
 
-@Slf4j
 class Address_Randomizer
         extends _BaseEntityRandomizer<Address> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     Address_Randomizer() {
         super(Address.class);

@@ -1,14 +1,16 @@
 package com.github.jinahya.persistence.sakila;
 
 import jakarta.persistence.NoResultException;
-import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.ExplicitParamInjection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -23,9 +25,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-@Slf4j
 class Inventory_NamedQueries_IT
         extends __PersistenceIT {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @DisplayName(InventoryConstants.QUERY_FIND_BY_INVENTORY_ID)
     @Nested

@@ -1,11 +1,13 @@
 package com.github.jinahya.persistence.sakila;
 
 import jakarta.persistence.NoResultException;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,9 +20,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
-@Slf4j
 class Actor_NamedQueries_IT
         extends _BaseEntityIT<Actor, Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     Actor_NamedQueries_IT() {
         super(Actor.class, Integer.class);

@@ -6,15 +6,18 @@ import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 @ApplicationScoped
-@Slf4j
 class ___ValidatorFactoryProducer {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private static final Map<ValidatorFactory, ValidatorFactory> PROXIES =
             new ConcurrentHashMap<>(new WeakHashMap<>());

@@ -1,17 +1,20 @@
 package com.github.jinahya.persistence.sakila;
 
 import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
 
-@Slf4j
 class Film_IT
         extends _BaseEntityIT<Film, Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     static Film newPersistedInstance(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");

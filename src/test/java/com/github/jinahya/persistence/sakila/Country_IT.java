@@ -1,20 +1,22 @@
 package com.github.jinahya.persistence.sakila;
 
 import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Locale;
+import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 class Country_IT
         extends _BaseEntityIT<Country, Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     static Country newPersistedInstance(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
@@ -35,6 +37,21 @@ class Country_IT
         assertThatBean(instance).isValid();
     }
 
+    @DisplayName("find(0)null")
+    @Test
+    void _Null_0() {
+        final var found = applyEntityManager(em -> em.find(Country.class, 0));
+        assertThat(found).isNull();
+    }
+
+    @DisplayName("find(1)!null")
+    @Test
+    void _NotNull_1() {
+        final var found = applyEntityManager(em -> em.find(Country.class, 1));
+        assertThat(found).isNotNull();
+        assertThatBean(found).isValid();
+    }
+
     @Nested
     class CountryAsLocalePropertyTest {
 
@@ -44,21 +61,16 @@ class Country_IT
          */
         @Test
         void __() {
-            final List<Country> found = applyEntityManager(
-                    em -> em.createQuery("SELECT e FROM Country AS e").getResultList()
+            final var all = applyEntityManager(
+                    em -> em.createQuery("SELECT e FROM Country AS e", Country.class)
+                            .getResultList()
             );
-            for (final var e : found) {
-                final Locale locale;
-                try {
-                    locale = e.getCountryAsLocale();
-                } catch (final UnsupportedOperationException uoe) {
-                    log.warn("unsupported: {}", uoe.getMessage());
-                    continue;
-                }
+            all.forEach(e -> {
+                final var locale = e.getCountryAsLocale();
                 if (locale == null) {
                     log.debug("no locale for '{}'", e.getCountry());
                 }
-            }
+            });
         }
     }
 }

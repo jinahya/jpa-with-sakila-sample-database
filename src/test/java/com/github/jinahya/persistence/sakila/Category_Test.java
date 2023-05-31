@@ -1,10 +1,14 @@
 package com.github.jinahya.persistence.sakila;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-@Slf4j
+import java.lang.invoke.MethodHandles;
+
 class Category_Test
         extends _BaseEntityTest<Category, Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     Category_Test() {
         super(Category.class, Integer.class);

@@ -1,6 +1,7 @@
 package com.github.jinahya.persistence.sakila;
 
 import jakarta.persistence.EntityManager;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
@@ -29,5 +30,20 @@ class City_IT
         final var instance = applyEntityManager(City_IT::newPersistedInstance);
         assertThat(instance).isNotNull();
         assertThatBean(instance).isValid();
+    }
+
+    @DisplayName("find(0)null")
+    @Test
+    void _Null_0() {
+        final var found = applyEntityManager(em -> em.find(City.class, 0));
+        assertThat(found).isNull();
+    }
+
+    @DisplayName("find(1)!null")
+    @Test
+    void _NotNull_1() {
+        final var found = applyEntityManager(em -> em.find(City.class, 1));
+        assertThat(found).isNotNull();
+        assertThatBean(found).isValid();
     }
 }

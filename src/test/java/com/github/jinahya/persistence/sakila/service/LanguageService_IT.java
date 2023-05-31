@@ -2,7 +2,6 @@ package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.Language;
 import com.github.jinahya.persistence.sakila.util.LocaleUtilsTest;
-import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.ExplicitParamInjection;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +9,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,9 +21,10 @@ import java.util.stream.Stream;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 class LanguageService_IT
         extends _BaseEntityServiceIT<LanguageService, Language, Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     LanguageService_IT() {
         super(LanguageService.class, Language.class, Integer.class);

@@ -1,16 +1,19 @@
 package com.github.jinahya.persistence.sakila.util;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Slf4j
 public class LocaleUtilsTest {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static Stream<Locale> getLocaleStream() {
         return Stream.of(Locale.getAvailableLocales());

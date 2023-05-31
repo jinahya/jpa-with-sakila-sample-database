@@ -3,19 +3,22 @@ package com.github.jinahya.persistence.sakila.service;
 import com.github.jinahya.persistence.sakila.Actor;
 import com.github.jinahya.persistence.sakila.ActorConstants;
 import jakarta.validation.ConstraintViolationException;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Slf4j
 class ActorService_IT
         extends _BaseEntityServiceIT<ActorService, Actor, Integer> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     ActorService_IT() {
         super(ActorService.class, Actor.class, Integer.class);

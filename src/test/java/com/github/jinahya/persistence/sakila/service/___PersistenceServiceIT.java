@@ -8,18 +8,21 @@ import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
-import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.environment.se.events.ContainerInitialized;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 import java.util.function.Function;
 
 @AddPackages({___EntityManagerProducer.class})
 @EnableAutoWeld
-@Slf4j
 abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     /**
      * Create a new instance for testing specified service class.

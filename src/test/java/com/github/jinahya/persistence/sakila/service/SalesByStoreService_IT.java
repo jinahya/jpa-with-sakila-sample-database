@@ -1,19 +1,22 @@
 package com.github.jinahya.persistence.sakila.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jboss.weld.junit5.auto.AddBeanClasses;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @AddBeanClasses({SalesByStoreService.class})
-@Slf4j
 class SalesByStoreService_IT
         extends ___PersistenceServiceIT<SalesByStoreService> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     SalesByStoreService_IT() {
         super(SalesByStoreService.class);

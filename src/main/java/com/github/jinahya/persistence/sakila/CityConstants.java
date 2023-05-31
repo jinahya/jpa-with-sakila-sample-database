@@ -1,5 +1,9 @@
 package com.github.jinahya.persistence.sakila;
 
+import jakarta.persistence.metamodel.Attribute;
+
+import java.util.Optional;
+
 public final class CityConstants {
 
     public static final String QUERY_FIND_BY_CITY_ID = "City_findByCityId";
@@ -7,7 +11,11 @@ public final class CityConstants {
     public static final String QUERY_PARAM_CITY_ID = "cityId";
 
     static {
-        assert QUERY_PARAM_CITY_ID.equals(City_.cityId.getName());
+        Optional.ofNullable(City_.cityId)
+                .map(Attribute::getName)
+                .ifPresent(v -> {
+                    assert v.equals(QUERY_PARAM_CITY_ID);
+                });
     }
 
     public static final String QUERY_FIND_ALL = "City_findAll";
@@ -17,8 +25,6 @@ public final class CityConstants {
     public static final String QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE = "cityIdMinExclusive";
 
     public static final String QUERY_FIND_ALL_BY_CITY = "City_findByCity";
-
-    public static final String QUERY_PARAM_CITY = "city";
 
     /**
      * The name of the query selects entities whose {@link City_#countryId countryId} attributes match specified value,
@@ -48,9 +54,17 @@ public final class CityConstants {
      * @see City_#countryId
      * @see #QUERY_PARAM_COUNTRY_ID
      */
-    public static final String QUERY_FIND_ALL_BY_COUNTRY_ID_CITY_ID_GREATER_THAN = "City_findAllCountryId";
+    public static final String QUERY_FIND_ALL_BY_COUNTRY_ID = "City_findAllCountryId";
 
-    public static final String QUERY_PARAM_COUNTRY_ID = CountryConstants.QUERY_PARAM_COUNTRY_ID;
+    public static final String QUERY_PARAM_COUNTRY_ID = "countryId";
+
+    static {
+        Optional.ofNullable(City_.countryId)
+                .map(Attribute::getName)
+                .ifPresent(v -> {
+                    assert v.equals(QUERY_PARAM_COUNTRY_ID);
+                });
+    }
 
     /**
      * The name of the query selects entities whose {@link City_#country country} attributes match specified value,
@@ -80,12 +94,16 @@ public final class CityConstants {
      * @see City_#country
      * @see #QUERY_PARAM_COUNTRY
      */
-    public static final String QUERY_FIND_ALL_BY_COUNTRY_CITY_ID_GREATER_THAN = "City_findAllByCountry";
+    public static final String QUERY_FIND_ALL_BY_COUNTRY = "City_findAllByCountry";
 
     public static final String QUERY_PARAM_COUNTRY = "country";
 
     static {
-        assert QUERY_PARAM_CITY.equals(City_.city.getName());
+        Optional.ofNullable(City_.country)
+                .map(Attribute::getName)
+                .ifPresent(v -> {
+                    assert v.equals(QUERY_PARAM_COUNTRY);
+                });
     }
 
     private CityConstants() {

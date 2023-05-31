@@ -1,17 +1,20 @@
 package com.github.jinahya.persistence.sakila;
 
-import lombok.extern.slf4j.Slf4j;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.text.StringRandomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.jeasy.random.FieldPredicates.named;
 
-@Slf4j
 class Staff_Randomizer
         extends _BaseEntityRandomizer<Staff> {
+
+    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     static Integer randomActive() {
         return ThreadLocalRandom.current().nextBoolean() ? 0 : 1;
