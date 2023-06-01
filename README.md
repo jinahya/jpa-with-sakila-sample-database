@@ -4,6 +4,22 @@ A persistence-unit for the [Sakila Sample Database](https://dev.mysql.com/doc/sa
 
 ----
 
+## Generating javadoc
+
+몇몇 클래스들의 javadoc 은 compile 시 생성된는 클래스들를 참조한다. 때문에 javadoc 를 생성할 때 `compile` phase 가 선행되어야 한다.
+
+```shell
+$ mvn -Dlint=none compile javadoc:javadoc
+```
+
+혹은 미리 준비된 script 를 실행해도 된다.
+
+```shell
+$ sh ./.mvn.javadoc.sh
+```
+
+----
+
 ## Docker
 
 ### How to run Sakila database with Docker

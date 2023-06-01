@@ -1,5 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -114,10 +115,12 @@ public class FilmCategoryId
     @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
+    @Column(name = FilmCategory.COLUMN_NAME_FILM_ID, nullable = false)
     private Integer filmId;
 
     @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
+    @Column(name = FilmCategory.COLUMN_NAME_CATEGORY_ID, nullable = false)
     private Integer categoryId;
 }
