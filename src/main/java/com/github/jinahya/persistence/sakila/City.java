@@ -197,7 +197,7 @@ public class City
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = COLUMN_NAME_CITY_ID, nullable = false,
-            insertable = true, // EclipseLink
+            insertable = /*false*/true, // EclipseLink
             updatable = false)
     private Integer cityId;
 
@@ -248,10 +248,13 @@ public class City
     }
 
     /**
-     * 이 도시가 포함된 국가. {@link Country_#countryId countryId} attribute 에 더하여, 같은 컬럼({@value #COLUMN_NAME_COUNTRY_ID})에
-     * 매핑된 attribute 이다.
+     * 이 도시가 포함된 국가. {@link Country_#countryId countryId} attribute 에 더하여, 같은 컬럼({@value #COLUMN_NAME_COUNTRY_ID})에 매핑된
+     * attribute 이다.
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_COUNTRY_ID, nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = COLUMN_NAME_COUNTRY_ID, nullable = false,
+                insertable = false, // !!!
+                updatable = false   // !!!
+    )
     private Country country;
 }

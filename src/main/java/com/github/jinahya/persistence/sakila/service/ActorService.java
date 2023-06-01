@@ -15,8 +15,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
-
-import static java.util.concurrent.ThreadLocalRandom.current;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * A service class related to {@link Actor} entity.
@@ -38,7 +37,7 @@ public class ActorService
     @Override
     // HV000131: A method return value must not be marked for cascaded validation more than once in a class hierarchy, ...
     public List<Actor> findAll(@Positive final Integer maxResults) {
-        if (current().nextBoolean()) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
             return super.findAll(maxResults);
         }
         return applyEntityManager(em -> {
@@ -57,7 +56,7 @@ public class ActorService
      * @return an optional of found entity; {@code empty} if not found.
      */
     public Optional<@Valid Actor> findByActorId(@Positive final int actorId) {
-        if (current().nextBoolean()) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
             return findById(actorId);
         }
         return Optional.ofNullable(
@@ -86,7 +85,7 @@ public class ActorService
     @NotNull
     public List<@Valid @NotNull Actor> findAllByActorIdGreaterThan(@PositiveOrZero final int actorIdMinExclusive,
                                                                    @Positive final Integer maxResults) {
-        if (current().nextBoolean()) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
             return findAllByIdGreaterThan(
                     r -> r.get(Actor_.actorId),
                     actorIdMinExclusive,
@@ -116,7 +115,7 @@ public class ActorService
     @NotNull
     public List<@Valid @NotNull Actor> findAllByLastName(@NotBlank final String lastName,
                                                          @Positive final Integer maxResults) {
-        if (current().nextBoolean()) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
             return findAllByAttribute(
                     r -> r.get(Actor_.lastName),
                     lastName,
@@ -150,7 +149,7 @@ public class ActorService
     public List<@Valid @NotNull Actor> findAllByLastNameActorIdGreaterThan(
             @NotBlank final String lastName, @PositiveOrZero final int actorIdMinExclusive,
             @Positive final Integer maxResults) {
-        if (current().nextBoolean()) {
+        if (ThreadLocalRandom.current().nextBoolean()) {
             return findAllByAttributeIdGreaterThan(
                     r -> r.get(Actor_.lastName),
                     lastName,

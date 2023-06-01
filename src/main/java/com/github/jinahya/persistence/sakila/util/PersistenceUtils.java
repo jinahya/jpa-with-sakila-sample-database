@@ -90,7 +90,7 @@ public final class PersistenceUtils {
         Objects.requireNonNull(function, "function is null");
         return applyEntityManagerInTransaction(entityManager, em -> {
             final var connection = unwrapConnection(em);
-            final var proxy = ____Utils.createUnCloseableProxy(Connection.class, connection);
+            final var proxy = ReflectionUtils.createUnCloseableProxy(Connection.class, connection);
             return function.apply(proxy);
         });
     }

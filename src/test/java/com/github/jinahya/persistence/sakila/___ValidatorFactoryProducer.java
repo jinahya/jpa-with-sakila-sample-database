@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.ReflectionUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
@@ -28,7 +28,7 @@ class ___ValidatorFactoryProducer {
     ValidatorFactory produceValidationFactory() {
         final var bean = Validation.buildDefaultValidatorFactory();
         log.debug("producing validator factory: " + bean);
-        final var proxy = ____Utils.createUnCloseableProxy(ValidatorFactory.class, bean);
+        final var proxy = ReflectionUtils.createUnCloseableProxy(ValidatorFactory.class, bean);
         final var previous = PROXIES.put(proxy, bean);
         assert previous == null;
         return proxy;

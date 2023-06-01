@@ -1,7 +1,7 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.SalesByStore;
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.JdbcUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -47,7 +47,7 @@ public class SalesByStoreService
                 try (var results = statement.executeQuery(builder.toString())) {
                     final var list = new ArrayList<SalesByStore>();
                     while (results.next()) {
-                        list.add(____Utils.bind(SalesByStore.class, results));
+                        list.add(JdbcUtils.bind(SalesByStore.class, results));
                     }
                     return list;
                 }

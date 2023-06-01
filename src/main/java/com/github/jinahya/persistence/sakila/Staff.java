@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.SecurityUtils;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -381,12 +381,12 @@ public class Staff
             return;
         }
         final byte[] copy = Arrays.copyOf(clientPassword, clientPassword.length);
-        if (Objects.equals(____Utils.sha1(copy), password)) {
+        if (Objects.equals(SecurityUtils.sha1(copy), password)) {
 //            log.info("signed in with sha1. updating password with sha2...");
 //            setPassword(_PersistenceUtils.sha2(copy));
             return;
         }
-        if (Objects.equals(____Utils.sha2(copy), password)) {
+        if (Objects.equals(SecurityUtils.sha2(copy), password)) {
             return;
         }
         throw new IllegalStateException("unable to sign in");
@@ -404,6 +404,6 @@ public class Staff
         }
         signIn(oldClientPassword);
 //        setPassword(_PersistenceUtils.sha2(newClientPassword));
-        setPassword(____Utils.sha1(newClientPassword));
+        setPassword(SecurityUtils.sha1(newClientPassword));
     }
 }

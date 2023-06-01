@@ -1,5 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
+import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -14,6 +15,7 @@ import java.util.Objects;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  */
+@Embeddable
 public class FilmActorId
         implements Serializable,
                    Comparable<FilmActorId> {

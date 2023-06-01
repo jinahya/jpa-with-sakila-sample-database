@@ -14,7 +14,7 @@ public final class _DomainTypes {
 
     private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    public interface AttributeEnum<E extends Enum<E> & AttributeEnum<E, A>, A> {
+    interface AttributeEnum<E extends Enum<E> & AttributeEnum<E, A>, A> {
 
         @NotNull A attribute();
     }
@@ -30,7 +30,7 @@ public final class _DomainTypes {
         public static final int TYPE_VALUE_POINT = 1;
 
         /**
-         * .
+         * Constants of supported spatial data types.
          *
          * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/gis-data-formats.html#gis-wkb-format">11.4.3 Supported
          * Spatial Data Formats</a>
@@ -78,35 +78,34 @@ public final class _DomainTypes {
         /**
          * Returns a endian value which is corresponding to specified byte order.
          *
-         * @param byteOrder the byte order to convert.
-         * @return {@value #ENDIAN_BIG} if {@code byteOrder} is {@link ByteOrder#BIG_ENDIAN}; {@value #ENDIAN_LITTLE}
+         * @param order the byte order to convert.
+         * @return {@value #ENDIAN_BIG} if {@code order} is {@link ByteOrder#BIG_ENDIAN}; {@value #ENDIAN_LITTLE}
          * otherwise.
          */
-        public static byte orderToEndian(final ByteOrder byteOrder) {
-            Objects.requireNonNull(byteOrder, "order is null");
-            return (byte) (byteOrder == ByteOrder.BIG_ENDIAN ? ENDIAN_BIG : ENDIAN_LITTLE);
+        public static byte orderToEndian(final ByteOrder order) {
+            Objects.requireNonNull(order, "order is null");
+            return (byte) (order == ByteOrder.BIG_ENDIAN ? ENDIAN_BIG : ENDIAN_LITTLE);
         }
 
         /**
          * Returns a byte order which is corresponding to specified endian value.
          *
-         * @param endianValue the endian value.
+         * @param endian the endian value.
          * @return {@link ByteOrder#BIG_ENDIAN} if {@code endian} is {@value #ENDIAN_BIG};
          * {@link ByteOrder#LITTLE_ENDIAN} otherwise.
          */
-        public static ByteOrder endianToOrder(final byte endianValue) {
-            if (endianValue == ENDIAN_BIG) {
+        public static ByteOrder endianToOrder(final byte endian) {
+            if (endian == ENDIAN_BIG) {
                 return ByteOrder.BIG_ENDIAN;
             }
-            assert endianValue == ENDIAN_LITTLE;
             return ByteOrder.LITTLE_ENDIAN;
         }
 
-        public static Wkb newPoint(final ByteOrder order, final double xCoordinate, final double yCoordinate) {
+        public static Wkb newPoint(final ByteOrder order, final double x, final double y) {
             Objects.requireNonNull(order, "order is null");
             final var buffer = ByteBuffer.allocate(Double.BYTES << 1).order(order);
-            buffer.putDouble(xCoordinate);
-            buffer.putDouble(yCoordinate);
+            buffer.putDouble(x);
+            buffer.putDouble(y);
             return new Wkb(order, Type.POINT, buffer.array());
         }
 
@@ -162,7 +161,7 @@ public final class _DomainTypes {
             return result;
         }
 
-        public ByteBuffer toByteBuffer(final ByteBuffer buffer) {
+        public ByteBuffer put(final ByteBuffer buffer) {
             Objects.requireNonNull(buffer, "buffer is null");
             return buffer
                     .order(order)
@@ -173,13 +172,15 @@ public final class _DomainTypes {
         }
 
         public ByteBuffer toByteBuffer() {
-            return toByteBuffer(ByteBuffer.allocate(capacity())).flip();
+            return put(ByteBuffer.allocate(capacity())).flip();
         }
 
+        @Deprecated(forRemoval = true) // not used
         public byte[] toByteArray() {
             return toByteBuffer().array();
         }
 
+        @Deprecated(forRemoval = true) // not used
         public byte[] getDataArray() {
             return Arrays.copyOf(data, data.length);
         }
@@ -249,18 +250,18 @@ public final class _DomainTypes {
             return Objects.hash(srid, binary);
         }
 
-        public ByteBuffer toByteBuffer(final ByteBuffer buffer) {
+        public ByteBuffer put(final ByteBuffer buffer) {
             Objects.requireNonNull(buffer, "buffer is null");
-            return binary.toByteBuffer(buffer.putInt(srid));
+            return binary.put(buffer.putInt(srid));
         }
 
         public ByteBuffer toByteBuffer() {
-            return toByteBuffer(
+            return put(
                     ByteBuffer.allocate(Integer.BYTES + binary.capacity())
             ).flip();
         }
 
-        public byte[] toByteArray() {
+        byte[] toByteArray() {
             return toByteBuffer().array();
         }
 

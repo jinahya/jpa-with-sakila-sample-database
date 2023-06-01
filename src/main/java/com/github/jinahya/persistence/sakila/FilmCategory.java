@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -146,6 +147,9 @@ public class FilmCategory
     void setCategoryId(final Integer categoryId) {
         this.categoryId = categoryId;
     }
+
+    @Transient
+    private FilmCategoryId filmCategoryId;
 
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">

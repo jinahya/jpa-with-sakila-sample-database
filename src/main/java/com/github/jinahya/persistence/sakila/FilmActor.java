@@ -31,30 +31,30 @@ import java.util.Optional;
  * Table</a>
  * @see FilmActorConstants
  */
-@NamedQuery(name = FilmActorConstants.QUERY_FIND_ALL_BY_FILM_ID,
-            query = """
-                    SELECT e
-                    FROM FilmActor AS e
-                    WHERE e.filmId = :filmId
-                          AND id > :idMinExclusive
-                    ORDER BY e.id ASC""")
-@NamedQuery(name = FilmActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID,
-            query = """
-                    SELECT e
-                    FROM FilmActor AS e
-                    WHERE e.actorId = :actorId
-                          AND id > :idMinExclusive
-                    ORDER BY e.id ASC""")
-@NamedQuery(name = FilmActorConstants.QUERY_FIND_ALL_ID_GREATER_THAN,
-            query = """
-                    SELECT e
-                    FROM FilmActor AS e
-                    WHERE e.id > :idMinExclusive
-                    ORDER BY e.id ASC""")
-@NamedQuery(name = FilmActorConstants.QUERY_FIND_ALL,
-            query = "SELECT e FROM FilmActor AS e")
-@NamedQuery(name = FilmActorConstants.QUERY_FIND_BY_ID,
-            query = "SELECT e FROM FilmActor AS e WHERE e.id = :Id")
+//@NamedQuery(name = FilmActorConstants.QUERY_FIND_ALL_BY_FILM_ID,
+//            query = """
+//                    SELECT e
+//                    FROM FilmActor AS e
+//                    WHERE e.filmId = :filmId
+//                          AND id > :idMinExclusive
+//                    ORDER BY e.id ASC""")
+//@NamedQuery(name = FilmActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID,
+//            query = """
+//                    SELECT e
+//                    FROM FilmActor AS e
+//                    WHERE e.actorId = :actorId
+//                          AND id > :idMinExclusive
+//                    ORDER BY e.id ASC""")
+//@NamedQuery(name = FilmActorConstants.QUERY_FIND_ALL_ID_GREATER_THAN,
+//            query = """
+//                    SELECT e
+//                    FROM FilmActor AS e
+//                    WHERE e.id > :idMinExclusive
+//                    ORDER BY e.id ASC""")
+//@NamedQuery(name = FilmActorConstants.QUERY_FIND_ALL,
+//            query = "SELECT e FROM FilmActor AS e")
+//@NamedQuery(name = FilmActorConstants.QUERY_FIND_BY_ID,
+//            query = "SELECT e FROM FilmActor AS e WHERE e.id = :Id")
 @IdClass(FilmActorId.class)
 @Entity
 @Table(name = FilmActor.TABLE_NAME)

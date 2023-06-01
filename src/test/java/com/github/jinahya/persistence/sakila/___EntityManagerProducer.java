@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.ReflectionUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
@@ -28,7 +28,7 @@ public class ___EntityManagerProducer {
     EntityManager produceEntityManager() {
         final var bean = entityManagerFactory.createEntityManager();
         log.debug("producing entity manager: {}", bean);
-        final var proxy = ____Utils.createUnCloseableProxy(EntityManager.class, bean);
+        final var proxy = ReflectionUtils.createUnCloseableProxy(EntityManager.class, bean);
         PROXIES.put(proxy, bean);
         return proxy;
     }

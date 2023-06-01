@@ -1,7 +1,7 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.FilmList;
-import com.github.jinahya.persistence.sakila.util.____Utils;
+import com.github.jinahya.persistence.sakila.util.ReflectionUtils;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.Column;
 import jakarta.validation.Valid;
@@ -28,7 +28,7 @@ public class FilmListService
                         return Optional.empty();
                     }
                     final var instance = new FilmList();
-                    for (final var field : ____Utils.getFieldsAnnotatedWithColumn(FilmList.class)) {
+                    for (final var field : ReflectionUtils.getFieldsAnnotatedWithColumn(FilmList.class)) {
                         if (!field.canAccess(instance)) {
                             field.setAccessible(true);
                         }
