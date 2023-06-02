@@ -563,14 +563,20 @@ public class Staff
      * @param newClientPassword a new password to set.
      * @throws IllegalArgumentException if failed to sign in with {@code oldClientPassword}.
      */
-    public void changePassword(final byte[] oldClientPassword, final byte[] newClientPassword) {
-        if (Objects.requireNonNull(newClientPassword, "newClientPassword is null").length == 0) {
+    public void changePassword(final byte[] oldClientPassword, byte[] newClientPassword) {
+        if (newClientPassword != null && newClientPassword.length == 0) {
             throw new IllegalArgumentException("empty new client password");
         }
+        final byte[] newClientPassword_ = Optional.ofNullable(newClientPassword).map(v -> Arrays.copyOf(v, v.length)).orElse(null);
+        newClientPassword = null;
         signIn(oldClientPassword);
-        if (false) {
-            setPassword(SecurityUtils.sha2(newClientPassword));
+        if (newClientPassword_ == null) {
+            setPassword(null);
+            return;
         }
-        setPassword(SecurityUtils.sha1(newClientPassword));
+        if (false) {
+            setPassword(SecurityUtils.sha2(newClientPassword_));
+        }
+        setPassword(SecurityUtils.sha1(newClientPassword_));
     }
 }

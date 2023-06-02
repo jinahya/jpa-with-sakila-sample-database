@@ -29,18 +29,14 @@ public final class SecurityUtils {
         }
     }
 
-    public static String sha1(final byte[] password) {
-        if (Objects.requireNonNull(password, "password is null").length == 0) {
-            throw new IllegalArgumentException("empty password");
-        }
-        return digest("SHA-1", password);
+    public static String sha1(final byte[] bytes) {
+        Objects.requireNonNull(bytes, "bytes is null");
+        return digest("SHA-1", bytes);
     }
 
-    public static String sha2(final byte[] password) {
-        if (Objects.requireNonNull(password, "password is null").length == 0) {
-            throw new IllegalArgumentException("empty password");
-        }
-        return digest("SHA-256", password);
+    public static String sha2(final byte[] bytes) {
+        Objects.requireNonNull(bytes, "bytes is null");
+        return digest("SHA-256", bytes);
     }
 
     private SecurityUtils() {
