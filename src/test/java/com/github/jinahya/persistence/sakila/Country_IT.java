@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Locale;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
@@ -53,12 +54,8 @@ class Country_IT
     }
 
     @Nested
-    class CountryAsLocalePropertyTest {
+    class GetLocalesForCountryTest {
 
-        /**
-         * {@value Country#TABLE_NAME} 테이블에 저장된 모든 {@link Country_#country country} 컬럼값과 {@link java.util.Locale} 에 정의된
-         * 값들을 비교한다.
-         */
         @Test
         void __() {
             final var all = applyEntityManager(
@@ -66,10 +63,14 @@ class Country_IT
                             .getResultList()
             );
             all.forEach(e -> {
-                final var locale = e.getCountryAsLocale();
-                if (locale == null) {
-                    log.debug("no locale for '{}'", e.getCountry());
-                }
+                final var localesForCountry = e.getLocalesForCountry();
+                assertThat(localesForCountry).satisfiesAnyOf(
+                        l -> assertThat(l).isNull(),
+                        l -> assertThat(l).isEmpty(),
+                        l -> assertThat(l)
+                                .extracting(v -> v.getDisplayCountry(Locale.ENGLISH))
+                                .contains(e.getCountry())
+                );
             });
         }
     }

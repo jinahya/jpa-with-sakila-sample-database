@@ -1,6 +1,7 @@
 package com.github.jinahya.persistence.sakila;
 
 import com.github.jinahya.persistence.sakila.util.LocaleUtils;
+import com.github.jinahya.persistence.sakila.util.LocaleUtils2;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,6 +15,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -197,10 +199,19 @@ public class Country
      * {@code null} or no locale matched.
      * @see LocaleUtils#valueOfDisplayCountryInEnglish(String)
      */
+    @Deprecated(forRemoval = true)
     @Transient
     public Locale getCountryAsLocale() {
         return Optional.ofNullable(getCountry())
-                .flatMap(LocaleUtils::valueOfDisplayCountryInEnglish)
+                .flatMap(v -> LocaleUtils2.valuesOfDisplayCountryInEnglish(v).stream().findFirst())
+                .orElse(null);
+    }
+
+    @Transient
+    public List<Locale> getLocalesForCountry() {
+        return Optional.ofNullable(getCountry())
+                .filter(v -> !v.isBlank())
+                .map(LocaleUtils2::valuesOfDisplayCountryInEnglish)
                 .orElse(null);
     }
 

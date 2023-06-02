@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class LocaleUtilsTest {
+public class LocaleUtils2Test {
 
     private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -31,45 +31,41 @@ public class LocaleUtilsTest {
 
     @MethodSource({"getLocaleWithNonBlankDisplayCountryStream"})
     @ParameterizedTest
-    void valueOfDisplayCountry(final Locale inLocale) {
-        final var displayCountry = inLocale.getDisplayCountry(inLocale);
-        final var value = LocaleUtils.valueOfDisplayCountry(displayCountry, inLocale);
-        assertThat(value).hasValueSatisfying(v -> {
-            assertThat(v.getDisplayCountry(inLocale))
-                    .isEqualTo(displayCountry);
-        });
+    void valuesOfDisplayCountry(final Locale locale) {
+        final var displayCountry = locale.getDisplayCountry(locale);
+        final var values = LocaleUtils2.valuesOfDisplayCountry(displayCountry, locale);
+        assertThat(values)
+                .extracting(v -> v.getDisplayCountry(locale))
+                .containsOnly(displayCountry);
     }
 
     @MethodSource({"getLocaleWithNonBlankDisplayCountryStream"})
     @ParameterizedTest
-    void valueOfDisplayCountryInEnglish(final Locale locale) {
+    void valuesOfDisplayCountryInEnglish(final Locale locale) {
         final var displayCountryInEnglish = locale.getDisplayCountry(Locale.ENGLISH);
-        final var value = LocaleUtils.valueOfDisplayCountryInEnglish(displayCountryInEnglish);
-        assertThat(value).hasValueSatisfying(v -> {
-            assertThat(v.getDisplayCountry(Locale.ENGLISH))
-                    .isEqualTo(displayCountryInEnglish);
-        });
+        final var values = LocaleUtils2.valuesOfDisplayCountryInEnglish(displayCountryInEnglish);
+        assertThat(values)
+                .extracting(v -> v.getDisplayCountry(Locale.ENGLISH))
+                .containsOnly(displayCountryInEnglish);
     }
 
     @MethodSource({"getLocaleWithNonBlankDisplayLanguageStream"})
     @ParameterizedTest
-    void valueOfDisplayLanguage(final Locale inLocale) {
-        final var displayLanguage = inLocale.getDisplayLanguage(inLocale);
-        final var value = LocaleUtils.valueOfDisplayLanguage(displayLanguage, inLocale);
-        assertThat(value).hasValueSatisfying(v -> {
-            assertThat(v.getDisplayLanguage(inLocale))
-                    .isEqualTo(displayLanguage);
-        });
+    void valuesOfDisplayLanguage(final Locale locale) {
+        final var displayLanguage = locale.getDisplayLanguage(locale);
+        final var values = LocaleUtils2.valuesOfDisplayLanguage(displayLanguage, locale);
+        assertThat(values)
+                .extracting(v -> v.getDisplayLanguage(locale))
+                .containsOnly(displayLanguage);
     }
 
     @MethodSource({"getLocaleWithNonBlankDisplayLanguageStream"})
     @ParameterizedTest
-    void valueOfDisplayLanguageInEnglish(final Locale locale) {
+    void valuesOfDisplayLanguageInEnglish(final Locale locale) {
         final var displayLanguageInEnglish = locale.getDisplayLanguage(Locale.ENGLISH);
-        final var value = LocaleUtils.valueOfDisplayLanguageInEnglish(displayLanguageInEnglish);
-        assertThat(value).hasValueSatisfying(v -> {
-            assertThat(v.getDisplayLanguage(Locale.ENGLISH))
-                    .isEqualTo(displayLanguageInEnglish);
-        });
+        final var values = LocaleUtils2.valuesOfDisplayLanguageInEnglish(displayLanguageInEnglish);
+        assertThat(values)
+                .extracting(v -> v.getDisplayLanguage(Locale.ENGLISH))
+                .containsOnly(displayLanguageInEnglish);
     }
 }

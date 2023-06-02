@@ -1,6 +1,7 @@
 package com.github.jinahya.persistence.sakila;
 
 import com.github.jinahya.persistence.sakila.util.LocaleUtils;
+import com.github.jinahya.persistence.sakila.util.LocaleUtils2;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -155,9 +157,24 @@ public class Language
      *
      * @return the locale represents current value of {@link Language_#name name} attribute; {@code null} if not found.
      */
+    @Deprecated
     public Locale getNameAsLocale() {
         return Optional.ofNullable(getName())
                 .flatMap(LocaleUtils::valueOfDisplayLanguageInEnglish)
+                .orElse(null);
+    }
+
+    /**
+     * Returns a list of locales which each value of {@link Locale#getDisplayLanguage(Locale) displayLanguage},
+     * represented in {@link Locale#ENGLISH ENGLISH}, matches current value of {@link Language_#name} attribute.
+     *
+     * @return a list of locales for current value of {@link Language_#name} attribute; {@code null} if current value of
+     * {@link Language_#name} is {@code null} or {@link String#isBlank() blank}.
+     */
+    public List<Locale> getLocalesForName() {
+        return Optional.ofNullable(getName())
+                .filter(v -> !v.isBlank())
+                .map(LocaleUtils2::valuesOfDisplayLanguageInEnglish)
                 .orElse(null);
     }
 

@@ -1,6 +1,5 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.LocaleUtilsTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Locale;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
@@ -28,48 +26,61 @@ class Language_Test
         super(Language.class, Integer.class);
     }
 
-    @DisplayName("NameAsLocale(locale)")
+    @DisplayName("getLocalesForName()List<Locale>")
     @Nested
-    class NameAsLocaleTest {
+    class GetLocalesForNameTest {
 
-        private static Stream<Locale> getLocaleStream() {
-            return LocaleUtilsTest.getLocaleStream();
-        }
-
-        private static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return LocaleUtilsTest.getLocaleWithNonBlankDisplayLanguageStream();
-        }
-
-        @DisplayName("getNameAsLocale()null")
+        @DisplayName("getName()null -> null")
         @Test
-        void getNameAsLocale_Null_New() {
+        void _Null_Null() {
             // GIVEN
             final var instance = newEntitySpy();
             // WHEN
-            final var nameAsLocale = instance.getNameAsLocale();
+            when(instance.getName()).thenReturn(null);
             // THEN
-            assertThat(nameAsLocale).isNull();
-            verify(instance, times(1)).getName();
+            assertThat(instance.getLocalesForName()).isNull();
         }
 
-        @DisplayName("getNameAsLocale() <- getName()")
-        @MethodSource({"localeWithNonBlankDisplayLanguageStream"})
+        @DisplayName("getName()!null -> !empty")
+        @MethodSource({"java.util.Locale#getAvailableLocales"})
         @ParameterizedTest
-        void getNameAsLocale__(final Locale locale) {
+        void __(final Locale locale) {
             // GIVEN
+            final var displayLanguageInEnglish = locale.getDisplayLanguage(Locale.ENGLISH);
+            if (displayLanguageInEnglish.isBlank()) {
+                return;
+            }
             final var instance = newEntitySpy();
-            when(instance.getName()).thenReturn(locale.getDisplayLanguage(Locale.ENGLISH));
             // WHEN
-            final var nameAsLocale = instance.getNameAsLocale();
+            when(instance.getName()).thenReturn(displayLanguageInEnglish);
             // THEN
-            assertThat(nameAsLocale.getDisplayLanguage(Locale.ENGLISH))
-                    .isEqualTo(instance.getName());
+            final var localesForName = instance.getLocalesForName();
+            assertThat(localesForName)
+                    .isNotEmpty()
+                    .extracting(v -> v.getDisplayLanguage(Locale.ENGLISH))
+                    .containsOnly(displayLanguageInEnglish);
+        }
+    }
+
+    @DisplayName("setNameAsLocale(Locale)")
+    @Nested
+    class SetNameAsLocaleTest {
+
+        @DisplayName("setNameAsLocale(null) -> setName(null)")
+        @Test
+        void _Null_Null() {
+            // GIVEN
+            final var spy = spy(entityClass);
+            // WHEN
+            spy.setNameAsLocale(null);
+            // THEN
+            verify(spy, times(1)).setName(null);
         }
 
         @DisplayName("setNameAsLocale(locale) -> setName(locale.displayLanguage(ENGLISH))")
-        @MethodSource("getLocaleStream")
+        @MethodSource({"java.util.Locale#getAvailableLocales"})
         @ParameterizedTest
-        void setNameAsLocale_InvokeNameWithLocaleDisplayLanguage_(final Locale locale) {
+        void _setNameWithLocaleDisplayLanguage_NotNull(final Locale locale) {
             // GIVEN
             final var spy = spy(entityClass);
             // WHEN

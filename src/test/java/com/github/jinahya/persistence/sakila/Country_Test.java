@@ -1,18 +1,14 @@
 package com.github.jinahya.persistence.sakila;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,85 +25,72 @@ class Country_Test
         super(Country.class, Integer.class);
     }
 
-    @DisplayName("countryAsLocale")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @DisplayName("getLocalesForCountry()List")
     @Nested
-    class CountryAsLocalePropertyTest {
+    class GetLocalesForCountryTest {
 
-        @DisplayName("getCountry()null -> getCountryAsLocale()null")
+        @DisplayName("getCountry()null -> null")
         @Test
-        void getCountryAsLocale_Null_Null() {
+        void _Null_Null() {
             // GIVEN
-            final var spy = newEntitySpy();
+            final var instance = newEntitySpy();
             // WHEN
-            when(spy.getCountry()).thenReturn(null);
+            when(instance.getCountry()).thenReturn(null);
             // THEN
-            try {
-                final var locale = spy.getCountryAsLocale();
-                assertThat(locale).isNull();
-            } catch (final UnsupportedOperationException uoe) {
-                log.warn("seems not implemented yet");
-            }
+            assertThat(instance.getLocalesForCountry()).isNull();
         }
 
-        @DisplayName("getCountry()unknown -> getCountryAsLocale()null")
-        @Test
-        void getCountryAsLocale_Null_Unknown() {
+        @DisplayName("getCountry()!null -> !null")
+        @MethodSource("java.util.Locale#getAvailableLocales")
+        @ParameterizedTest
+        void _NotNull_NotNull(final Locale locale) {
             // GIVEN
-            final var spy = newEntitySpy();
-            // WHEN
-            when(spy.getCountry()).thenReturn("Wakanda");
-            // THEN
-            try {
-                final var locale = spy.getCountryAsLocale();
-                assertThat(locale).isNull();
-            } catch (final UnsupportedOperationException uoe) {
-                log.warn("seems not implemented yet");
+            final var instance = newEntitySpy();
+            final var displayLanguageInEnglish = locale.getDisplayLanguage(Locale.ENGLISH);
+            if (displayLanguageInEnglish.isBlank()) {
+                return;
             }
+            // WHEN
+            when(instance.getCountry()).thenReturn(displayLanguageInEnglish);
+            // THEN
+            assertThat(instance.getLocalesForCountry())
+                    .satisfiesAnyOf(
+                            l -> {
+                                assertThat(l).isEmpty();
+                            },
+                            l -> {
+                                assertThat(l).extracting(v -> v.getDisplayCountry(Locale.ENGLISH))
+                                        .containsOnly(displayLanguageInEnglish);
+                            }
+                    );
         }
+    }
 
-        @DisplayName("getCountry()known -> getCountryAsLocale()!null")
-        @Test
-        void getCountryAsLocale_NonNull_Known() {
-            // GIVEN
-            final var spy = newEntitySpy();
-            // WHEN
-            when(spy.getCountry()).thenReturn(Locale.US.getDisplayCountry(Locale.ENGLISH)); // of country_id(103)
-            // THEN
-            try {
-                final var locale = spy.getCountryAsLocale();
-                assertThat(locale).isNotNull();
-            } catch (final UnsupportedOperationException uoe) {
-                log.warn("seems not implemented yet");
-            }
-        }
+    @DisplayName("setCountryAsLocale(Locale)")
+    @Nested
+    class SetCountryAsLocaleTest {
 
         @DisplayName("setCountryAsLocale(null) -> setCountry(null)")
         @Test
-        void setCountryAsLocale_Null_Null() {
+        void _Null_Null() {
             // GIVEN
-            final var spy = newEntitySpy();
+            final var instance = newEntitySpy();
             // WHEN
-            spy.setCountryAsLocale(null);
+            instance.setCountryAsLocale(null);
             // THEN
-            verify(spy, times(1)).setCountry(null);
+            verify(instance, times(1)).setCountry(null);
         }
 
-        private List<Locale> getLocales() {
-            return Arrays.asList(Locale.getAvailableLocales());
-        }
-
-        @Disabled
-        @DisplayName("setCountryAsLocale(locale) -> setCountry(locale.getDisplayLanguage(ENGLISH))")
-        @MethodSource({"getLocales"})
+        @DisplayName("setCountryAsLocale(country) -> setCountry(locale.getDisplayLanguage(ENGLISH)")
+        @MethodSource("java.util.Locale#getAvailableLocales")
         @ParameterizedTest
-        void setCountryAsLocale__(final Locale locale) {
+        void _NotNull_NotNull(final Locale locale) {
             // GIVEN
-            final var spy = newEntitySpy();
+            final var instance = newEntitySpy();
             // WHEN
-            spy.setCountryAsLocale(locale);
+            instance.setCountryAsLocale(locale);
             // THEN
-            verify(spy, times(1)).setCountry(locale.getDisplayCountry(Locale.ENGLISH));
+            verify(instance, times(1)).setCountry(locale.getDisplayCountry(Locale.ENGLISH));
         }
     }
 }

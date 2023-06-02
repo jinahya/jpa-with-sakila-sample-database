@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
@@ -20,7 +21,20 @@ import jakarta.validation.constraints.PositiveOrZero;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.WritableByteChannel;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +42,7 @@ import java.util.Optional;
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
  * <p>
- * <blockquote>
+ * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
  * The {@value TABLE_NAME} table lists all staff members, including information for email address, login information,
  * and picture.<br/>The {@value #TABLE_NAME} table refers to the {@value Store#TABLE_NAME} and
  * {@value Address#TABLE_NAME} tables using foreign keys, and is referred to by the {@value Rental#TABLE_NAME},
@@ -67,12 +81,22 @@ public class Staff
     public static final String COLUMN_NAME_STORE_ID = Store.COLUMN_NAME_STORE_ID;
 
     /**
+     * The name of the table column to which the {@link Staff_#active active} attribute maps. The value is {@value}.
+     */
+    public static final String COLUMN_NAME_ACTIVE = "active";
+
+    /**
+     * The default value of the {@link #COLUMN_NAME_ACTIVE} column. The value is {@value}.
+     */
+    public static final int COLUMN_VALUE_ACTIVE_1 = 1;
+
+    /**
      * Creates a new instance with specified value of {@link Staff_#staffId staffId} attribute.
      *
      * @param staffId the value of {@link Staff_#staffId staffId} attribute.
      * @return a new instance with {@code staffId}.
      */
-    public static Staff of(final int staffId) {
+    public static Staff ofStaffId(final int staffId) {
         final var instance = new Staff();
         instance.staffId = staffId;
         return instance;
@@ -158,15 +182,15 @@ public class Staff
         return addressId;
     }
 
-    public void setAddressId(final Integer addressId) {
+    void setAddressId(final Integer addressId) {
         this.addressId = addressId;
     }
 
-    public byte[] getPicture() {
+    byte[] getPicture() {
         return picture;
     }
 
-    public void setPicture(final byte[] picture) {
+    void setPicture(final byte[] picture) {
         this.picture = picture;
     }
 
@@ -182,7 +206,7 @@ public class Staff
         return storeId;
     }
 
-    protected void setStoreId(final Integer storeId) {
+    void setStoreId(final Integer storeId) {
         this.storeId = storeId;
     }
 
@@ -194,16 +218,6 @@ public class Staff
         this.active = active;
     }
 
-    public Boolean getActiveAsBoolean() {
-        // TODO: Implement
-        throw new UnsupportedOperationException("not implemented yet");
-    }
-
-    public void setActiveAsBoolean(final Boolean activeAsBoolean) {
-        // TODO: Implement!
-        throw new UnsupportedOperationException("not implemented yet");
-    }
-
     public String getUsername() {
         return username;
     }
@@ -212,7 +226,7 @@ public class Staff
         this.username = username;
     }
 
-    private String getPassword() {
+    String getPassword() {
         return password;
     }
 
@@ -221,7 +235,9 @@ public class Staff
     }
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * A surrogate primary key that uniquely identifies the staff member.
+     * </blockquote>
      */
     @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
@@ -233,7 +249,9 @@ public class Staff
     private Integer staffId;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * The first name of the staff member.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -241,7 +259,9 @@ public class Staff
     private String firstName;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * The last name of the staff member.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -249,7 +269,9 @@ public class Staff
     private String lastName;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * A foreign key to the staff member {@value Address#TABLE_NAME} in the address table.
+     * </blockquote>
      */
     @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
@@ -259,14 +281,18 @@ public class Staff
     private Integer addressId;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * A {@code BLOB} containing a photograph of the employee.
+     * </blockquote>
      */
     @Basic(optional = true)
     @Column(name = "picture", nullable = true)
     private byte[] picture;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * The staff member email address.
+     * </blockquote>
      */
     @Email
     @Basic(optional = true)
@@ -274,8 +300,10 @@ public class Staff
     private String email;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * The staff member “home store.” The employee can work at other stores but is generally assigned to the store
      * listed.
+     * </blockquote>
      */
     @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
@@ -285,16 +313,20 @@ public class Staff
     private Integer storeId;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * Whether this is an active employee. If employees leave, their rows are not deleted from this table; instead, this
      * column is set to {@code FALSE}.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
-    @Column(name = "active", nullable = false)
-    private Integer active;
+    @Column(name = COLUMN_NAME_ACTIVE, nullable = false)
+    private Integer active = COLUMN_VALUE_ACTIVE_1;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * The user name used by the staff member to access the rental system.
+     * </blockquote>
      */
     @NotNull
     @Basic(optional = false)
@@ -302,8 +334,10 @@ public class Staff
     private String username;
 
     /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * The password used by the staff member to access the rental system. The password should be stored as a hash using
      * the {@code SHA2()} function.
+     * </blockquote>
      */
     @Basic(optional = true)
     @Column(name = "password", nullable = true, length = 40)
@@ -336,23 +370,103 @@ public class Staff
     @Valid
     @NotNull
     @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_ADDRESS_ID, nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = COLUMN_NAME_ADDRESS_ID, nullable = false,
+                insertable = false, // !!!
+                updatable = false   // !!!
+                )
     private Address address;
 
+    @Transient
+    public void getPictureWritingTo(final OutputStream stream) throws IOException {
+        Objects.requireNonNull(stream, "stream is null");
+        final var data = getPicture();
+        if (data == null) {
+            throw new IllegalStateException("data is currently null");
+        }
+        stream.write(data);
+    }
+
+    @Transient
+    public void getPictureWritingTo(final java.io.File file) throws IOException {
+        Objects.requireNonNull(file, "file is null");
+        try (final var stream = new FileOutputStream(file)) {
+            getPictureWritingTo(stream);
+            stream.flush();
+        }
+    }
+
+    @Transient
+    public void getPictureWritingTo(final WritableByteChannel channel) throws IOException {
+        Objects.requireNonNull(channel, "channel is null");
+        final var data = getPicture();
+        if (data == null) {
+            throw new IllegalStateException("data is currently null");
+        }
+        for (final var buffer = ByteBuffer.wrap(data);
+             buffer.hasRemaining();
+             channel.write(buffer)) {
+            // empty
+        }
+    }
+
+    @Transient
+    public void getPictureWritingTo(final java.nio.file.Path path) throws IOException {
+        Objects.requireNonNull(path, "path is null");
+        try (final var channel = FileChannel.open(
+                path, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.DSYNC)) {
+            getPictureWritingTo(channel);
+            channel.force(false);
+        }
+    }
+
+    @Transient
+    public void setPictureReadingFrom(final InputStream stream) throws IOException {
+        Objects.requireNonNull(stream, "stream is null");
+        final var image = ImageIO.read(stream);
+        if (image == null) {
+            throw new IllegalArgumentException("no registered ImageReader claims to be able to read");
+        }
+        final var raster = image.getRaster();
+        final var buffer = raster.getDataBuffer();
+        if (buffer.getDataType() != DataBuffer.TYPE_BYTE) {
+            throw new IllegalArgumentException(
+                    "image.raster.dataBuffer.type(" + buffer.getDataType() +
+                    ") != TYPE_BYTE(" + DataBuffer.TYPE_BYTE + ")");
+        }
+        final byte[] data = ((DataBufferByte) buffer).getData();
+        setPicture(data);
+    }
+
+    @Transient
+    public void setPictureReadingFrom(final java.io.File file) throws IOException {
+        Objects.requireNonNull(file, "file is null");
+        try (final var stream = new FileInputStream(file)) {
+            setPictureReadingFrom(stream);
+        }
+    }
+
+    @Transient
+    public void setPictureReadingFrom(final java.nio.file.Path path) throws IOException {
+        Objects.requireNonNull(path, "path is null");
+        try (final var channel = FileChannel.open(path, StandardOpenOption.READ)) {
+            setPictureReadingFrom(Channels.newInputStream(channel));
+        }
+    }
+
     /**
-     * Returns current value of {@link Store_#store store} attribute.
+     * Returns current value of {@link Staff_#store store} attribute.
      *
-     * @return current value of the {@link Store_#store store} attribute.
+     * @return current value of the {@link Staff_#store store} attribute.
      */
     public Store getStore() {
         return store;
     }
 
     /**
-     * Replaces current value of {@link Store_#store store} attribute with specified value.
+     * Replaces current value of {@link Staff_#store store} attribute with specified value.
      *
-     * @param store new value for the {@link Store_#store store} attribute.
-     * @apiNote This method also updates current value of {@link Store#storeId storeId} with {@code store?.storeId}.
+     * @param store new value for the {@link Staff_#store store} attribute.
+     * @apiNote This method also updates current value of {@link Staff#storeId storeId} with {@code store?.storeId}.
      */
     public void setStore(final Store store) {
         this.store = store;
@@ -364,46 +478,99 @@ public class Staff
     }
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false, insertable = false, updatable = false)
+    @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false,
+                insertable = false, // !!!
+                updatable = false   // !!!
+                )
     private Store store;
+
+    /**
+     * Returns current value of {@link Staff_#active active} attribute as a {@link Boolean} value.
+     *
+     * @return {@link Boolean#FALSE} if current value of {@link Staff_#active active} attribute is {@code 0};
+     * {@link Boolean#FALSE} otherwise excluding {@code null}; {@code null} if current value of the
+     * {@link Staff_#active active} attribute is {@code null}.
+     */
+    public Boolean getActiveAsBoolean() {
+        return Optional.ofNullable(getActive())
+                .map(_DomainConverters.BooleanConverter::intToBoolean)
+                .orElse(null);
+    }
+
+    /**
+     * Replaces current value of {@link Staff_#active active} attribute with specified {@code boolean} value.
+     *
+     * @param activeAsBoolean the {@code boolean} value for the {@link Staff_#active active} attribute;
+     *                        {@link Boolean#FALSE} for {@code 0};  {@link Boolean#TRUE} for {@code 1}; {@code null} for
+     *                        {@code null}.
+     */
+    public void setActiveAsBoolean(final Boolean activeAsBoolean) {
+        setActive(
+                Optional.ofNullable(activeAsBoolean)
+                        .map(_DomainConverters.BooleanConverter::booleanToInt)
+                        .orElse(null)
+        );
+    }
+
+    public Staff activate() {
+        setActiveAsBoolean(Boolean.TRUE);
+        return this;
+    }
+
+    public Staff deactivate() {
+        setActiveAsBoolean(Boolean.FALSE);
+        return this;
+    }
 
     /**
      * Signs with specified password.
      *
      * @param clientPassword the password to verity with.
+     * @throws IllegalArgumentException if failed to sign in with {@code clientPassword}.
      */
-    public void signIn(final byte[] clientPassword) {
+    public void signIn(byte[] clientPassword) {
+        if (clientPassword != null && clientPassword.length == 0) {
+            throw new IllegalArgumentException("empty password");
+        }
+        final var password_ = getPassword();
         if (clientPassword == null) {
-            if (this.password != null) {
+            if (password_ != null) {
                 throw new IllegalStateException("unable to sign in without password");
             }
-            log.warn("signing in without password; username: " + username);
+            log.warn("signed in without password; username: " + username);
             return;
         }
-        final byte[] copy = Arrays.copyOf(clientPassword, clientPassword.length);
-        if (Objects.equals(SecurityUtils.sha1(copy), password)) {
-//            log.info("signed in with sha1. updating password with sha2...");
-//            setPassword(_PersistenceUtils.sha2(copy));
+        final byte[] clientPassword_ = Arrays.copyOf(clientPassword, clientPassword.length);
+        clientPassword = null;
+        if (Objects.equals(SecurityUtils.sha1(clientPassword_), password_)) {
+            log.info("signed in with sha1");
+            if (false) {
+                log.info("updating password with sha2...");
+                setPassword(SecurityUtils.sha2(clientPassword_));
+            }
             return;
         }
-        if (Objects.equals(SecurityUtils.sha2(copy), password)) {
+        if (Objects.equals(SecurityUtils.sha2(clientPassword_), password_)) {
             return;
         }
-        throw new IllegalStateException("unable to sign in");
+        throw new IllegalArgumentException("unable to sign in");
     }
 
     /**
-     * Updates the password of this staff with specified value.
+     * Updates the password of this staff using specified values.
      *
      * @param oldClientPassword an old password to verify.
-     * @param newClientPassword a new password to update.
+     * @param newClientPassword a new password to set.
+     * @throws IllegalArgumentException if failed to sign in with {@code oldClientPassword}.
      */
     public void changePassword(final byte[] oldClientPassword, final byte[] newClientPassword) {
         if (Objects.requireNonNull(newClientPassword, "newClientPassword is null").length == 0) {
             throw new IllegalArgumentException("empty new client password");
         }
         signIn(oldClientPassword);
-//        setPassword(_PersistenceUtils.sha2(newClientPassword));
+        if (false) {
+            setPassword(SecurityUtils.sha2(newClientPassword));
+        }
         setPassword(SecurityUtils.sha1(newClientPassword));
     }
 }

@@ -1,10 +1,10 @@
 package com.github.jinahya.persistence.sakila;
 
+import jakarta.persistence.Transient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 
 import static java.beans.Introspector.getBeanInfo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,34 +25,33 @@ abstract class __BaseEntityTest<T extends __BaseEntity<U>, U extends Comparable<
 
     @DisplayName("get...()")
     @Test
-    void getter__() throws IntrospectionException, ReflectiveOperationException {
+    void get__() throws IntrospectionException, ReflectiveOperationException {
         final var instance = newEntityInstance();
         for (final var descriptor : getBeanInfo(entityClass).getPropertyDescriptors()) {
             final var reader = descriptor.getReadMethod();
             if (reader == null) {
                 continue;
             }
+            if (reader.isAnnotationPresent(Transient.class)) {
+                continue;
+            }
             if (!reader.canAccess(instance)) {
                 reader.setAccessible(true);
             }
-            try {
-                final var value = reader.invoke(instance);
-            } catch (final InvocationTargetException ite) {
-                if (ite.getTargetException() instanceof UnsupportedOperationException) {
-                    continue;
-                }
-                throw ite;
-            }
+            final var value = reader.invoke(instance);
         }
     }
 
-    @DisplayName("set..(null)")
+    @DisplayName("set...(null)")
     @Test
-    void setter__() throws IntrospectionException, ReflectiveOperationException {
+    void set__() throws IntrospectionException, ReflectiveOperationException {
         final var instance = newEntityInstance();
         for (final var descriptor : getBeanInfo(entityClass).getPropertyDescriptors()) {
             final var writer = descriptor.getWriteMethod();
             if (writer == null) {
+                continue;
+            }
+            if (writer.isAnnotationPresent(Transient.class)) {
                 continue;
             }
             if (!writer.canAccess(instance)) {
@@ -61,14 +60,7 @@ abstract class __BaseEntityTest<T extends __BaseEntity<U>, U extends Comparable<
             if (descriptor.getPropertyType().isPrimitive()) {
                 continue;
             }
-            try {
-                writer.invoke(instance, new Object[]{null});
-            } catch (final InvocationTargetException ite) {
-                if (ite.getTargetException() instanceof UnsupportedOperationException) {
-                    continue;
-                }
-                throw ite;
-            }
+            writer.invoke(instance, new Object[]{null});
         }
     }
 }
