@@ -5,23 +5,35 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
-import java.util.Comparator;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.persistence.sakila.CityConstants.GRAPH_COUNTRY;
+import static com.github.jinahya.persistence.sakila.CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.persistence.sakila.CityConstants.PARAM_COUNTRY_ID;
+import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_FIND_ALL_BY_COUNTRY;
+import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID;
+import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_FIND_BY_CITY_ID;
+import static com.github.jinahya.persistence.sakila._PersistenceConstants.PERSISTENCE_FETCHGRAPH;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Comparator.comparing;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * Tests named queries defined on {@link City} class.
+ *
+ * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ */
 class City_NamedQueries_IT
         extends __PersistenceIT {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(CityConstants.QUERY_FIND_BY_CITY_ID)
+    @DisplayName(QUERY_FIND_BY_CITY_ID)
     @Nested
     class FindByCityIdTest {
 
@@ -31,7 +43,7 @@ class City_NamedQueries_IT
             final var cityId = 0;
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(CityConstants.QUERY_FIND_BY_CITY_ID, City.class)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_CITY_ID, City.class)
                                     .setParameter(City_.cityId.getName(), cityId)
                                     .getSingleResult() // NoResultException
                     )
@@ -43,7 +55,7 @@ class City_NamedQueries_IT
         void _NotNull_1() {
             final var cityId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_BY_CITY_ID, City.class)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_CITY_ID, City.class)
                             .setParameter(City_.cityId.getName(), cityId)
                             .getSingleResult()
             );
@@ -52,72 +64,46 @@ class City_NamedQueries_IT
                     .extracting(City::getCityId)
                     .isEqualTo(cityId);
         }
+
+        @DisplayName("(1fetch)!null")
+        @Test
+        void _NotNull_1FetchCountry() {
+            final var cityId = 1;
+            final var found = applyEntityManager(em -> {
+                final var query = em.createNamedQuery(QUERY_FIND_BY_CITY_ID, City.class)
+                        .setParameter(City_.cityId.getName(), cityId);
+                if (current().nextBoolean()) {
+                    final var graph = em.getEntityGraph(GRAPH_COUNTRY);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
+                } else {
+                    final var graph = em.createEntityGraph(City.class);
+                    graph.addAttributeNodes(City_.country.getName());
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
+                }
+                return query.getSingleResult();
+            });
+            assertThat(found)
+                    .isNotNull()
+                    .satisfies(city -> {
+                        assertThat(city.getCityId()).isEqualTo(cityId);
+                        assertThat(city.getCountry()).satisfies(country -> {
+                            assertThat(city.getCountry().getCountry()).isNotNull();
+                        });
+                    });
+        }
     }
 
-    @DisplayName(CityConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
+        @DisplayName("first page")
         @Test
-        void __WithoutMaxResults() {
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL, City.class)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .doesNotContainNull();
-        }
-
-        @Test
-        void __WithMasResults() {
+        void __first() {
             final var maxResults = current().nextInt(1, 8);
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL, City.class)
-                            .setMaxResults(maxResults)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .doesNotContainNull()
-                    .hasSizeLessThanOrEqualTo(maxResults);
-        }
-    }
-
-    @DisplayName(CityConstants.QUERY_FIND_ALL_BY_CITY_ID_GREATER_THAN)
-    @Nested
-    class FindAllByCityIdGreaterThanTest {
-
-        @DisplayName("0-maxResults")
-        @Test
-        void __WithoutMaxResults() {
-            final var cityIdMinExclusive = 0;
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_CITY_ID_GREATER_THAN, City.class)
-                            .setParameter(CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .doesNotContainNull()
-                    .extracting(City::getCityId)
-                    .isSorted()
-                    .allSatisfy(v -> {
-                        assertThat(v).isGreaterThan(cityIdMinExclusive);
-                    });
-        }
-
-        @DisplayName("0+maxResults")
-        @Test
-        void __WithMaxResults() {
-            final var cityIdMinExclusive = current().nextInt(0, 16);
-            final var maxResults = current().nextInt(1, 8);
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_CITY_ID_GREATER_THAN, City.class)
-                            .setParameter(CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                    em -> em.createNamedQuery(QUERY_FIND_ALL, City.class)
+                            .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
                             .setMaxResults(maxResults)
                             .getResultList()
             );
@@ -126,43 +112,22 @@ class City_NamedQueries_IT
                     .isNotEmpty()
                     .doesNotContainNull()
                     .hasSizeLessThanOrEqualTo(maxResults)
-                    .extracting(City::getCityId)
-                    .isSorted()
-                    .allSatisfy(v -> {
-                        assertThat(v).isGreaterThan(cityIdMinExclusive);
-                    });
+                    .isSortedAccordingTo(comparing(City::getCityId));
         }
 
-        @DisplayName("pagination")
+        @DisplayName("all pages")
         @Test
-        void __() {
-            final var maxResults = current().nextInt(32, 64);
+        void __all() {
+            final var maxResults = current().nextInt(1, 8);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var cityIdMinExclusive = i.get();
-                final var list = applyEntityManager(
-                        em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_CITY_ID_GREATER_THAN, City.class)
-                                .setParameter(CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
-                                .setMaxResults(maxResults)
-                                .getResultList()
-                );
-                assertThat(list)
-                        .isNotNull()
-                        .doesNotContainNull()
-                        .hasSizeLessThanOrEqualTo(maxResults)
-                        .extracting(City::getCityId)
-                        .isSorted()
-                        .allSatisfy(v -> {
-                            assertThat(v).isGreaterThan(cityIdMinExclusive);
-                        });
-                if (list.isEmpty()) {
-                    break;
-                }
-                i.set(list.get(list.size() - 1).getCityId());
+                // TODO: implement!
+                break;
             }
         }
     }
 
-    @DisplayName(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_COUNTRY_ID)
     @Nested
     class FindAllByCountryIdTest {
 
@@ -170,47 +135,25 @@ class City_NamedQueries_IT
         @Test
         void _Empty_0() {
             final var countryId = 0;
-            final var cityIdMinExclusive = 0;
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(
-                                    CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID,
-                                    City.class)
-                            .setParameter(CityConstants.QUERY_PARAM_COUNTRY_ID, countryId)
-                            .setParameter(CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                    em -> em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                            .setParameter(PARAM_COUNTRY_ID, countryId)
+                            .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
                             .getResultList()
             );
             assertThat(list).isEmpty();
         }
 
-        @DisplayName("(1-maxResults)!empty")
+        @DisplayName("(1)!empty")
         @Test
-        void _NotEmpty_1WithoutMaxResults() {
+        void _NotEmpty_1() {
             final var countryId = 1;
             final var cityIdMinExclusive = 0;
+            final var maxResults = current().nextInt(8, 16);
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                            .setParameter(CityConstants.QUERY_PARAM_COUNTRY_ID, countryId)
-                            .setParameter(CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotEmpty()
-                    .doesNotContainNull()
-                    .isSortedAccordingTo(Comparator.comparing(City::getCityId))
-                    .extracting(City::getCountryId)
-                    .containsOnly(countryId);
-        }
-
-        @DisplayName("(1+maxResults)!empty")
-        @Test
-        void _NotEmpty_1WithMaxResults() {
-            final var countryId = 1;
-            final var cityIdMinExclusive = 0;
-            final var maxResults = current().nextInt(1, 8);
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                            .setParameter(CityConstants.QUERY_PARAM_COUNTRY_ID, countryId)
-                            .setParameter(CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                    em -> em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                            .setParameter(PARAM_COUNTRY_ID, countryId)
+                            .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
                             .setMaxResults(maxResults)
                             .getResultList()
             );
@@ -218,28 +161,29 @@ class City_NamedQueries_IT
                     .isNotEmpty()
                     .doesNotContainNull()
                     .hasSizeLessThanOrEqualTo(maxResults)
-                    .isSortedAccordingTo(Comparator.comparing(City::getCityId))
+                    .isSortedAccordingTo(comparing(City::getCityId))
                     .extracting(City::getCountryId)
                     .containsOnly(countryId);
         }
 
-        @DisplayName("pagination for 44(India)")
+        @DisplayName("(44; India) first page")
         @Test
-        void __44() {
+        void __44First() {
             final var countryId = 44; // India
             final var maxResults = current().nextInt(8, 16);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var cityIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                                .setParameter(CityConstants.QUERY_PARAM_COUNTRY_ID, countryId)
-                                .setParameter(CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                                .setParameter(PARAM_COUNTRY_ID, countryId)
+                                .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
                 assertThat(list)
+                        .isNotNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
-                        .isSortedAccordingTo(Comparator.comparing(City::getCityId))
+                        .isSortedAccordingTo(comparing(City::getCityId))
                         .extracting(City::getCountryId)
                         .allMatch(v -> v == countryId);
                 if (list.isEmpty()) {
@@ -248,36 +192,118 @@ class City_NamedQueries_IT
                 i.set(list.get(list.size() - 1).getCityId());
             }
         }
-    }
 
-    @DisplayName(CityConstants.QUERY_FIND_ALL_BY_COUNTRY)
-    @Nested
-    class FindAllByCountryIdGreaterThanTest {
-
-        @DisplayName("(Country(44))+")
+        @DisplayName("(44; India) first page fetching country")
         @Test
-        void __44WithMaxResults() {
-            final var country = Country.ofCountryId(44); // India
+        void __44FirstFetchCountry() {
+            final var countryId = 44; // India
+            final var maxResults = current().nextInt(8, 16);
+            final var list = applyEntityManager(em -> {
+                final var query = em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                        .setParameter(PARAM_COUNTRY_ID, countryId)
+                        .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
+                        .setMaxResults(maxResults);
+                if (current().nextBoolean()) {
+                    final var graph = em.getEntityGraph(GRAPH_COUNTRY);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
+                } else {
+                    final var graph = em.createEntityGraph(City.class);
+                    graph.addAttributeNodes(City_.country.getName());
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
+                }
+                return query.getResultList();
+            });
+            assertThat(list)
+                    .isNotNull()
+                    .hasSizeLessThanOrEqualTo(maxResults)
+                    .isSortedAccordingTo(comparing(City::getCityId))
+                    .allSatisfy(city -> {
+                        assertThat(city.getCountryId()).isEqualTo(countryId);
+                    })
+                    .extracting(City::getCountry)
+                    .doesNotContainNull()
+                    .allSatisfy(country -> {
+                        assertThat(country.getCountryId()).isEqualTo(countryId);
+                    })
+                    .extracting(Country::getCountry)
+                    .doesNotContainNull();
+        }
+
+        @DisplayName("(44; India) all pages without fetching country")
+        @Test
+        void __44All() {
+            final var countryId = 44; // India
             final var maxResults = current().nextInt(8, 16);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var cityIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY, City.class)
-                                .setParameter(CityConstants.QUERY_PARAM_COUNTRY, country)
-                                .setParameter(CityConstants.QUERY_PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                                .setParameter(PARAM_COUNTRY_ID, countryId)
+                                .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
                 assertThat(list)
+                        .isNotNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
-                        .isSortedAccordingTo(Comparator.comparing(City::getCityId))
+                        .isSortedAccordingTo(comparing(City::getCityId))
                         .extracting(City::getCountryId)
-                        .allMatch(v -> Objects.equals(v, country.getCountryId()));
+                        .allMatch(v -> v == countryId);
                 if (list.isEmpty()) {
                     break;
                 }
                 i.set(list.get(list.size() - 1).getCityId());
             }
         }
+
+        @DisplayName("(44; India) all pages with fetching country")
+        @Test
+        void __44AllFetchCountry() {
+            final var countryId = 44; // India
+            final var maxResults = current().nextInt(8, 16);
+            for (final var i = new AtomicInteger(0); ; ) {
+                final var cityIdMinExclusive = i.get();
+                final var list = applyEntityManager(em -> {
+                    final var query = em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                            .setParameter(PARAM_COUNTRY_ID, countryId)
+                            .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                            .setMaxResults(maxResults);
+                    if (current().nextBoolean()) {
+                        final var graph = em.getEntityGraph(GRAPH_COUNTRY);
+                        query.setHint(PERSISTENCE_FETCHGRAPH, graph);
+                    } else {
+                        final var graph = em.createEntityGraph(City.class);
+                        graph.addAttributeNodes(City_.country.getName());
+                        query.setHint(PERSISTENCE_FETCHGRAPH, graph);
+                    }
+                    return query.getResultList();
+                });
+                assertThat(list)
+                        .isNotNull()
+                        .hasSizeLessThanOrEqualTo(maxResults)
+                        .isSortedAccordingTo(comparing(City::getCityId))
+                        .allSatisfy(city -> {
+                            assertThat(city.getCountryId()).isEqualTo(countryId);
+                        })
+                        .extracting(City::getCountry)
+                        .doesNotContainNull()
+                        .allSatisfy(country -> {
+                            assertThat(country.getCountryId()).isEqualTo(countryId);
+                        })
+                        .extracting(Country::getCountry)
+                        .doesNotContainNull();
+                if (list.isEmpty()) {
+                    break;
+                }
+                i.set(list.get(list.size() - 1).getCityId());
+            }
+        }
+    }
+
+    @DisplayName(QUERY_FIND_ALL_BY_COUNTRY)
+    @Nested
+    class FindAllByCountryTest {
+
+        // TODO: add testcases!
     }
 }

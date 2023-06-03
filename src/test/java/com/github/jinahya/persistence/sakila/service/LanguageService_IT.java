@@ -90,7 +90,7 @@ class LanguageService_IT
         @Test
         void __Pagination() {
             final var maxResults = ThreadLocalRandom.current().nextInt(1, 8);
-            log.debug("masResults: {}", maxResults);
+            log.debug("maxResults: {}", maxResults);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var list = applyServiceInstance(
                         s -> s.findAllByLanguageIdGreaterThan(i.get(), maxResults)

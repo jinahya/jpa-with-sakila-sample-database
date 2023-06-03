@@ -46,7 +46,9 @@ public final class ReflectionUtils {
                 new Class<?>[]{cls},
                 (p, m, a) -> {
                     if (m.equals(method)) {
-                        throw new UnsupportedOperationException("you're not allowed to close " + obj);
+                        throw new UnsupportedOperationException(
+                                "you're not allowed to close " + obj
+                                + ". I'll find you and you ought to know what I'm going to do to you.");
                     }
                     try {
                         return m.invoke(obj, a);

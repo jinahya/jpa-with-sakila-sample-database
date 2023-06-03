@@ -10,7 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -41,20 +44,47 @@ import java.util.function.BiFunction;
  * @see Address_
  * @see AddressConstants
  */
+//@NamedEntityGraph(name = AddressConstants.GRAPH_CITY_COUNTRY,
+//                  attributeNodes = {
+//                          @NamedAttributeNode(value = AddressConstants.NODE_CITY,
+//                                              subgraph = CityConstants.GRAPH_COUNTRY)
+//                  }
+//)
+@NamedEntityGraph(name = AddressConstants.GRAPH_CITY_COUNTRY,
+                  attributeNodes = {
+                          @NamedAttributeNode(value = AddressConstants.NODE_CITY,
+                                              subgraph = AddressConstants.SUBGRAPH_CITY_COUNTRY
+                          )
+                  },
+                  subgraphs = {
+                          @NamedSubgraph(name = AddressConstants.SUBGRAPH_CITY_COUNTRY,
+                                         attributeNodes = {
+                                                 @NamedAttributeNode(CityConstants.NODE_COUNTRY)
+                                         }
+                          )
+                  }
+)
+@NamedEntityGraph(name = AddressConstants.GRAPH_CITY,
+                  attributeNodes = {
+                          @NamedAttributeNode(AddressConstants.NODE_CITY)
+                  }
+)
 @NamedQuery(name = AddressConstants.QUERY_FIND_ALL_BY_CITY,
             query = """
                     SELECT e
                     FROM Address AS e
                     WHERE e.city = :city
                           AND e.addressId > :addressIdMinExclusive
-                    ORDER BY e.addressId ASC""")
+                    ORDER BY e.addressId ASC"""
+)
 @NamedQuery(name = AddressConstants.QUERY_FIND_ALL_BY_CITY_ID,
             query = """
                     SELECT e
                     FROM Address AS e
                     WHERE e.cityId = :cityId
                           AND e.addressId > :addressIdMinExclusive
-                    ORDER BY e.addressId ASC""")
+                    ORDER BY e.addressId ASC"""
+)
 @NamedQuery(name = AddressConstants.QUERY_FIND_ALL_ADDRESS_ID_GREATER_THAN,
             query = """
                     SELECT e
@@ -398,7 +428,7 @@ public class Address
      * @param <R>      result type parameter
      * @return the result of the {@code function}.
      */
-    public <R> R getLocationGeometryAsPoint(final BiFunction<? super Double, ? super Double, ? extends R> function) {
+    public <R> R applyLocationGeometryAsPoint(final BiFunction<? super Double, ? super Double, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
         return Optional.ofNullable(getLocationGeometry())
                 .map(lg -> {
@@ -418,7 +448,7 @@ public class Address
                 .orElse(null);
     }
 
-    public void setLocationGeometryAsPoint(final int srid, final double xCoordinate, final double yCoordinate) {
+    public void setLocationGeometryAsPoint(final double xCoordinate, final double yCoordinate, final int srid) {
         final var buffer = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + Double.BYTES + Double.BYTES);
         buffer.order(ByteOrder.LITTLE_ENDIAN)
                 .put(_DomainTypes.Wkb.orderToEndian(buffer.order()))
@@ -435,7 +465,7 @@ public class Address
     }
 
     public void setLocationGeometryAsPoint(final double xCoordinate, final double yCoordinate) {
-        setLocationGeometryAsPoint(0, xCoordinate, yCoordinate);
+        setLocationGeometryAsPoint(xCoordinate, yCoordinate, 0);
     }
 
     /**
@@ -446,9 +476,9 @@ public class Address
      * @param <R>      result type parameter
      * @return the result of the {@code function}.
      */
-    public <R> R getLatitudeLongitude(final BiFunction<? super Double, ? super Double, ? extends R> function) {
+    public <R> R applyLatitudeLongitude(final BiFunction<? super Double, ? super Double, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return getLocationGeometryAsPoint((x, y) -> function.apply(y, x));
+        return applyLocationGeometryAsPoint((x, y) -> function.apply(y, x));
     }
 
     /**

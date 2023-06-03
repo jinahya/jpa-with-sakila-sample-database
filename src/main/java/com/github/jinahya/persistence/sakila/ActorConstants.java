@@ -18,7 +18,7 @@ public final class ActorConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -41,7 +41,7 @@ public final class ActorConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -66,7 +66,7 @@ public final class ActorConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -94,7 +94,7 @@ public final class ActorConstants {
      * <p>
      * The JPQL and the equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -122,7 +122,7 @@ public final class ActorConstants {
      * <p>
      * The JPQL and the equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":

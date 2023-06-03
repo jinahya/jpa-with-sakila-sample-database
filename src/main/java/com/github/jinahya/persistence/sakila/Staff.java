@@ -10,6 +10,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -52,6 +56,64 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">5.1.15 The staff Table</a>
  */
+@NamedEntityGraph(
+        name = "staff-entity-graph",
+        attributeNodes = {
+                @NamedAttributeNode("address")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "",
+                        attributeNodes = {
+                                @NamedAttributeNode("city")
+                        }
+                )
+        }
+)
+@NamedEntityGraph(
+        name = "staff-graph-address",
+        attributeNodes = {
+                @NamedAttributeNode(value = "address", subgraph = "staff-graph-address-subgraph-city")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "staff-graph-address-subgraph-city",
+                        attributeNodes = {
+                                @NamedAttributeNode("city")
+                        }
+                )
+        }
+)
+@NamedQuery(name = StaffConstants.QUERY_FIND_ALL_BY_COUNTRY,
+            query = """
+                    SELECT e
+                    FROM Staff AS e
+                            JOIN FETCH e.address AS a
+                            JOIN FETCH a.city AS c
+                            JOIN FETCH c.country AS c2
+                    WHERE c2 = :country
+                          AND e.staffId > :staffIdMinExclusive
+                    ORDER BY e.staffId ASC""")
+@NamedQuery(name = StaffConstants.QUERY_FIND_ALL_BY_CITY,
+            query = """
+                    SELECT e
+                    FROM Staff AS e
+                            JOIN FETCH e.address AS a
+                            JOIN FETCH a.city AS c
+                    WHERE e.address.city = :city
+                          AND e.staffId > :staffIdMinExclusive
+                    ORDER BY e.staffId ASC""")
+@NamedQuery(name = StaffConstants.QUERY_FIND_ALL,
+            query = """
+                    SELECT e
+                    FROM Staff AS e
+                    WHERE e.staffId > :staffIdMinExclusive
+                    ORDER BY e.staffId ASC""")
+@NamedQuery(name = StaffConstants.QUERY_FIND_BY_STAFF_ID,
+            query = """
+                    SELECT e
+                    FROM Staff AS e
+                    WHERE e.staffId = :staffId""")
 @Entity
 @Table(name = Staff.TABLE_NAME)
 public class Staff

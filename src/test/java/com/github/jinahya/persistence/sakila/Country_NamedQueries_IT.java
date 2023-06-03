@@ -88,17 +88,16 @@ class Country_NamedQueries_IT
 
         @Test
         void __WithMaxResults() {
-            // TODO: fix typo, masResults -> maxResults!
-            final var masResults = ThreadLocalRandom.current().nextInt(8, 16);
+            final var maxResults = ThreadLocalRandom.current().nextInt(8, 16);
             final var list = applyEntityManager(
                     em -> em.createNamedQuery(CountryConstants.QUERY_FIND_ALL, Country.class)
-                            .setMaxResults(masResults)
+                            .setMaxResults(maxResults)
                             .getResultList()
             );
             assertThat(list)
                     .isNotNull()
                     .isNotEmpty()
-                    .hasSizeLessThanOrEqualTo(masResults);
+                    .hasSizeLessThanOrEqualTo(maxResults);
         }
     }
 

@@ -15,7 +15,7 @@ public class AddressConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -48,7 +48,7 @@ public class AddressConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -71,7 +71,7 @@ public class AddressConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -100,7 +100,7 @@ public class AddressConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -133,7 +133,7 @@ public class AddressConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></th></tr></head>
+     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -154,11 +154,23 @@ public class AddressConstants {
      */
     public static final String QUERY_FIND_ALL_BY_CITY = "Address_findAllByCity";
 
-    public static final String QUERY_PARAM_CITY = "city";
+    public static final String PARAM_CITY = "city";
 
     static {
-        assert QUERY_PARAM_CITY.equals(Address_.city.getName());
+        assert PARAM_CITY.equals(Address_.city.getName());
     }
+
+    public static final String GRAPH_CITY = "Address_city";
+
+    public static final String NODE_CITY = "city";
+
+    static {
+        assert NODE_CITY.equals(Address_.city.getName());
+    }
+
+    public static final String GRAPH_CITY_COUNTRY = "Address_city_country";
+
+    public static final String SUBGRAPH_CITY_COUNTRY = CityConstants.NODE_COUNTRY;
 
     private AddressConstants() {
         throw new AssertionError("instantiation is not allowed");

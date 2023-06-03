@@ -68,7 +68,7 @@ class Address_Test
             // GIVEN
             final var instance = newEntitySpy();
             // WHEN
-            final var locationGeometry = instance.getLocationGeometryAsPoint((x, y) -> new Object());
+            final var locationGeometry = instance.applyLocationGeometryAsPoint((x, y) -> new Object());
             assertThat(locationGeometry).isNull();
             verify(instance, times(1)).getLocationGeometry();
         }
@@ -81,7 +81,7 @@ class Address_Test
             // WHEN
             when(instance.getLocation()).thenReturn(point11Le());
             // THEN
-            instance.getLocationGeometryAsPoint((x, y) -> {
+            instance.applyLocationGeometryAsPoint((x, y) -> {
                 assertThat(x).isEqualTo(+1.0d);
                 assertThat(x).isEqualTo(-1.0d);
                 return null;
@@ -96,7 +96,7 @@ class Address_Test
             // WHEN
             when(instance.getLocation()).thenReturn(point24Le());
             // THEN
-            instance.getLocationGeometryAsPoint((x, y) -> {
+            instance.applyLocationGeometryAsPoint((x, y) -> {
                 assertThat(x).isEqualTo(+2.0d);
                 assertThat(x).isEqualTo(+4.0d);
                 return null;
@@ -133,7 +133,7 @@ class Address_Test
             final var yCoordinate = ThreadLocalRandom.current().nextDouble();
             final var srid = 0;
             // WHEN
-            instance.setLocationGeometryAsPoint(0, xCoordinate, yCoordinate);
+            instance.setLocationGeometryAsPoint(xCoordinate, yCoordinate, 0);
             // THEN
             verify(instance, times(1)).setLocationGeometry(argThat(g -> {
                 assertThat(g).isNotNull();
