@@ -5,7 +5,6 @@
 *~
 *.jfr
 *.log
-doc/sakila-db
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -32,12 +31,6 @@ buildNumber.properties
 .classpath
 
 # End of https://www.toptal.com/developers/gitignore/api/maven
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-*.iml
-*.idea
-!.idea/codeStyles
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -112,6 +105,7 @@ local.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse
 
+
 # ----------------------------------------------------------------------------------------------------------------------
 # Created by https://www.toptal.com/developers/gitignore/api/netbeans
 # Edit at https://www.toptal.com/developers/gitignore?templates=netbeans
@@ -127,3 +121,13 @@ nbdist/
 .nb-gradle/
 
 # End of https://www.toptal.com/developers/gitignore/api/netbeans
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+*.iml
+*.idea
+!.idea/codeStyles
+
+doc/sakila-db
+effective-pom-eclipselink.xml
+effective-pom-hibernate.xml

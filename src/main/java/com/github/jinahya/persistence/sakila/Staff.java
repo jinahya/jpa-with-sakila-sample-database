@@ -56,24 +56,25 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">5.1.15 The staff Table</a>
  */
+//@NamedEntityGraph(
+//        name = "staff-entity-graph",
+//        attributeNodes = {
+//                @NamedAttributeNode("address")
+//        },
+//        subgraphs = {
+//                @NamedSubgraph(
+//                        name = "",
+//                        attributeNodes = {
+//                                @NamedAttributeNode("city")
+//                        }
+//                )
+//        }
+//)
 @NamedEntityGraph(
-        name = "staff-entity-graph",
+        name = StaffConstants.GRAPH_ADDRESS,
         attributeNodes = {
-                @NamedAttributeNode("address")
-        },
-        subgraphs = {
-                @NamedSubgraph(
-                        name = "",
-                        attributeNodes = {
-                                @NamedAttributeNode("city")
-                        }
-                )
-        }
-)
-@NamedEntityGraph(
-        name = "staff-graph-address",
-        attributeNodes = {
-                @NamedAttributeNode(value = "address", subgraph = "staff-graph-address-subgraph-city")
+                @NamedAttributeNode(value = StaffConstants.GRAPH_NODE_ADDRESS,
+                                    subgraph = "staff-graph-address-subgraph-city")
         },
         subgraphs = {
                 @NamedSubgraph(
@@ -553,6 +554,7 @@ public class Staff
      * {@link Boolean#FALSE} otherwise excluding {@code null}; {@code null} if current value of the
      * {@link Staff_#active active} attribute is {@code null}.
      */
+    @Transient
     public Boolean getActiveAsBoolean() {
         return Optional.ofNullable(getActive())
                 .map(_DomainConverters.BooleanConverter::intToBoolean)
@@ -574,20 +576,32 @@ public class Staff
         );
     }
 
+    /**
+     * Activates this staff by updating current value of {@link Staff_#active active} attribute with {@code 1}, and
+     * returns this staff.
+     *
+     * @return this staff.
+     */
     public Staff activate() {
         setActiveAsBoolean(Boolean.TRUE);
         return this;
     }
 
+    /**
+     * Deactivates this staff by updating current value of {@link Staff_#active active} attribute with {@code 0}, and
+     * returns this staff.
+     *
+     * @return this staff.
+     */
     public Staff deactivate() {
         setActiveAsBoolean(Boolean.FALSE);
         return this;
     }
 
     /**
-     * Signs with specified password.
+     * Signs in with specified client password.
      *
-     * @param clientPassword the password to verity with.
+     * @param clientPassword the password to verity with; may be {@code null} but should have a non-zero length.
      * @throws IllegalArgumentException if failed to sign in with {@code clientPassword}.
      */
     public void signIn(byte[] clientPassword) {

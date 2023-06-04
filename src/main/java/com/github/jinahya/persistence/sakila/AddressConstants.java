@@ -44,28 +44,6 @@ public class AddressConstants {
     }
 
     /**
-     * The name of the query selects all entities. The value is {@value}.
-     * <p>
-     * The JPQL and an equivalent SQL are as follows.
-     * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
-     * <tbody>
-     * <tr>
-     * <td>{@snippet lang = "jpql":
-     * SELECT e
-     * FROM Address AS e
-     *}</td>
-     * <td>{@snippet lang = "sql":
-     * SELECT *
-     * FROM address
-     *}</td>
-     * </tr>
-     * </tbody>
-     * </table>
-     */
-    public static final String QUERY_FIND_ALL = "Address_findAll";
-
-    /**
      * The name of the query selects all entities whose {@link Address_#addressId addressId} attributes are greater than
      * specified value, ordered by {@link Address_#addressId addressId} in ascending order. The value is {@value}.
      * <p>
@@ -90,7 +68,7 @@ public class AddressConstants {
      * </tbody>
      * </table>
      */
-    public static final String QUERY_FIND_ALL_ADDRESS_ID_GREATER_THAN = "Address_findAllAddressIdGreaterThan";
+    public static final String QUERY_FIND_ALL = "Address_findAll";
 
     public static final String QUERY_PARAM_ADDRESS_MIN_EXCLUSIVE = "addressIdMinExclusive";
 
@@ -162,15 +140,15 @@ public class AddressConstants {
 
     public static final String GRAPH_CITY = "Address_city";
 
-    public static final String NODE_CITY = "city";
+    public static final String GRAPH_NODE_CITY = "city";
 
     static {
-        assert NODE_CITY.equals(Address_.city.getName());
+        assert GRAPH_NODE_CITY.equals(Address_.city.getName());
     }
 
     public static final String GRAPH_CITY_COUNTRY = "Address_city_country";
 
-    public static final String SUBGRAPH_CITY_COUNTRY = CityConstants.NODE_COUNTRY;
+    public static final String SUBGRAPH_CITY_COUNTRY = CityConstants.GRAPH_NODE_COUNTRY;
 
     private AddressConstants() {
         throw new AssertionError("instantiation is not allowed");

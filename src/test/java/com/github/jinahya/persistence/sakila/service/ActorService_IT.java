@@ -76,45 +76,6 @@ class ActorService_IT
         }
     }
 
-    @DisplayName(ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN)
-    @Nested
-    class FindAllByActorIdGreaterThanTest {
-
-        @DisplayName("findAllByActorIdGreaterThan(0, null)")
-        @Test
-        void __0() {
-            // GIVEN
-            final var actorIdMinExclusive = 0;
-            // WHEN
-            final var list = applyServiceInstance(s -> s.findAllByActorIdGreaterThan(actorIdMinExclusive, null));
-            // THEN
-            assertThat(list)
-                    .isNotEmpty()
-                    .extracting(Actor::getActorId)
-                    .allSatisfy(ai -> {
-                        assertThat(ai).isPositive();
-                    });
-        }
-
-        @DisplayName("findAllByActorIdGreaterThan(positive, !null)")
-        @Test
-        void __WithMaxResults() {
-            // GIVEN
-            final var actorIdMinExclusive = ThreadLocalRandom.current().nextInt(1, 8);
-            final var maxResults = ThreadLocalRandom.current().nextInt(1, 8);
-            // WHEN
-            final var list = applyServiceInstance(s -> s.findAllByActorIdGreaterThan(actorIdMinExclusive, maxResults));
-            // THEN
-            assertThat(list)
-                    .isNotEmpty()
-                    .hasSizeLessThanOrEqualTo(maxResults)
-                    .extracting(Actor::getActorId)
-                    .allSatisfy(ai -> {
-                        assertThat(ai).isGreaterThan(actorIdMinExclusive);
-                    });
-        }
-    }
-
     @DisplayName(ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME)
     @Nested
     class FindAllByLastNameTest {
@@ -147,52 +108,6 @@ class ActorService_IT
                     .hasSizeLessThanOrEqualTo(maxResults)
                     .extracting(Actor::getLastName)
                     .containsOnly(lastName);
-        }
-    }
-
-    @DisplayName(ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN)
-    @Nested
-    class FindAllByLastNameActorIdGreaterThanTest {
-
-        @DisplayName("findAllByLastName(\"KILMER\", null)")
-        @Test
-        void __KILMER() {
-            // GIVEN
-            final var lastName = "KILMER";
-            final var actorIdMinExclusive = ThreadLocalRandom.current().nextInt(23, 163);
-            // WHEN
-            final var list = applyServiceInstance(
-                    s -> s.findAllByLastNameActorIdGreaterThan(lastName, actorIdMinExclusive, null)
-            );
-            // THEN
-            assertThat(list)
-                    .isNotEmpty()
-                    .allSatisfy(a -> {
-                        assertThat(a.getLastName()).isEqualTo(lastName);
-                        assertThat(a.getActorId()).isGreaterThan(actorIdMinExclusive);
-                    });
-        }
-
-        @DisplayName("findAllByLastName(\"KILMER\", !null)")
-        @Test
-        void __KILMERWithMaxResults() {
-            // GIVEN
-            // GIVEN
-            final var lastName = "KILMER";
-            final var actorIdMinExclusive = ThreadLocalRandom.current().nextInt(23, 163);
-            final var maxResults = ThreadLocalRandom.current().nextInt(1, 3);
-            // WHEN
-            final var list = applyServiceInstance(
-                    s -> s.findAllByLastNameActorIdGreaterThan(lastName, actorIdMinExclusive, maxResults)
-            );
-            // THEN
-            assertThat(list)
-                    .isNotEmpty()
-                    .hasSizeLessThanOrEqualTo(maxResults)
-                    .allSatisfy(a -> {
-                        assertThat(a.getLastName()).isEqualTo(lastName);
-                        assertThat(a.getActorId()).isGreaterThan(actorIdMinExclusive);
-                    });
         }
     }
 }

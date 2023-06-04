@@ -1,5 +1,7 @@
 package com.github.jinahya.persistence.sakila;
 
+import java.util.Optional;
+
 public final class StaffConstants {
 
     /**
@@ -163,6 +165,20 @@ public final class StaffConstants {
     public static final String QUERY_FIND_ALL_BY_COUNTRY = "Staff_findAllByCountry";
 
     public static final String QUERY_PARAM_COUNTRY = "country";
+
+    public static final String GRAPH_ADDRESS = "Staff_graph_address";
+
+    public static final String GRAPH_NODE_ADDRESS = "address";
+
+    static {
+        Optional.ofNullable(Staff_.address).ifPresent(a -> {
+            assert a.getName().equals(GRAPH_NODE_ADDRESS);
+        });
+    }
+
+    public static final String GRAPH_ADDRESS_CITY = "Staff_graph_address_city";
+
+    public static final String GRAPH_ADDRESS_CITY_COUNTRY = "Staff_graph_address_city_country";
 
     private StaffConstants() {
         throw new AssertionError("instantiation is not allowed");

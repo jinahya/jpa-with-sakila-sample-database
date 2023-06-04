@@ -292,7 +292,7 @@ public class Film
      * @param filmId the value of the {@link Film_#filmId filmId} attribute.
      * @return a new instance.
      */
-    public static Film ofFilmId(final Integer filmId) {
+    public static Film ofFilmId(final int filmId) {
         final var instance = new Film();
         instance.filmId = filmId;
         return instance;

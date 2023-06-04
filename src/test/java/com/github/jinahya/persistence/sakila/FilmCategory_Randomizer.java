@@ -15,8 +15,7 @@ class FilmCategory_Randomizer
     @Override
     EasyRandomParameters parameters() {
         return super.parameters()
-                .excludeField(named(FilmCategory_.filmId.getName()))
-                .excludeField(named(FilmCategory_.categoryId.getName()))
+                .excludeField(named(FilmCategory_.id.getName()))
                 .excludeField(named(FilmCategory_.film.getName()))
                 .excludeField(named(FilmCategory_.category.getName()))
                 ;

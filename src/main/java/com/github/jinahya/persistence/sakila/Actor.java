@@ -12,6 +12,8 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -20,6 +22,12 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
+
+import static com.github.jinahya.persistence.sakila.ActorConstants.ENTITY_GRAPH_FILMS;
+import static com.github.jinahya.persistence.sakila.ActorConstants.ATTRIBUTE_NODE_FILMS;
+import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME;
+import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_BY_ACTOR_ID;
 
 /**
  * An entity class for mapping {@value Actor#TABLE_NAME} table.
@@ -34,37 +42,36 @@ import java.util.List;
  * @see ActorConstants
  * @see ActorService
  */
-@NamedQuery(name = ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
-            query = """
-                    SELECT e FROM Actor AS e
-                    WHERE e.lastName = :lastName
-                          AND e.actorId > :actorIdMinExclusive
-                    ORDER BY e.actorId ASC
-                    """)
-@NamedQuery(name = ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME,
-            query = """
-                    SELECT e
-                    FROM Actor AS e
-                    WHERE e.lastName = :lastName
-                    """)
-@NamedQuery(name = ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
-            query = """
-                    SELECT e
-                    FROM Actor AS e
-                    WHERE e.actorId > :actorIdMinExclusive
-                    ORDER BY e.actorId ASC
-                    """)
-@NamedQuery(name = ActorConstants.QUERY_FIND_BY_ACTOR_ID,
-            query = """
-                    SELECT e
-                    FROM Actor AS e
-                    WHERE e.actorId = :actorId
-                    """)
-@NamedQuery(name = ActorConstants.QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM Actor AS e
-                    """)
+@NamedEntityGraph(
+        name = ENTITY_GRAPH_FILMS,
+        attributeNodes = {
+                @NamedAttributeNode(ATTRIBUTE_NODE_FILMS)
+        }
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_LAST_NAME,
+        query = """
+                SELECT e
+                FROM Actor AS e
+                WHERE e.lastName = :lastName
+                      AND e.actorId > :actorIdMinExclusive
+                ORDER BY e.actorId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM Actor AS e
+                WHERE e.actorId > :actorIdMinExclusive
+                ORDER BY e.actorId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_ACTOR_ID,
+        query = """
+                SELECT e
+                FROM Actor AS e
+                WHERE e.actorId = :actorId"""
+)
 @Entity
 @Table(name = Actor.TABLE_NAME, indexes = {@Index(columnList = Actor.COLUMN_NAME_LAST_NAME)})
 public class Actor
@@ -240,14 +247,6 @@ public class Actor
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_LAST_NAME, nullable = false, length = COLUMN_LENGTH_LAST_NAME)
     private String lastName;
-
-    static final String ATTRIBUTE_NAME_FILMS = "films";
-
-//    static {
-//        Optional.ofNullable(Actor_.films).map(Attribute::getName).ifPresent(v -> {
-//            assert v.equals(ATTRIBUTE_NAME_FILMS);
-//        });
-//    }
 
     /**
      * 이 배우가 출연한 영화 목록.

@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,36 +75,6 @@ public class ActorService
     }
 
     /**
-     * Finds all entities whose values of {@link Actor_#actorId actorId} attribute is greater than specified value.
-     *
-     * @param actorIdMinExclusive the lower exclusive value of the {@link Actor_#actorId actorId} attribute to compare.
-     * @param maxResults          a number of maximum results to limit; {@code null} for an unlimited results.
-     * @return a list of found entities.
-     */
-    @NotNull
-    public List<@Valid @NotNull Actor> findAllByActorIdGreaterThan(@PositiveOrZero final int actorIdMinExclusive,
-                                                                   @Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return findAllByIdGreaterThan(
-                    r -> r.get(Actor_.actorId),
-                    actorIdMinExclusive,
-                    maxResults
-            );
-        }
-        return applyEntityManager(em -> {
-            final var query = em.createNamedQuery(
-                    ActorConstants.QUERY_FIND_ALL_BY_ACTOR_ID_GREATER_THAN,
-                    Actor.class
-            );
-            query.setParameter("actorIdMinExclusive", actorIdMinExclusive);
-            if (maxResults != null) {
-                query.setMaxResults(maxResults);
-            }
-            return query.getResultList();
-        });
-    }
-
-    /**
      * Finds the entity whose value of {@link Actor_#lastName lastName} attribute matches specified value.
      *
      * @param lastName   the value of {@link Actor_#lastName lastName} attribute to match.
@@ -128,43 +97,6 @@ public class ActorService
                     Actor.class
             );
             query.setParameter(Actor_.lastName.getName(), lastName);
-            if (maxResults != null) {
-                query.setMaxResults(maxResults);
-            }
-            return query.getResultList();
-        });
-    }
-
-    /**
-     * Finds all entities whose values of {@link Actor_#lastName lastName} attribute match specified value and whose
-     * values of {@link Actor_#actorId} attribute are greater than specified value, sorted by
-     * {@link Actor_#actorId actorId} attribute in ascending order.
-     *
-     * @param lastName            the value of {@link Actor_#lastName lastName} attribute to match.
-     * @param actorIdMinExclusive the lower exclusive value of {@link Actor_#actorId actorId} attribute.
-     * @param maxResults          a number of maximum results to limit; {@code null} for an unlimited results.
-     * @return a list of found entities;
-     */
-    @NotNull
-    public List<@Valid @NotNull Actor> findAllByLastNameActorIdGreaterThan(
-            @NotBlank final String lastName, @PositiveOrZero final int actorIdMinExclusive,
-            @Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return findAllByAttributeIdGreaterThan(
-                    r -> r.get(Actor_.lastName),
-                    lastName,
-                    r -> r.get(Actor_.actorId),
-                    actorIdMinExclusive,
-                    maxResults
-            );
-        }
-        return applyEntityManager(em -> {
-            final var query = em.createNamedQuery(
-                    ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME_ACTOR_ID_GREATER_THAN,
-                    Actor.class
-            );
-            query.setParameter(Actor_.lastName.getName(), lastName);
-            query.setParameter("actorIdMinExclusive", actorIdMinExclusive);
             if (maxResults != null) {
                 query.setMaxResults(maxResults);
             }

@@ -19,15 +19,23 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiFunction;
+
+import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_CITY;
+import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_CITY_COUNTRY;
+import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_NODE_CITY;
+import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_BY_ADDRESS_ID;
+import static com.github.jinahya.persistence.sakila.CityConstants.GRAPH_COUNTRY;
+import static com.github.jinahya.persistence.sakila.CityConstants.GRAPH_NODE_COUNTRY;
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -44,68 +52,76 @@ import java.util.function.BiFunction;
  * @see Address_
  * @see AddressConstants
  */
-//@NamedEntityGraph(name = AddressConstants.GRAPH_CITY_COUNTRY,
-//                  attributeNodes = {
-//                          @NamedAttributeNode(value = AddressConstants.NODE_CITY,
-//                                              subgraph = CityConstants.GRAPH_COUNTRY)
-//                  }
+@NamedEntityGraph(
+        name = GRAPH_CITY_COUNTRY,
+        attributeNodes = {
+                @NamedAttributeNode(
+                        value = GRAPH_NODE_CITY,
+                        subgraph = GRAPH_COUNTRY
+                )
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = GRAPH_COUNTRY,
+                        attributeNodes = {
+                                @NamedAttributeNode(GRAPH_NODE_COUNTRY)
+                        }
+                )
+        }
+)
+@NamedEntityGraph(
+        name = GRAPH_CITY,
+        attributeNodes = {
+                @NamedAttributeNode(GRAPH_NODE_CITY)
+        }
+)
+@NamedQuery(
+        name = AddressConstants.QUERY_FIND_ALL_BY_CITY,
+        query = """
+                SELECT e
+                FROM Address AS e
+                WHERE e.city = :city
+                      AND e.addressId > :addressIdMinExclusive
+                ORDER BY e.addressId ASC"""
+)
+@NamedQuery(
+        name = AddressConstants.QUERY_FIND_ALL_BY_CITY_ID,
+        query = """
+                SELECT e
+                FROM Address AS e
+                WHERE e.cityId = :cityId
+                      AND e.addressId > :addressIdMinExclusive
+                ORDER BY e.addressId ASC"""
+)
+//@NamedQuery(
+//        name = AddressConstants.QUERY_FIND_ALL_ADDRESS_ID_GREATER_THAN,
+//        query = """
+//                SELECT e
+//                FROM Address AS e
+//                WHERE e.addressId > :addressIdMinExclusive
+//                ORDER BY e.addressId ASC"""
 //)
-@NamedEntityGraph(name = AddressConstants.GRAPH_CITY_COUNTRY,
-                  attributeNodes = {
-                          @NamedAttributeNode(value = AddressConstants.NODE_CITY,
-                                              subgraph = AddressConstants.SUBGRAPH_CITY_COUNTRY
-                          )
-                  },
-                  subgraphs = {
-                          @NamedSubgraph(name = AddressConstants.SUBGRAPH_CITY_COUNTRY,
-                                         attributeNodes = {
-                                                 @NamedAttributeNode(CityConstants.NODE_COUNTRY)
-                                         }
-                          )
-                  }
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM Address AS e
+                WHERE e.addressId > :addressIdMinExclusive
+                ORDER BY e.addressId ASC"""
 )
-@NamedEntityGraph(name = AddressConstants.GRAPH_CITY,
-                  attributeNodes = {
-                          @NamedAttributeNode(AddressConstants.NODE_CITY)
-                  }
+@NamedQuery(
+        name = QUERY_FIND_BY_ADDRESS_ID,
+        query = """
+                SELECT e
+                FROM Address AS e
+                WHERE e.addressId = :addressId"""
 )
-@NamedQuery(name = AddressConstants.QUERY_FIND_ALL_BY_CITY,
-            query = """
-                    SELECT e
-                    FROM Address AS e
-                    WHERE e.city = :city
-                          AND e.addressId > :addressIdMinExclusive
-                    ORDER BY e.addressId ASC"""
-)
-@NamedQuery(name = AddressConstants.QUERY_FIND_ALL_BY_CITY_ID,
-            query = """
-                    SELECT e
-                    FROM Address AS e
-                    WHERE e.cityId = :cityId
-                          AND e.addressId > :addressIdMinExclusive
-                    ORDER BY e.addressId ASC"""
-)
-@NamedQuery(name = AddressConstants.QUERY_FIND_ALL_ADDRESS_ID_GREATER_THAN,
-            query = """
-                    SELECT e
-                    FROM Address AS e
-                    WHERE e.addressId > :addressIdMinExclusive
-                    ORDER BY e.addressId ASC""")
-@NamedQuery(name = AddressConstants.QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM Address AS e""")
-@NamedQuery(name = AddressConstants.QUERY_FIND_BY_ADDRESS_ID,
-            query = """
-                    SELECT e
-                    FROM Address AS e
-                    WHERE e.addressId = :addressId""")
 @Entity
 @Table(name = Address.TABLE_NAME)
 public class Address
         extends _BaseEntity<Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -249,10 +265,20 @@ public class Address
         this.cityId = cityId;
     }
 
+    /**
+     * Returns current value of {@link Address_#postalCode postalCode} attribute.
+     *
+     * @return current value of the {@link Address_#postalCode postalCode} attribute.
+     */
     public String getPostalCode() {
         return postalCode;
     }
 
+    /**
+     * Replaces current value of {@link Address_#postalCode postalCode} attribute with specified value.
+     *
+     * @param postalCode new value for the {@link Address_#postalCode postalCode} attribute.
+     */
     public void setPostalCode(final String postalCode) {
         this.postalCode = postalCode;
     }

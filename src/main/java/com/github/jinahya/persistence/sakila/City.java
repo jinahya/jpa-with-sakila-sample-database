@@ -20,7 +20,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.util.Optional;
 
 import static com.github.jinahya.persistence.sakila.CityConstants.GRAPH_COUNTRY;
-import static com.github.jinahya.persistence.sakila.CityConstants.NODE_COUNTRY;
+import static com.github.jinahya.persistence.sakila.CityConstants.GRAPH_NODE_COUNTRY;
 import static com.github.jinahya.persistence.sakila.CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.CityConstants.PARAM_COUNTRY_ID;
 import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_FIND_ALL;
@@ -44,7 +44,7 @@ import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_PARAM_CI
 @NamedEntityGraph(
         name = GRAPH_COUNTRY,
         attributeNodes = {
-                @NamedAttributeNode(NODE_COUNTRY)
+                @NamedAttributeNode(GRAPH_NODE_COUNTRY)
         }
 )
 @NamedQuery(name = QUERY_FIND_ALL_BY_COUNTRY,

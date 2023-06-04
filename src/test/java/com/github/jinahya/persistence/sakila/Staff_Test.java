@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +82,7 @@ class Staff_Test
             final var instance = newEntitySpy();
             final var pictureBytes = getPictureBytes();
             when(instance.getPicture()).thenReturn(pictureBytes);
+            clearInvocations(instance); // EclipseLink
             final var stream = mock(OutputStream.class);
             // WHEN
             assertDoesNotThrow(() -> instance.getPictureWritingTo(stream));
@@ -138,6 +140,7 @@ class Staff_Test
             final var instance = newEntitySpy();
             final var pictureBytes = getPictureBytes();
             when(instance.getPicture()).thenReturn(pictureBytes);
+            clearInvocations(instance); // EclipseLink
             final var channel = mock(WritableByteChannel.class);
             when(channel.write(notNull())).thenAnswer(i -> {
                 final var buffer = i.getArgument(0, ByteBuffer.class);
@@ -241,15 +244,10 @@ class Staff_Test
         void getActiveAsBoolean_Null_GetActiveNull() {
             // GIVEN
             final var instance = newEntitySpy();
-            // WHEN
             when(instance.getActive()).thenReturn(null);
-            final Boolean activeAsBoolean;
-            try {
-                activeAsBoolean = instance.getActiveAsBoolean();
-            } catch (final UnsupportedOperationException uoe) {
-                log.warn("unsupported", uoe);
-                return;
-            }
+            clearInvocations(instance); // EclipseLink
+            // WHEN
+            final Boolean activeAsBoolean = instance.getActiveAsBoolean();
             // THEN
             assertThat(activeAsBoolean).isNull();
             verify(instance, times(1)).getActive();
@@ -260,15 +258,10 @@ class Staff_Test
         void getActiveAsBoolean_False_0() {
             // GIVEN
             final var instance = newEntitySpy();
-            // WHEN
             when(instance.getActive()).thenReturn(0);
-            final Boolean activeAsBoolean;
-            try {
-                activeAsBoolean = instance.getActiveAsBoolean();
-            } catch (final UnsupportedOperationException uoe) {
-                log.warn("unsupported", uoe);
-                return;
-            }
+            clearInvocations(instance); // EclipseLink
+            // WHEN
+            final var activeAsBoolean = instance.getActiveAsBoolean();
             // THEN
             assertThat(activeAsBoolean).isFalse();
             verify(instance, times(1)).getActive();
@@ -279,15 +272,10 @@ class Staff_Test
         void getActiveAsBoolean_False_Not0() {
             // GIVEN
             final var instance = newEntitySpy();
-            // WHEN
             when(instance.getActive()).thenReturn(ThreadLocalRandom.current().nextInt() | 1); // !0, simply.
-            final Boolean activeAsBoolean;
-            try {
-                activeAsBoolean = instance.getActiveAsBoolean();
-            } catch (final UnsupportedOperationException uoe) {
-                log.warn("unsupported", uoe);
-                return;
-            }
+            clearInvocations(instance); // EclipseLink
+            // WHEN
+            final Boolean activeAsBoolean = instance.getActiveAsBoolean();
             // THEN
             assertThat(activeAsBoolean).isTrue();
             verify(instance, times(1)).getActive();

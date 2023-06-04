@@ -31,7 +31,7 @@ class FilmCategory_IT
         final var instance = applyEntityManager(FilmCategory_IT::newPersistedInstance);
         assertThatBean(instance).isValid();
         assertThat(instance).isNotNull().satisfies(e -> {
-            assertThat(e.getCategoryId()).isNotNull();
+            assertThat(e.getId()).isNotNull();
         });
     }
 }

@@ -144,11 +144,11 @@ public final class CityConstants {
 
     public static final String GRAPH_COUNTRY = "City_country";
 
-    public static final String NODE_COUNTRY = "country";
+    public static final String GRAPH_NODE_COUNTRY = "country";
 
     static {
         Optional.ofNullable(City_.country).ifPresent(a -> {
-            assert Objects.equals(a.getName(), NODE_COUNTRY);
+            assert Objects.equals(a.getName(), GRAPH_NODE_COUNTRY);
         });
     }
 

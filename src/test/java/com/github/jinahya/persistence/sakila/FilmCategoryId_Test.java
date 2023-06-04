@@ -4,9 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 class FilmCategoryId_Test
         extends _BaseEntityTest<FilmCategory, FilmCategoryId> {
@@ -38,7 +37,6 @@ class FilmCategoryId_Test
             // WHEN
             instance.setFilm(null);
             // THEN
-            verify(instance, times(1)).setFilmId(null);
             assertThat(instance.getId())
                     .isNotNull()
                     .extracting(FilmCategoryId::getFilmId)
@@ -50,11 +48,10 @@ class FilmCategoryId_Test
         void _NotNull_NotNull() {
             // GIVEN
             final var instance = newEntitySpy();
-            final var filmId = 0;
+            final var filmId = current().nextInt();
             // WHEN
             instance.setFilm(Film.ofFilmId(filmId));
             // THEN
-            verify(instance, times(1)).setFilmId(filmId);
             assertThat(instance.getId())
                     .isNotNull()
                     .extracting(FilmCategoryId::getFilmId)
@@ -86,7 +83,6 @@ class FilmCategoryId_Test
             // WHEN
             instance.setCategory(null);
             // THEN
-            verify(instance, times(1)).setCategoryId(null);
             assertThat(instance.getId())
                     .isNotNull()
                     .extracting(FilmCategoryId::getCategoryId)
@@ -98,11 +94,10 @@ class FilmCategoryId_Test
         void _NotNull_NotNull() {
             // GIVEN
             final var instance = newEntitySpy();
-            final var categoryId = 0;
+            final var categoryId = current().nextInt();
             // WHEN
             instance.setCategory(Category.ofCategoryId(categoryId));
             // THEN
-            verify(instance, times(1)).setCategoryId(categoryId);
             assertThat(instance.getId())
                     .isNotNull()
                     .extracting(FilmCategoryId::getCategoryId)
