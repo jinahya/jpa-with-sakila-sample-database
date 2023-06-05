@@ -31,9 +31,9 @@ import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_CITY;
 import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_CITY_COUNTRY;
 import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_NODE_CITY;
 import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_ALL_BY_CITY;
+import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_ALL_BY_CITY_ID;
 import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_BY_ADDRESS_ID;
-import static com.github.jinahya.persistence.sakila.CityConstants.GRAPH_COUNTRY;
-import static com.github.jinahya.persistence.sakila.CityConstants.GRAPH_NODE_COUNTRY;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -57,14 +57,14 @@ import static org.slf4j.LoggerFactory.getLogger;
         attributeNodes = {
                 @NamedAttributeNode(
                         value = GRAPH_NODE_CITY,
-                        subgraph = GRAPH_COUNTRY
+                        subgraph = CityConstants.GRAPH_COUNTRY
                 )
         },
         subgraphs = {
                 @NamedSubgraph(
-                        name = GRAPH_COUNTRY,
+                        name = CityConstants.GRAPH_COUNTRY,
                         attributeNodes = {
-                                @NamedAttributeNode(GRAPH_NODE_COUNTRY)
+                                @NamedAttributeNode(CityConstants.GRAPH_NODE_COUNTRY)
                         }
                 )
         }
@@ -76,7 +76,7 @@ import static org.slf4j.LoggerFactory.getLogger;
         }
 )
 @NamedQuery(
-        name = AddressConstants.QUERY_FIND_ALL_BY_CITY,
+        name = QUERY_FIND_ALL_BY_CITY,
         query = """
                 SELECT e
                 FROM Address AS e
@@ -85,7 +85,7 @@ import static org.slf4j.LoggerFactory.getLogger;
                 ORDER BY e.addressId ASC"""
 )
 @NamedQuery(
-        name = AddressConstants.QUERY_FIND_ALL_BY_CITY_ID,
+        name = QUERY_FIND_ALL_BY_CITY_ID,
         query = """
                 SELECT e
                 FROM Address AS e
@@ -93,14 +93,6 @@ import static org.slf4j.LoggerFactory.getLogger;
                       AND e.addressId > :addressIdMinExclusive
                 ORDER BY e.addressId ASC"""
 )
-//@NamedQuery(
-//        name = AddressConstants.QUERY_FIND_ALL_ADDRESS_ID_GREATER_THAN,
-//        query = """
-//                SELECT e
-//                FROM Address AS e
-//                WHERE e.addressId > :addressIdMinExclusive
-//                ORDER BY e.addressId ASC"""
-//)
 @NamedQuery(
         name = QUERY_FIND_ALL,
         query = """

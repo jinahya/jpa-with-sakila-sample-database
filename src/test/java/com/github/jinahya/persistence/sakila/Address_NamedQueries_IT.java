@@ -12,9 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_CITY;
 import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_CITY_COUNTRY;
 import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_NODE_CITY;
+import static com.github.jinahya.persistence.sakila.AddressConstants.PARAMETER_ADDRESS_ID;
+import static com.github.jinahya.persistence.sakila.AddressConstants.PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_BY_ADDRESS_ID;
-import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_PARAM_ADDRESS_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila._PersistenceConstants.PERSISTENCE_FETCHGRAPH;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -65,7 +66,7 @@ class Address_NamedQueries_IT
             final var found = applyEntityManager(
                     em -> {
                         final var query = em.createNamedQuery(QUERY_FIND_BY_ADDRESS_ID, Address.class)
-                                .setParameter(Address_.addressId.getName(), addressId);
+                                .setParameter(PARAMETER_ADDRESS_ID, addressId);
                         if (current().nextBoolean()) {
                             final var graph = em.createEntityGraph(GRAPH_CITY);
                             query.setHint(PERSISTENCE_FETCHGRAPH, graph);
@@ -92,7 +93,7 @@ class Address_NamedQueries_IT
             final var found = applyEntityManager(
                     em -> {
                         final var query = em.createNamedQuery(QUERY_FIND_BY_ADDRESS_ID, Address.class)
-                                .setParameter(Address_.addressId.getName(), addressId);
+                                .setParameter(PARAMETER_ADDRESS_ID, addressId);
                         if (current().nextBoolean()) {
                             final var graph = em.createEntityGraph(GRAPH_CITY_COUNTRY);
                             query.setHint(PERSISTENCE_FETCHGRAPH, graph);
@@ -127,7 +128,7 @@ class Address_NamedQueries_IT
                 final var addressIdMinExclusive = i.get();
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL, Address.class)
-                                .setParameter(QUERY_PARAM_ADDRESS_MIN_EXCLUSIVE, addressIdMinExclusive)
+                                .setParameter(PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -152,7 +153,7 @@ class Address_NamedQueries_IT
                 final var list = applyEntityManager(
                         em -> {
                             final var query = em.createNamedQuery(QUERY_FIND_ALL, Address.class)
-                                    .setParameter(QUERY_PARAM_ADDRESS_MIN_EXCLUSIVE, addressIdMinExclusive)
+                                    .setParameter(PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
                                     .setMaxResults(maxResults);
                             if (current().nextBoolean()) {
                                 final var graph = em.createEntityGraph(GRAPH_CITY);
@@ -186,7 +187,7 @@ class Address_NamedQueries_IT
                 final var list = applyEntityManager(
                         em -> {
                             final var query = em.createNamedQuery(QUERY_FIND_ALL, Address.class)
-                                    .setParameter(QUERY_PARAM_ADDRESS_MIN_EXCLUSIVE, addressIdMinExclusive)
+                                    .setParameter(PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
                                     .setMaxResults(maxResults);
                             if (current().nextBoolean()) {
                                 final var graph = em.createEntityGraph(GRAPH_CITY_COUNTRY);

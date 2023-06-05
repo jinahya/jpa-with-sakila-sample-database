@@ -11,7 +11,10 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
+
+import static com.github.jinahya.persistence.sakila.LanguageConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.LanguageConstants.QUERY_PARAM_LANGUAGE_ID_MIN_EXCLUSIVE;
+import static java.util.concurrent.ThreadLocalRandom.current;
 
 /**
  * A service class for {@link Language}.
@@ -25,28 +28,28 @@ public class LanguageService
         super(Language.class, Integer.class);
     }
 
-    @Override
-    public @NotNull List<Language> findAll(Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return super.findAll(maxResults);
+    public @NotNull List<@Valid @NotNull Language> findAll(final @PositiveOrZero int languageIdMinExclusive,
+                                                           final @Positive int maxResults) {
+        if (current().nextBoolean()) {
+            return findAll(
+                    r -> r.get(Language_.languageId),
+                    languageIdMinExclusive,
+                    maxResults
+            );
         }
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return findAllByLanguageIdGreaterThan(0, maxResults);
-        }
-        return applyEntityManager(em -> {
-            final var query = em.createNamedQuery(LanguageConstants.NAMED_QUERY_FIND_ALL, Language.class);
-            if (maxResults != null) {
-                query.setMaxResults(maxResults);
-            }
-            return query.getResultList();
-        });
+        return applyEntityManager(
+                em -> em.createNamedQuery(QUERY_FIND_ALL, Language.class)
+                        .setParameter(QUERY_PARAM_LANGUAGE_ID_MIN_EXCLUSIVE, languageIdMinExclusive)
+                        .setMaxResults(maxResults)
+                        .getResultList()
+        );
     }
 
     @NotNull
     public List<@Valid @NotNull Language> findAllByLanguageIdGreaterThan(
             @PositiveOrZero final int languageIdMinExclusive, @Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return findAllByIdGreaterThan(
+        if (current().nextBoolean()) {
+            return findAll(
                     r -> r.get(Language_.languageId),
                     languageIdMinExclusive,
                     maxResults

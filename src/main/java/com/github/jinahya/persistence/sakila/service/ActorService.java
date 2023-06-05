@@ -8,13 +8,17 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
+
+import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A service class related to {@link Actor} entity.
@@ -24,7 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class ActorService
         extends _BaseEntityService<Actor, Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
      * Creates a new instance.
@@ -33,19 +37,21 @@ public class ActorService
         super(Actor.class, Integer.class);
     }
 
-    @Override
-    // HV000131: A method return value must not be marked for cascaded validation more than once in a class hierarchy, ...
-    public List<Actor> findAll(@Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return super.findAll(maxResults);
+    public @NotNull List<@Valid @NotNull Actor> findAll(final @PositiveOrZero int actorIdMinExclusive,
+                                                        final @Positive int maxResults) {
+        if (current().nextBoolean()) {
+            return findAll(
+                    r -> r.get(Actor_.actorId),
+                    actorIdMinExclusive,
+                    maxResults
+            );
         }
-        return applyEntityManager(em -> {
-            final var query = em.createNamedQuery(ActorConstants.QUERY_FIND_ALL, Actor.class);
-            if (maxResults != null) {
-                query.setMaxResults(maxResults);
-            }
-            return query.getResultList();
-        });
+        return applyEntityManager(
+                em -> em.createNamedQuery(QUERY_FIND_ALL, Actor.class)
+                        .setParameter(QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                        .setMaxResults(maxResults)
+                        .getResultList()
+        );
     }
 
     /**
@@ -55,7 +61,7 @@ public class ActorService
      * @return an optional of found entity; {@code empty} if not found.
      */
     public Optional<@Valid Actor> findByActorId(@Positive final int actorId) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
+        if (current().nextBoolean()) {
             return findById(actorId);
         }
         return Optional.ofNullable(
@@ -74,21 +80,16 @@ public class ActorService
         );
     }
 
-    /**
-     * Finds the entity whose value of {@link Actor_#lastName lastName} attribute matches specified value.
-     *
-     * @param lastName   the value of {@link Actor_#lastName lastName} attribute to match.
-     * @param maxResults a number of maximum results to limit; {@code null} for an unlimited results.
-     * @return a list of found entities;
-     */
-    @NotNull
-    public List<@Valid @NotNull Actor> findAllByLastName(@NotBlank final String lastName,
-                                                         @Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return findAllByAttribute(
+    public @NotNull List<@Valid @NotNull Actor> findAllByLastName(final @PositiveOrZero int actorIdMinExclusive,
+                                                                  final @Positive int maxResults,
+                                                                  final @NotBlank String lastName) {
+        if (current().nextBoolean()) {
+            return findAllBy(
+                    r -> r.get(Actor_.actorId),
+                    actorIdMinExclusive,
+                    maxResults,
                     r -> r.get(Actor_.lastName),
-                    lastName,
-                    maxResults
+                    lastName
             );
         }
         return applyEntityManager(em -> {
@@ -96,10 +97,8 @@ public class ActorService
                     ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME,
                     Actor.class
             );
-            query.setParameter(Actor_.lastName.getName(), lastName);
-            if (maxResults != null) {
-                query.setMaxResults(maxResults);
-            }
+            query.setParameter(ActorConstants.QUERY_PARAM_LAST_NAME, lastName);
+            query.setMaxResults(maxResults);
             return query.getResultList();
         });
     }

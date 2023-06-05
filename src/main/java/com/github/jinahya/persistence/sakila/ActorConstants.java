@@ -111,6 +111,14 @@ public final class ActorConstants {
      */
     public static final String QUERY_FIND_ALL_BY_LAST_NAME = "Actor_findAllByLastName";
 
+    public static final String QUERY_PARAM_LAST_NAME = "lastName";
+
+    static {
+        Optional.ofNullable(Actor_.lastName).map(Attribute::getName).ifPresent(v -> {
+            assert v.equals(QUERY_PARAM_LAST_NAME);
+        });
+    }
+
     /**
      * The name of the graph which fetches {@link Actor_#films films} attribute. The value is {@value}.
      *

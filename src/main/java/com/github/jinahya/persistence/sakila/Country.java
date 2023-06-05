@@ -19,6 +19,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM_COUNTRY_ID;
+
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
  *
@@ -31,29 +35,25 @@ import java.util.Optional;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a>
  */
-@NamedQuery(name = CountryConstants.QUERY_FIND_ALL_BY_COUNTRY, // not indexed
+//@NamedQuery(name = QUERY_FIND_ALL_BY_COUNTRY, // not indexed
+//            query = """
+//                    SELECT e
+//                    FROM Country AS e
+//                    WHERE e.country = :country
+//                          AND e.countryId > :countryIdMinExclusive
+//                    ORDER BY e.countryId ASC"""
+//)
+@NamedQuery(name = QUERY_FIND_ALL,
             query = """
                     SELECT e
                     FROM Country AS e
-                    WHERE e.country = :country
-                    """
+                    WHERE e.countryId > :countryIdMinExclusive
+                    ORDER BY e.countryId ASC"""
 )
-@NamedQuery(name = CountryConstants.QUERY_FIND_ALL_BY_COUNTRY_ID_GREATER_THAN,
+@NamedQuery(name = QUERY_FIND_BY_COUNTRY_ID,
             query = "SELECT e" +
                     " FROM Country AS e" +
-                    " WHERE e.countryId > :" + CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE +
-                    " ORDER BY e.countryId ASC"
-)
-@NamedQuery(name = CountryConstants.QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM Country AS e
-                    """
-)
-@NamedQuery(name = CountryConstants.QUERY_FIND_BY_COUNTRY_ID,
-            query = "SELECT e" +
-                    " FROM Country AS e" +
-                    " WHERE e.countryId = :" + CountryConstants.QUERY_PARAM_COUNTRY_ID
+                    " WHERE e.countryId = :" + QUERY_PARAM_COUNTRY_ID
 )
 @Entity
 @Table(name = Country.TABLE_NAME)
@@ -89,7 +89,7 @@ public class Country
      * @param country the value for {@link Country_#country country} attribute.
      * @return a new instance of {@code country}.
      */
-    public static Country ofCountry(final String country) {
+    public static Country of(final String country) {
         final var instance = new Country();
         instance.country = country;
         return instance;

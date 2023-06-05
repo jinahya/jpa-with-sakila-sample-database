@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static com.github.jinahya.persistence.sakila.LanguageConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.LanguageConstants.QUERY_FIND_BY_LANGUAGE_ID;
+
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
  * <p>
@@ -31,16 +34,18 @@ import java.util.Optional;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-language.html">5.1.12 The language
  * Table</a>
  */
-@NamedQuery(name = LanguageConstants.NAMED_QUERY_FIND_ALL_BY_NAME,
-            query = "SELECT e FROM Language AS e WHERE e.name = :name") // not indexed!
-@NamedQuery(name = LanguageConstants.NAMED_QUERY_FIND_BY_LANGUAGE_ID,
-            query = "SELECT e FROM Language AS e WHERE e.languageId = :languageId")
-@NamedQuery(name = LanguageConstants.NAMED_QUERY_FIND_ALL_BY_LANGUAGE_ID_GREATER_THAN,
-            query = "SELECT e FROM Language AS e" +
-                    " WHERE e.languageId > :languageIdMinExclusive" +
-                    " ORDER BY e.languageId ASC")
-@NamedQuery(name = LanguageConstants.NAMED_QUERY_FIND_ALL,
-            query = "SELECT e FROM Language AS e")
+@NamedQuery(name = QUERY_FIND_ALL,
+            query = """
+                    SELECT e FROM Language AS e
+                    WHERE e.languageId > :languageIdMinExclusive
+                    ORDER BY e.languageId ASC"""
+)
+@NamedQuery(name = QUERY_FIND_BY_LANGUAGE_ID,
+            query = """
+                    SELECT e
+                    FROM Language AS e
+                    WHERE e.languageId = :languageId"""
+)
 @Entity
 @Table(name = Language.TABLE_NAME)
 public class Language

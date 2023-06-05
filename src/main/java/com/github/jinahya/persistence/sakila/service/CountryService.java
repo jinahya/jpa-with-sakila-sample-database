@@ -1,7 +1,6 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.Country;
-import com.github.jinahya.persistence.sakila.CountryConstants;
 import com.github.jinahya.persistence.sakila.Country_;
 import jakarta.persistence.NoResultException;
 import jakarta.validation.Valid;
@@ -9,10 +8,21 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+import org.slf4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM_COUNTRY_ID;
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.concurrent.ThreadLocalRandom.current;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A service for querying {@link Country} class.
@@ -21,6 +31,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 class CountryService
         extends _BaseEntityService<Country, Integer> {
+
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
      * Creates a new instance.
@@ -32,18 +44,18 @@ class CountryService
     /**
      * Finds the entity whose {@link Country_#countryId countryId} attribute matches specified value.
      *
-     * @param countryId the value for the {@link Country_#countryId countryId} attribute to match.
-     * @return an optional of found entity; {@code empty} if not found.
+     * @param countryId the value of the {@link Country_#countryId countryId} attribute to match.
+     * @return an optional of found entity; {@link Optional#empty() empty} if not found.
      */
-    Optional<@Valid Country> findByCountryId(@Positive final int countryId) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
+    public Optional<@Valid Country> findByCountryId(@Positive final int countryId) {
+        if (current().nextBoolean()) {
             return super.findById(countryId);
         }
         return Optional.ofNullable(
                 applyEntityManager(em -> {
                     try {
-                        return em.createNamedQuery(CountryConstants.QUERY_FIND_BY_COUNTRY_ID, Country.class)
-                                .setParameter(CountryConstants.QUERY_PARAM_COUNTRY_ID, countryId)
+                        return em.createNamedQuery(QUERY_FIND_BY_COUNTRY_ID, Country.class)
+                                .setParameter(QUERY_PARAM_COUNTRY_ID, countryId)
                                 .getSingleResult(); // NoResultException
                     } catch (final NoResultException nre) {
                         return null;
@@ -52,64 +64,46 @@ class CountryService
         );
     }
 
-    @Override
     // https://hibernate.atlassian.net/browse/HV-770
-    public @NotNull List</*@Valid @NotNull*/ Country> findAll(@Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return super.findAll(maxResults);
-        }
-        return applyEntityManager(em -> {
-            final var query = em.createNamedQuery(CountryConstants.QUERY_FIND_ALL, Country.class);
-            if (maxResults != null) {
-                query.setMaxResults(maxResults);
-            }
-            return query.getResultList();
-        });
-    }
-
-    public @NotNull List<@Valid @NotNull Country> findAllByCountryIdGreaterThan(
-            @PositiveOrZero int countryIdMinExclusive,
-            @Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return super.findAllByIdGreaterThan(
+    public @NotNull List<@Valid @NotNull Country> findAll(final @PositiveOrZero int countryIdMinExclusive,
+                                                          final @Positive int maxResults) {
+        if (current().nextBoolean()) {
+            return super.findAll(
                     r -> r.get(Country_.countryId),
                     countryIdMinExclusive,
                     maxResults
             );
         }
-        return applyEntityManager(em -> {
-            final var query = em.createNamedQuery(CountryConstants.QUERY_FIND_ALL_BY_COUNTRY_ID_GREATER_THAN, Country.class);
-            query.setParameter(CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive);
-            if (maxResults != null) {
-                query.setMaxResults(maxResults);
-            }
-            return query.getResultList();
-        });
+        return applyEntityManager(
+                em -> em.createNamedQuery(QUERY_FIND_ALL, Country.class)
+                        .setParameter(QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
+                        .setMaxResults(maxResults)
+                        .getResultList()
+        );
     }
 
-    public List<@Valid @NotNull Country> findAllByCountry(@NotBlank final String country,
-                                                          @Positive final Integer maxResults) {
-        if (ThreadLocalRandom.current().nextBoolean()) {
-            return super.findAllByAttribute(
-                    r -> r.get(Country_.country),
-                    country,
-                    maxResults
-            );
-        }
-        return applyEntityManager(em -> {
-            final var query = em.createNamedQuery(CountryConstants.QUERY_FIND_ALL_BY_COUNTRY, Country.class)
-                    .setParameter(CountryConstants.QUERY_PARAM_COUNTRY, country);
-            if (maxResults != null) {
-                query.setMaxResults(maxResults);
-            }
-            return query.getResultList();
-        });
+    @NotNull List<@Valid @NotNull Country> findAllByCountry(final @PositiveOrZero int countryIdMinExclusive,
+                                                            final @Positive int maxResults,
+                                                            final @NotBlank String country) {
+        return super.findAllBy(
+                r -> r.get(Country_.countryId),
+                countryIdMinExclusive,
+                maxResults,
+                r -> r.get(Country_.country),
+                country
+        );
     }
 
-    public @Valid @NotNull Country locateByByCountry(@NotBlank final String country) {
-        return findAllByCountry(country, 1)
-                .stream()
-                .findFirst()
-                .orElseGet(() -> persist(Country.ofCountry(country)));
+    private static final Map<String, Country> LOCATED_COUNTRIES = new ConcurrentHashMap<>(new WeakHashMap<>());
+
+    @Valid @NotNull Country locateByByCountry(@NotBlank final String country) {
+        log.debug("LOCATED_COUNTRIES: {}", LOCATED_COUNTRIES);
+        return LOCATED_COUNTRIES.computeIfAbsent(
+                new String(country),
+                k -> findAllByCountry(0, 1, k)
+                        .stream()
+                        .findFirst()
+                        .orElseGet(() -> persist(Country.of(country)))
+        );
     }
 }

@@ -47,7 +47,7 @@ public class StaffService
                             .getResultList()
             );
         }
-        return findAllByIdGreaterThan(
+        return findAll(
                 r -> r.get(Staff_.staffId),
                 staffIdMinExclusive,
                 maxResults

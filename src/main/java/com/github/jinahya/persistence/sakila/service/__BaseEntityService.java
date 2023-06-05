@@ -9,17 +9,18 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * An abstract base class for subclasses of {@link __BaseEntity}.
  *
- * @param <T> entity type parameter
- * @param <U> id type parameter
+ * @param <ENTITY> entity type parameter
+ * @param <ID>     id type parameter
  */
-abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparable<? super U>>
+abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends Comparable<? super ID>>
         extends ___PersistenceService {
 
     /**
@@ -28,10 +29,10 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
      * @param entityClass the entity class.
      * @param idClass     the id class.
      */
-    __BaseEntityService(final Class<T> entityClass, final Class<U> idClass) {
+    __BaseEntityService(final Class<ENTITY> entityClass, final Class<ID> idClass) {
         super();
-        this.entityClass = Objects.requireNonNull(entityClass, "entityClass is null");
-        this.idClass = Objects.requireNonNull(idClass, "idClass is null");
+        this.entityClass = requireNonNull(entityClass, "entityClass is null");
+        this.idClass = requireNonNull(idClass, "idClass is null");
     }
 
     /**
@@ -54,13 +55,13 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
      * @return given {@code entity}.
      * @see EntityManager#persist(Object)
      */
-    @NotNull
-    public T persist(@NotNull final T entity) {
-        Objects.requireNonNull(entity, "entity is null");
-        return applyEntityManagerInTransaction(em -> {
+    public @Valid @NotNull ENTITY persist(final @Valid @NotNull ENTITY entity) {
+        requireNonNull(entity, "entity is null");
+        applyEntityManagerInTransaction(em -> {
             em.persist(entity);
-            return entity;
+            return null;
         });
+        return entity;
     }
 
     /**
@@ -71,21 +72,20 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
      * @return the result of the {@link EntityManager#merge(Object) merge} invocation.
      * @see EntityManager#merge(Object)
      */
-    @NotNull
-    public T merge(@NotNull final T entity) {
-        Objects.requireNonNull(entity, "entity is null");
+    public @Valid @NotNull ENTITY merge(final @Valid @NotNull ENTITY entity) {
+        requireNonNull(entity, "entity is null");
         return applyEntityManagerInTransaction(em -> em.merge(entity));
     }
 
     /**
-     * Finds the entity instance identified by specified value.
+     * Finds the entity identified by specified value.
      *
      * @param id the value identifies the entity.
-     * @return an optional of the entity instance identified by {@code id}; empty if not found.
+     * @return an optional of found entity identified by {@code id}; empty if not found.
      * @see EntityManager#find(Class, Object)
      */
-    public Optional<@Valid T> findById(@NotNull final U id) {
-        Objects.requireNonNull(id, "id is null");
+    public Optional<@Valid ENTITY> findById(final @NotNull ID id) {
+        requireNonNull(id, "id is null");
         return Optional.ofNullable(
                 applyEntityManager(
                         em -> em.find(entityClass, id) // null if not found
@@ -94,139 +94,68 @@ abstract class __BaseEntityService<T extends __BaseEntity<U>, U extends Comparab
     }
 
     /**
-     * Finds all entity instances of {@link #entityClass} optionally limiting the number of results.
+     * Finds all entities whose {@link ID} attributes are greater than specified value, ordered by the <em>id></em>
+     * attribute in ascending order.
      *
-     * @param maxResults an optional value for limiting the number of results; {@code null} for an unlimited number of
-     *                   results.
-     * @return a list of found entity instances.
+     * @param idExpressionMapper  a function for evaluating the path to the {@link ID} attribute.
+     * @param idValueMinExclusive the lower exclusive value of the {@link ID} attribute to limit.
+     * @param maxResults          a number of maximum results to limit
+     * @return a list of found entities, ordered by the <em>id</em> attribute in ascending order.
      */
-    @NotNull
-    public List<@Valid @NotNull T> findAll(@Positive final Integer maxResults) {
+    @NotNull List<@Valid @NotNull ENTITY> findAll(
+            @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends ID>> idExpressionMapper,
+            @NotNull final ID idValueMinExclusive, @Positive final int maxResults) {
+        requireNonNull(idExpressionMapper, "idExpressionMapper is null");
+        requireNonNull(idValueMinExclusive, "idValueMinExclusive is null");
+        requireNonNull(maxResults, "maxResults is null");
         return applyEntityManager(em -> {
             final var builder = em.getCriteriaBuilder();
-            final var criteria = builder.createQuery(entityClass);
-            final var root = criteria.from(entityClass);
-            criteria.select(root);
-            final var typed = em.createQuery(criteria);
-            if (maxResults != null) {
-                typed.setMaxResults(maxResults);
-            }
-            return typed.getResultList();
-        });
-    }
-
-    /**
-     * Finds all entity instances whose <em>id</em> attributes are greater than specified value.
-     *
-     * @param idExpressionMapper  a function for evaluating the path to the <em>id</em> attribute.
-     * @param idValueMinExclusive the lower <em>exclusive</em> value of the <em>id</em> attribute to compare.
-     * @param maxResults          an optional value for limiting the number of results; {@code null} for an unlimited
-     *                            number of results.
-     * @return a list of entity instances, ordered by the <em>id</em> attribute in ascending order.
-     */
-    @NotNull
-    List<@Valid @NotNull T> findAllByIdGreaterThan(
-            @NotNull final Function<? super Root<T>, ? extends Expression<? extends U>> idExpressionMapper,
-            @NotNull final U idValueMinExclusive, @Positive final Integer maxResults) {
-        return applyEntityManager(em -> {
-            final var builder = em.getCriteriaBuilder();
-            final var criteria = builder.createQuery(entityClass);
-            final var root = criteria.from(entityClass);
-            criteria.select(root);
+            final var query = builder.createQuery(entityClass);
+            final var root = query.from(entityClass);                                                // FROM ENTITY AS e
+            query.select(root);                                                                              // SELECT e
             final var idExpression = idExpressionMapper.apply(root);
-            criteria.where(
-                    builder.greaterThan(
-                            idExpression,
-                            idValueMinExclusive
-                    )
-            );
-            criteria.orderBy(builder.asc(idExpression));
-            final var typed = em.createQuery(criteria);
-            if (maxResults != null) {
-                typed.setMaxResults(maxResults);
-            }
-            return typed.getResultList();
+            query.where(builder.greaterThan(idExpression, idValueMinExclusive));                     // WHERE e.ID = :id
+            query.orderBy(builder.asc(idExpression));                                               // ORDER BY e.ID ASC
+            return em.createQuery(query)
+                    .setMaxResults(maxResults)
+                    .getResultList();
         });
     }
 
-    /**
-     * Finds all entities by an attribute matching specified value.
-     *
-     * @param expressionMapper a function for evaluating the attribute.
-     * @param attributeValue   the value of the attribute to match.
-     * @param maxResults       a number of results to limit; {@code null} for an unlimited result.
-     * @param <V>              attribute type parameter
-     * @return a list of found entities.
-     */
-    @NotNull <V> List<@Valid @NotNull T> findAllByAttribute(
-            @NotNull final Function<? super Root<T>, ? extends Expression<? extends V>> expressionMapper,
-            @NotNull final V attributeValue, @Positive final Integer maxResults) {
+    @NotNull <V> List<@Valid @NotNull ENTITY> findAllBy(
+            @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends ID>> idExpressionMapper,
+            @NotNull final ID idValueMinExclusive, @Positive final int maxResults,
+            @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends V>> attributeExpressionMapper,
+            @NotNull final V attributeValue) {
+        requireNonNull(idExpressionMapper, "idExpressionMapper is null");
+        requireNonNull(idValueMinExclusive, "idValueMinExclusive is null");
+        requireNonNull(attributeExpressionMapper, "attributeExpressionMapper is null");
+        requireNonNull(maxResults, "maxResults is null");
         return applyEntityManager(em -> {
             final var builder = em.getCriteriaBuilder();
-            final var criteria = builder.createQuery(entityClass);
-            final var root = criteria.from(entityClass);
-            criteria.select(root);
-            final var expression = expressionMapper.apply(root);
-            criteria.where(
-                    builder.equal(
-                            expression,
-                            attributeValue
-                    )
-            );
-            final var typed = em.createQuery(criteria);
-            if (maxResults != null) {
-                typed.setMaxResults(maxResults);
-            }
-            return typed.getResultList();
-        });
-    }
-
-    /**
-     * Finds all entities whose specific attribute matches specified value and whose <em>id</em> attribute is greater
-     * than specified value.
-     *
-     * @param attributeExpressionMapper   a function for mapping a path to the attribute to match.
-     * @param attributeValue              the value of the target attribute to match.
-     * @param idAttributeExpressionMapper a function for mapping a path the <em>id</em> attribute.
-     * @param idValueMinExclusive         the lower exclusive <em>id</em> attribute value.
-     * @param maxResults                  a number of results to limit; {@code null} for an unlimited result.
-     * @param <V>                         attribute type parameter
-     * @return a list of found entities ordered by the <em>id</em> attribute in ascending order.
-     */
-    @NotNull <V> List<@Valid @NotNull T> findAllByAttributeIdGreaterThan(
-            @NotNull final Function<? super Root<T>, ? extends Expression<? extends V>> attributeExpressionMapper,
-            @NotNull final V attributeValue,
-            @NotNull final Function<? super Root<T>, ? extends Expression<? extends U>> idAttributeExpressionMapper,
-            @NotNull final U idValueMinExclusive, @Positive final Integer maxResults) {
-        return applyEntityManager(em -> {
-            final var builder = em.getCriteriaBuilder();
-            final var criteria = builder.createQuery(entityClass);
-            final var root = criteria.from(entityClass);
-            criteria.select(root);
+            final var query = builder.createQuery(entityClass);
+            final var root = query.from(entityClass);                                              // FROM <ENTITY> AS e
+            query.select(root);                                                                              // SELECT e
+            final var idExpression = idExpressionMapper.apply(root);
             final var attributeExpression = attributeExpressionMapper.apply(root);
-            final var idAttributeExpression = idAttributeExpressionMapper.apply(root);
-            criteria.where(
-                    builder.and(
-                            builder.equal(attributeExpression, attributeValue),
-                            builder.greaterThan(idAttributeExpression, idValueMinExclusive)
-                    )
-            );
-            criteria.orderBy(builder.asc(idAttributeExpression));
-            final var typed = em.createQuery(criteria);
-            if (maxResults != null) {
-                typed.setMaxResults(maxResults);
-            }
-            return typed.getResultList();
+            query.where(builder.and(
+                    builder.equal(attributeExpression, attributeValue),           // WHERE e.ATTRIBUTE = :attributeValue
+                    builder.greaterThan(idExpression, idValueMinExclusive)            // AND e.ID > :idValueMinExclusive
+            ));
+            query.orderBy(builder.asc(idExpression));                                               // ORDER BY e.ID ASC
+            return em.createQuery(query)
+                    .setMaxResults(maxResults)
+                    .getResultList();
         });
     }
 
     /**
      * The entity class.
      */
-    final Class<T> entityClass;
+    final Class<ENTITY> entityClass;
 
     /**
      * The type of id of {@link #entityClass}.
      */
-    final Class<U> idClass;
+    final Class<ID> idClass;
 }

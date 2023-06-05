@@ -5,13 +5,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
+import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A class for testing named queries defined on {@link Country} class.
@@ -21,13 +25,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class Country_NamedQueries_IT
         extends __PersistenceIT {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(CountryConstants.QUERY_FIND_BY_COUNTRY_ID)
+    @DisplayName(QUERY_FIND_BY_COUNTRY_ID)
     @Nested
     class FindByCountryIdTest {
 
-        @DisplayName("findByCountryId(0) throws NoResultException")
+        @DisplayName("(0)NoResultException")
         @Test
         void _NoResultException_0() {
             // GIVEN
@@ -35,7 +39,7 @@ class Country_NamedQueries_IT
             // WHEN / THEN
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(CountryConstants.QUERY_FIND_BY_COUNTRY_ID, Country.class)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_COUNTRY_ID, Country.class)
                                     .setParameter(Country_.countryId.getName(), countryId)
                                     .getSingleResult() // NoResultException
                     )
@@ -49,7 +53,7 @@ class Country_NamedQueries_IT
             final var countryId = 1;
             // WHEN
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.QUERY_FIND_BY_COUNTRY_ID, Country.class)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_COUNTRY_ID, Country.class)
                             .setParameter(Country_.countryId.getName(), countryId)
                             .getSingleResult() // NoResultException
             );
@@ -71,117 +75,33 @@ class Country_NamedQueries_IT
         }
     }
 
-    @DisplayName(CountryConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
         @Test
         void __() {
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.QUERY_FIND_ALL, Country.class)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty();
-        }
-
-        @Test
-        void __WithMaxResults() {
-            final var maxResults = ThreadLocalRandom.current().nextInt(8, 16);
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.QUERY_FIND_ALL, Country.class)
-                            .setMaxResults(maxResults)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .hasSizeLessThanOrEqualTo(maxResults);
-        }
-    }
-
-    @DisplayName(CountryConstants.QUERY_FIND_ALL_BY_COUNTRY_ID_GREATER_THAN)
-    @Nested
-    class FindAllIdGreaterThanTest {
-
-        @Test
-        void __() {
-            final var countryIdMinExclusive = 0;
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.QUERY_FIND_ALL_BY_COUNTRY_ID_GREATER_THAN, Country.class)
-                            .setParameter(CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .extracting(Country::getCountryId)
-                    .allMatch(v -> v.compareTo(countryIdMinExclusive) > 0);
-        }
-
-        @Test
-        void __WithMaxResults() {
-            final var countryIdMinExclusive = ThreadLocalRandom.current().nextInt(0, 16);
-            final var maxResults = ThreadLocalRandom.current().nextInt(8, 16);
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.QUERY_FIND_ALL_BY_COUNTRY_ID_GREATER_THAN, Country.class)
-                            .setParameter(CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
-                            .setMaxResults(maxResults)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .hasSizeLessThanOrEqualTo(maxResults)
-                    .extracting(Country::getCountryId)
-                    .allMatch(v -> v.compareTo(countryIdMinExclusive) > 0);
-        }
-    }
-
-    @DisplayName(CountryConstants.QUERY_FIND_ALL_BY_COUNTRY)
-    @Nested
-    class FindByCountryTest {
-
-        @DisplayName("findAllByCountry(Wakanda) -> Empty")
-        @Test
-        void __() {
-            // GIVEN
-            final var country = "Wakanda";
-            // WHEN
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.QUERY_FIND_ALL_BY_COUNTRY, Country.class)
-                            .setParameter(Country_.country.getName(), country)
-                            .getResultList()
-            );
-            // THEN
-            assertThat(list).isEmpty();
-        }
-
-        @DisplayName("findAllByCountry('United States') -> Not Empty")
-        @Test
-        void __UnitedStates() {
-            // GIVEN
-            final var country = "United States";
-            // WHEN
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.QUERY_FIND_ALL_BY_COUNTRY, Country.class)
-                            .setParameter(Country_.country.getName(), country)
-                            .getResultList()
-            );
-            // THEN
-            assertThat(list)
-                    .isNotEmpty()
-                    .extracting(Country::getCountry)
-                    .containsOnly(country);
-        }
-
-        @DisplayName("findAllByCountry('South Korea') -> Not Empty")
-        @Test
-        void __SouthKorea() {
-            final var country = "South Korea";
-            // TODO: implement!
-            final var list = applyEntityManager(em -> null);
+            final var maxResults = current().nextInt(8, 16);
+            for (final var i = new AtomicInteger(0); ; ) {
+                final var countryIdMinExclusive = i.get();
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Country.class)
+                                .setParameter(QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
+                                .setMaxResults(maxResults)
+                                .getResultList()
+                );
+                assertThat(list)
+                        .isNotNull()
+                        .doesNotContainNull()
+                        .hasSizeLessThanOrEqualTo(maxResults)
+                        .extracting(Country::getCountryId)
+                        .allMatch(v -> v > countryIdMinExclusive)
+                        .isSorted();
+                if (list.isEmpty()) {
+                    break;
+                }
+                i.set(list.get(list.size() - 1).getCountryId());
+            }
         }
     }
 }
