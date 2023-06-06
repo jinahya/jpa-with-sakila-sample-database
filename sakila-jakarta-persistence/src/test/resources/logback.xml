@@ -1,0 +1,20 @@
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} -%kvp- %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="debug">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+  <logger name="org.jboss.logging" level="WARN"/>
+  <logger name="org.jboss.weld" level="WARN"/>
+
+  <logger name="org.hibernate" level="WARN"/>
+  <!--  <logger name="org.hibernate.SQL" level="DEBUG"/>-->
+  <!--  <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>-->
+
+</configuration>
