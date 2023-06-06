@@ -12,7 +12,6 @@ SELECT *
 FROM film_actor
 ;
 
-
 -- actors with most films
 EXPLAIN
 SELECT a.*, COUNT(fa.film_id) AS films
@@ -46,7 +45,7 @@ ORDER BY a.last_name ASC
 EXPLAIN
 SELECT CONCAT_WS(' ', f.title, CONCAT('(', f.release_year, ')')) AS film
 FROM film_actor AS fa
-         JOIN film f on f.film_id = fa.film_id
+         JOIN film AS f ON f.film_id = fa.film_id
 WHERE fa.actor_id = :actorId
 ORDER BY f.title ASC
 ;
@@ -59,4 +58,5 @@ FROM film_actor AS fa
          JOIN film AS f ON fa.film_id = f.film_id
 WHERE a.last_name = 'Guinness'
   AND a.first_name = 'Alec'
+ORDER BY f.release_year ASC
 ;

@@ -17,7 +17,7 @@ import java.util.Optional;
  * <td>{@snippet lang = "jpql":
  * SELECT e
  * FROM Actor AS e
- * WHERE e.actorId = :actorId  // @link substring=".actorId" target="Actor_#actorId" @link substring=":actorId" target="#QUERY_PARAM_ACTOR_ID"
+ * WHERE e.actorId = :actorId  // @link substring=".actorId" target="Actor_#actorId" @link substring=":actorId" target="#PARAMETER_ACTOR_ID"
  *}</td>
  * <td>{@snippet lang = "sql":
  * SELECT *
@@ -30,7 +30,7 @@ import java.util.Optional;
  * <td>{@snippet lang = "jpql":
  * SELECT e
  * FROM Actor AS e
- * WHERE e.actorId > :actorIdMinExclusive // @link substring=":actorIdMinExclusive" target="#QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE"
+ * WHERE e.actorId > :actorIdMinExclusive // @link substring=":actorIdMinExclusive" target="#PARAMETER_ACTOR_ID_MIN_EXCLUSIVE"
  * ORDER BY e.actorId ASC
  *}</td>
  * <td>{@snippet lang = "sql":
@@ -52,7 +52,7 @@ import java.util.Optional;
  * <td>{@snippet lang = "sql":
  * SELECT *
  * FROM actor
- * WHERE last_name = ?
+ * WHERE last_name = ? // @link substring="last_name" target="Actor#COLUMN_NAME_LAST_NAME"
  *       AND actor_id > ?
  * ORDER BY actor_id ASC
  *}</td>
@@ -66,31 +66,32 @@ import java.util.Optional;
 public final class ActorConstants {
 
     /**
-     * The name of the query which selects an entity whose value of {@link Actor_#actorId actorId} matches specific
-     * value. The value is {@value}.
+     * The name of the query which selects an entity whose value of {@link Actor_#actorId actorId} attribute matches a
+     * specific value. The value is {@value}.
      *
-     * @see #QUERY_PARAM_ACTOR_ID
+     * @see #PARAMETER_ACTOR_ID
      */
     public static final String QUERY_FIND_BY_ACTOR_ID = "Actor_findByActorId";
 
     /**
-     * The name of the query parameter for specifying the value of {@link Actor_#actorId actorId}. The value is
+     * The name of the query parameter for specifying a value of {@link Actor_#actorId actorId} attribute. The value is
      * {@value}.
      */
-    public static final String QUERY_PARAM_ACTOR_ID = "actorId";
+    public static final String PARAMETER_ACTOR_ID = "actorId";
 
     static {
         Optional.ofNullable(Actor_.actorId).map(Attribute::getName).ifPresent(v -> {
-            assert v.equals(QUERY_PARAM_ACTOR_ID);
+            assert v.equals(PARAMETER_ACTOR_ID);
         });
     }
 
     /**
-     * The name of the query which selects entities which each {@link Actor_#actorId actorId} attribute is greater than
-     * specific value, ordered by {@link Actor_#actorId actorId} attribute in ascending order. The value is {@value}.
+     * The name of the query which selects all entities which each {@link Actor_#actorId actorId} attribute is greater
+     * than specific value, ordered by {@link Actor_#actorId actorId} attribute in ascending order. The value is
+     * {@value}.
      *
      * @see Actor_#actorId
-     * @see #QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE
+     * @see #PARAMETER_ACTOR_ID_MIN_EXCLUSIVE
      */
     public static final String QUERY_FIND_ALL = "Actor_findAll";
 
@@ -98,7 +99,7 @@ public final class ActorConstants {
      * The name of the query parameter for limiting lower exclusive value of {@link Actor_#actorId actorId} attribute.
      * The value is {@value}.
      */
-    public static final String QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE = "actorIdMinExclusive";
+    public static final String PARAMETER_ACTOR_ID_MIN_EXCLUSIVE = "actorIdMinExclusive";
 
     /**
      * The name of the query which selects entities which each {@link Actor_#lastName lastName} attribute matches
@@ -107,15 +108,22 @@ public final class ActorConstants {
      *
      * @see Actor_#lastName
      * @see Actor_#actorId
-     * @see #QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE
+     * @see #PARAMETER_ACTOR_ID_MIN_EXCLUSIVE
      */
     public static final String QUERY_FIND_ALL_BY_LAST_NAME = "Actor_findAllByLastName";
 
-    public static final String QUERY_PARAM_LAST_NAME = "lastName";
+    /**
+     * The name of the parameter for specifying a value of {@link Actor_#lastName lastName} attribute. The value is
+     * {@value}.
+     *
+     * @see Actor_#lastName
+     * @see #QUERY_FIND_ALL_BY_LAST_NAME
+     */
+    public static final String PARAMETER_LAST_NAME = "lastName";
 
     static {
         Optional.ofNullable(Actor_.lastName).map(Attribute::getName).ifPresent(v -> {
-            assert v.equals(QUERY_PARAM_LAST_NAME);
+            assert v.equals(PARAMETER_LAST_NAME);
         });
     }
 

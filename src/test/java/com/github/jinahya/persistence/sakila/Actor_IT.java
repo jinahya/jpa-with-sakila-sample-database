@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 
+import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static org.assertj.core.api.Assertions.assertThat;
+
 class Actor_IT
         extends _BaseEntityIT<Actor, Integer> {
 
@@ -23,5 +26,7 @@ class Actor_IT
     @Test
     void persist__() {
         final var instance = applyEntityManager(Actor_IT::newPersistedInstance);
+        assertThat(instance).isNotNull();
+        assertThatBean(instance).isValid();
     }
 }

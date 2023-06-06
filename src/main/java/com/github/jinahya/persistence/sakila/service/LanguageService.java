@@ -69,19 +69,20 @@ public class LanguageService
         );
     }
 
-    @NotNull
-    public List<@Valid @NotNull Language> findAllByName(@NotBlank final String name) {
-        return applyEntityManager(
-                em -> em.createNamedQuery(LanguageConstants.NAMED_QUERY_FIND_ALL_BY_NAME, Language.class)
-                        .setParameter("name", name)
-                        .getResultList()
+    @NotNull List<@Valid @NotNull Language> findAllByName(final @NotBlank String name, final @Positive int maxResults) {
+        return findAllBy(
+                r -> r.get(Language_.languageId),
+                0,
+                maxResults,
+                r -> r.get(Language_.name),
+                name
         );
     }
 
     @Valid
     @NotNull
     public Language locateByName(@NotBlank final String name) {
-        return findAllByName(name)
+        return findAllByName(name, 1)
                 .stream()
                 .findFirst()
                 .orElseGet(() -> persist(Language.of(name)));

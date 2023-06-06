@@ -12,36 +12,24 @@ SELECT COUNT(1)
 FROM actor
 ;
 
--- most common first_name
+-- most common first_names
 EXPLAIN
-SELECT first_name, COUNT(1) AS c
+SELECT first_name, COUNT(1) AS count
 FROM actor
 GROUP BY first_name
-HAVING c > 1
-ORDER BY c DESC
+ORDER BY count DESC, first_name ASC
 LIMIT 5
 ;
 
--- most common last_name
-SELECT last_name, COUNT(1) AS c
+-- most common last_names
+SELECT last_name, COUNT(1) AS count
 FROM actor
 GROUP BY last_name
-HAVING c > 1
-ORDER BY c DESC
+ORDER BY count DESC, last_name ASC
 LIMIT 5
 ;
 
--- actors most played
-SELECT CONCAT_WS(', ', a.last_name, a.first_name) AS name,
-       COUNT(1)                                   AS film_count,
-       GROUP_CONCAT(f.title SEPARATOR ', ')       AS titles
-FROM actor AS a
-         JOIN film_actor AS fa ON a.actor_id = fa.actor_id
-         JOIN film f on fa.film_id = f.film_id
-GROUP BY fa.actor_id
-ORDER BY film_count DESC, name ASC
-LIMIT 10
-;
+
 
 -- films of Sir Alec Guinness CH CBE
 EXPLAIN

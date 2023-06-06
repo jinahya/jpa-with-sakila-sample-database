@@ -53,8 +53,8 @@ select s.staff_id,
        s.store_id,
        s.username
 from staff s
-         join address a on a.address_id = s.address_id
-         join city c on c.city_id = a.city_id
+         join address AS a ON a.address_id = s.address_id
+         join city AS c ON c.city_id = a.city_id
 where c.city_id = ?
   and s.staff_id > ?
 order by s.staff_id

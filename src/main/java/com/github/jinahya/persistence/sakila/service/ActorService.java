@@ -14,8 +14,8 @@ import org.slf4j.Logger;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.jinahya.persistence.sakila.ActorConstants.PARAMETER_ACTOR_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL;
-import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -48,7 +48,7 @@ public class ActorService
         }
         return applyEntityManager(
                 em -> em.createNamedQuery(QUERY_FIND_ALL, Actor.class)
-                        .setParameter(QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                        .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
                         .setMaxResults(maxResults)
                         .getResultList()
         );
@@ -97,7 +97,7 @@ public class ActorService
                     ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME,
                     Actor.class
             );
-            query.setParameter(ActorConstants.QUERY_PARAM_LAST_NAME, lastName);
+            query.setParameter(ActorConstants.PARAMETER_LAST_NAME, lastName);
             query.setMaxResults(maxResults);
             return query.getResultList();
         });

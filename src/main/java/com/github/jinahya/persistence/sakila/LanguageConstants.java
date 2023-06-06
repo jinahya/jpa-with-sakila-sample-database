@@ -38,8 +38,6 @@ public final class LanguageConstants {
 
     public static final String NAMED_QUERY_FIND_ALL_BY_LANGUAGE_ID_GREATER_THAN = "Language_findAllByLanguageIdGreaterThan";
 
-    public static final String NAMED_QUERY_FIND_ALL_BY_NAME = "Language_findAllByName";
-
     private LanguageConstants() {
         throw new AssertionError("instantiation is not allowed");
     }

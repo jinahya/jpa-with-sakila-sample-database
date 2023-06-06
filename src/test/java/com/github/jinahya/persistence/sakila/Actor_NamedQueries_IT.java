@@ -6,18 +6,17 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.persistence.sakila.ActorConstants.PARAMETER_ACTOR_ID;
+import static com.github.jinahya.persistence.sakila.ActorConstants.PARAMETER_ACTOR_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.persistence.sakila.ActorConstants.PARAMETER_LAST_NAME;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_BY_ACTOR_ID;
-import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_PARAM_ACTOR_ID;
-import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE;
-import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_PARAM_LAST_NAME;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -45,18 +44,19 @@ class Actor_NamedQueries_IT
             assertThatThrownBy(
                     () -> applyEntityManager(
                             em -> em.createNamedQuery(QUERY_FIND_BY_ACTOR_ID, Actor.class)
-                                    .setParameter(QUERY_PARAM_ACTOR_ID, 0)
+                                    .setParameter(PARAMETER_ACTOR_ID, 0)
                                     .getSingleResult() // NoResultException
                     )
             ).isInstanceOf(NoResultException.class);
         }
 
+        @DisplayName("(1)!null")
         @Test
-        void __1() {
+        void _NotNull_1() {
             final var actorId = 1;
             final var result = applyEntityManager(
                     em -> em.createNamedQuery(QUERY_FIND_BY_ACTOR_ID, Actor.class)
-                            .setParameter(QUERY_PARAM_ACTOR_ID, actorId)
+                            .setParameter(PARAMETER_ACTOR_ID, actorId)
                             .getSingleResult()
             );
             assertThat(result)
@@ -72,21 +72,21 @@ class Actor_NamedQueries_IT
 
         @Test
         void __() {
-            final var maxResults = ThreadLocalRandom.current().nextInt(32, 64);
+            final var maxResults = current().nextInt(32, 64);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var actorIdMinExclusive = i.get();
-                final List<Actor> list = applyEntityManager(
-                        em -> em.createNamedQuery(QUERY_FIND_ALL)
-                                .setParameter(QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Actor.class)
+                                .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
                 assertThat(list)
                         .isNotNull()
+                        // not asserting the emptiness; the last page may be empty.
                         .doesNotContainNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
-                        .isSortedAccordingTo(comparing(Actor::getActorId))
-                ;
+                        .isSortedAccordingTo(comparing(Actor::getActorId));
                 if (list.isEmpty()) {
                     break;
                 }
@@ -102,24 +102,25 @@ class Actor_NamedQueries_IT
         @Test
         void __KILMER() {
             final var lastName = "KILMER";
-            final var maxResults = ThreadLocalRandom.current().nextInt(1, 3);
+            final var maxResults = current().nextInt(2, 4);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var actorIdMinExclusive = i.get();
-                final List<Actor> list = applyEntityManager(
-                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_LAST_NAME)
-                                .setParameter(QUERY_PARAM_LAST_NAME, lastName)
-                                .setParameter(QUERY_PARAM_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_LAST_NAME, Actor.class)
+                                .setParameter(PARAMETER_LAST_NAME, lastName)
+                                .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
                 assertThat(list)
                         .isNotNull()
+                        // not asserting the emptiness; the last page may be empty.
                         .doesNotContainNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
                         .isSortedAccordingTo(comparing(Actor::getActorId))
                         .extracting(Actor::getLastName)
+                        // not using the containsOnly; doesn't work with an empty list
                         .allMatch(v -> v.equals(lastName));
-                ;
                 if (list.isEmpty()) {
                     break;
                 }

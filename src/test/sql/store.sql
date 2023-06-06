@@ -10,7 +10,7 @@ FROM store
 -- manager_staff_id
 SELECT s.store_id, s2.first_name, s2.last_name
 FROM store AS s
-         JOIN staff AS s2 on s.manager_staff_id = s2.staff_id
+         JOIN staff AS s2 ON s.manager_staff_id = s2.staff_id
 ;
 
 -- address_id
