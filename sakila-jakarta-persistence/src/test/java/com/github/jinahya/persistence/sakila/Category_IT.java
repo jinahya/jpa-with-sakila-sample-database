@@ -3,18 +3,18 @@ package com.github.jinahya.persistence.sakila;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class Category_IT
         extends _BaseEntityIT<Category, Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     static Category newPersistedInstance(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");

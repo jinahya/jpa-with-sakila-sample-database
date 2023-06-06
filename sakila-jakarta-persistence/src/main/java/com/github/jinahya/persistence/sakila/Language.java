@@ -1,6 +1,5 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.LocaleUtils;
 import com.github.jinahya.persistence.sakila.util.LocaleUtils2;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -14,12 +13,13 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import static com.github.jinahya.persistence.sakila.LanguageConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.LanguageConstants.QUERY_FIND_BY_LANGUAGE_ID;
+import static java.util.Optional.ofNullable;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -34,17 +34,19 @@ import static com.github.jinahya.persistence.sakila.LanguageConstants.QUERY_FIND
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-language.html">5.1.12 The language
  * Table</a>
  */
-@NamedQuery(name = QUERY_FIND_ALL,
-            query = """
-                    SELECT e FROM Language AS e
-                    WHERE e.languageId > :languageIdMinExclusive
-                    ORDER BY e.languageId ASC"""
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e FROM Language AS e
+                WHERE e.languageId > :languageIdMinExclusive
+                ORDER BY e.languageId ASC"""
 )
-@NamedQuery(name = QUERY_FIND_BY_LANGUAGE_ID,
-            query = """
-                    SELECT e
-                    FROM Language AS e
-                    WHERE e.languageId = :languageId"""
+@NamedQuery(
+        name = QUERY_FIND_BY_LANGUAGE_ID,
+        query = """
+                SELECT e
+                FROM Language AS e
+                WHERE e.languageId = :languageId"""
 )
 @Entity
 @Table(name = Language.TABLE_NAME)
@@ -62,10 +64,22 @@ public class Language
      */
     public static final String COLUMN_NAME_LANGUAGE_ID = "language_id";
 
+    /**
+     * The name of the table column to which the {@link Language_#name name} attribute maps. That value is {@value}.
+     */
     public static final String COLUMN_NAME_NAME = "name";
 
+    /**
+     * The length of the {@link #COLUMN_NAME_NAME} column. That value is {@value}.
+     */
     public static final int COLUMN_LENGTH_NAME = 20;
 
+    /**
+     * Creates a new instance with specified value of {@link Language_#name name} attribute.
+     *
+     * @param name the value of the {@link Language_#name name} attribute.
+     * @return a new instance with {@code name}.
+     */
     public static Language of(final String name) {
         final var instance = new Language();
         instance.name = name;
@@ -117,20 +131,27 @@ public class Language
      * Replaces current value of {@link Language_#languageId languageId} attribute with specified value.
      *
      * @param languageId new value for the {@link Language_#languageId languageId} attribute.
-     * @deprecated for removal
+     * @deprecated for removal.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true)
     private void setLanguageId(final Integer languageId) {
-        if (true) {
-            throw new UnsupportedOperationException("the languageId attribute is a generated value");
-        }
-        this.languageId = languageId;
+        throw new UnsupportedOperationException("the languageId attribute is a generated value");
     }
 
+    /**
+     * Returns current value of {@link Language_#name name} attribute.
+     *
+     * @return current value of the {@link Language_#name name} attribute.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Replaces current value of {@link Language_#name name} attribute with specified value.
+     *
+     * @param name new value for the {@link Language_#name name} attribute.
+     */
     public void setName(final String name) {
         this.name = name;
     }
@@ -158,43 +179,32 @@ public class Language
     private String name;
 
     /**
-     * Returns the locale represents current value of {@link Language_#name name} attribute.
+     * Returns an unmodifiable list of locales which each value of
+     * {@link Locale#getDisplayLanguage(Locale) displayLanguage}, represented in {@link Locale#ENGLISH ENGLISH}, matches
+     * current value of {@link Language_#name} attribute.
      *
-     * @return the locale represents current value of {@link Language_#name name} attribute; {@code null} if not found.
-     */
-    @Deprecated
-    public Locale getNameAsLocale() {
-        return Optional.ofNullable(getName())
-                .flatMap(LocaleUtils::valueOfDisplayLanguageInEnglish)
-                .orElse(null);
-    }
-
-    /**
-     * Returns a list of locales which each value of {@link Locale#getDisplayLanguage(Locale) displayLanguage},
-     * represented in {@link Locale#ENGLISH ENGLISH}, matches current value of {@link Language_#name} attribute.
-     *
-     * @return a list of locales for current value of {@link Language_#name} attribute; {@code null} if current value of
-     * {@link Language_#name} is {@code null} or {@link String#isBlank() blank}.
+     * @return a list of locales for current value of {@link Language_#name} attribute; may be empty if current value of
+     * {@link Language_#name} is {@code null} {@link String#isBlank() blank}, or no locales matched.
      */
     public List<Locale> getLocalesForName() {
-        return Optional.ofNullable(getName())
+        return ofNullable(getName())
                 .filter(v -> !v.isBlank())
                 .map(LocaleUtils2::valuesOfDisplayLanguageInEnglish)
-                .orElse(null);
+                .orElseGet(Collections::emptyList);
     }
 
     /**
      * Replaces current value of {@link Language_#name name} attribute with specified locale's
-     * {@link Locale#getDisplayLanguage(Locale) display language} retrieved for {@link Locale#ENGLISH}.
+     * {@link Locale#getDisplayLanguage(Locale) displayLanguage} retrieved for {@link Locale#ENGLISH}.
      *
-     * @param locale the locale whose {@link Locale#getDisplayLanguage(Locale) display language} is set on the
+     * @param locale the locale whose {@link Locale#getDisplayLanguage(Locale) displayLanguage} is set on the
      *               {@link Language_#name name} attribute.
      * @see Locale#getDisplayLanguage(Locale)
      * @see Locale#ENGLISH
      */
     public void setNameAsLocale(final Locale locale) {
         setName(
-                Optional.ofNullable(locale)
+                ofNullable(locale)
                         .map(l -> l.getDisplayLanguage(Locale.ENGLISH))
                         .orElse(null)
         );

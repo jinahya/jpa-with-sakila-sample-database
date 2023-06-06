@@ -30,18 +30,29 @@ class Language_Test
     @Nested
     class GetLocalesForNameTest {
 
-        @DisplayName("getName()null -> null")
+        @DisplayName("getName()null -> empty")
         @Test
-        void _Null_Null() {
+        void _Empty_Null() {
             // GIVEN
             final var instance = newEntitySpy();
             // WHEN
             when(instance.getName()).thenReturn(null);
             // THEN
-            assertThat(instance.getLocalesForName()).isNull();
+            assertThat(instance.getLocalesForName()).isEmpty();
         }
 
-        @DisplayName("getName()!null -> !empty")
+        @DisplayName("getName()blank -> empty")
+        @Test
+        void _Empty_Blank() {
+            // GIVEN
+            final var instance = newEntitySpy();
+            // WHEN
+            when(instance.getName()).thenReturn("");
+            // THEN
+            assertThat(instance.getLocalesForName()).isEmpty();
+        }
+
+        @DisplayName("getName()!blank -> !empty")
         @MethodSource({"java.util.Locale#getAvailableLocales"})
         @ParameterizedTest
         void __(final Locale locale) {

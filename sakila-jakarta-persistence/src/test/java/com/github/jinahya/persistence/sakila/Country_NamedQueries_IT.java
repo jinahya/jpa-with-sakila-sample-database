@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
-import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.persistence.sakila.CountryConstants.PARAMETER_COUNTRY_ID_MIN_EXCLUSIVE;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,30 +46,30 @@ class Country_NamedQueries_IT
             ).isInstanceOf(NoResultException.class);
         }
 
-        @DisplayName("findByCountryId(1)")
+        @DisplayName("(1)!null")
         @Test
         void __1() {
             // GIVEN
-            final var countryId = 1;
+            final var countryId = 1; // Afghanistan
             // WHEN
             final var found = applyEntityManager(
                     em -> em.createNamedQuery(QUERY_FIND_BY_COUNTRY_ID, Country.class)
                             .setParameter(Country_.countryId.getName(), countryId)
-                            .getSingleResult() // NoResultException
+                            .getSingleResult()
             );
             // THEN
             assertThat(found)
                     .isNotNull()
                     .extracting(Country::getCountryId)
                     .isEqualTo(countryId);
+            log.debug("country: " + found.getCountry());
         }
 
-        @DisplayName("findByCountryId(86)")
+        @DisplayName("(86)!null")
         @Test
         void __86() {
             // GIVEN
-            final var countryId = 86;
-            // TODO: implement!
+            final var countryId = 86; // South Korea
             // WHEN
             // THEN
         }
@@ -84,14 +84,17 @@ class Country_NamedQueries_IT
             final var maxResults = current().nextInt(8, 16);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var countryIdMinExclusive = i.get();
+                // WHEN
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL, Country.class)
-                                .setParameter(QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
+                                .setParameter(PARAMETER_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
+                // THEN
                 assertThat(list)
                         .isNotNull()
+                        // not asserting the emptiness; the last page may be empty.
                         .doesNotContainNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
                         .extracting(Country::getCountryId)

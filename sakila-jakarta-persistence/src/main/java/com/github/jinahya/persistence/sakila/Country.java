@@ -21,7 +21,6 @@ import java.util.Optional;
 
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
-import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM_COUNTRY_ID;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -35,25 +34,20 @@ import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a>
  */
-//@NamedQuery(name = QUERY_FIND_ALL_BY_COUNTRY, // not indexed
-//            query = """
-//                    SELECT e
-//                    FROM Country AS e
-//                    WHERE e.country = :country
-//                          AND e.countryId > :countryIdMinExclusive
-//                    ORDER BY e.countryId ASC"""
-//)
-@NamedQuery(name = QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM Country AS e
-                    WHERE e.countryId > :countryIdMinExclusive
-                    ORDER BY e.countryId ASC"""
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM Country AS e
+                WHERE e.countryId > :countryIdMinExclusive
+                ORDER BY e.countryId ASC"""
 )
-@NamedQuery(name = QUERY_FIND_BY_COUNTRY_ID,
-            query = "SELECT e" +
-                    " FROM Country AS e" +
-                    " WHERE e.countryId = :" + QUERY_PARAM_COUNTRY_ID
+@NamedQuery(
+        name = QUERY_FIND_BY_COUNTRY_ID,
+        query = """
+                SELECT e
+                FROM Country AS e
+                WHERE e.countryId = :countryId"""
 )
 @Entity
 @Table(name = Country.TABLE_NAME)
@@ -77,7 +71,7 @@ public class Country
      * @param countryId the {@link Country_#countryId countryId} attribute value.
      * @return a new instance of {@code countryId}.
      */
-    static Country ofCountryId(final Integer countryId) {
+    static Country ofCountryId(final int countryId) {
         final var instance = new Country();
         instance.countryId = countryId;
         return instance;

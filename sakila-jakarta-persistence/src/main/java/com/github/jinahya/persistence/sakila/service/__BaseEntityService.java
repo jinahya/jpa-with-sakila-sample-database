@@ -84,7 +84,7 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
      * @return an optional of found entity identified by {@code id}; empty if not found.
      * @see EntityManager#find(Class, Object)
      */
-    public Optional<@Valid ENTITY> findById(final @NotNull ID id) {
+    Optional<@Valid ENTITY> findById(final @NotNull ID id) {
         requireNonNull(id, "id is null");
         return Optional.ofNullable(
                 applyEntityManager(

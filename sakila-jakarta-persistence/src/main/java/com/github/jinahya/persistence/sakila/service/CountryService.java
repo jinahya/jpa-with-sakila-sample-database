@@ -18,8 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
-import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM_COUNTRY_ID;
-import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.persistence.sakila.CountryConstants.PARAMETER_COUNTRY_ID;
+import static com.github.jinahya.persistence.sakila.CountryConstants.PARAMETER_COUNTRY_ID_MIN_EXCLUSIVE;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -55,7 +55,7 @@ class CountryService
                 applyEntityManager(em -> {
                     try {
                         return em.createNamedQuery(QUERY_FIND_BY_COUNTRY_ID, Country.class)
-                                .setParameter(QUERY_PARAM_COUNTRY_ID, countryId)
+                                .setParameter(PARAMETER_COUNTRY_ID, countryId)
                                 .getSingleResult(); // NoResultException
                     } catch (final NoResultException nre) {
                         return null;
@@ -76,7 +76,7 @@ class CountryService
         }
         return applyEntityManager(
                 em -> em.createNamedQuery(QUERY_FIND_ALL, Country.class)
-                        .setParameter(QUERY_PARAM_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
+                        .setParameter(PARAMETER_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
                         .setMaxResults(maxResults)
                         .getResultList()
         );

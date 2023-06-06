@@ -4,13 +4,17 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+
+import static com.github.jinahya.persistence.sakila.CategoryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.CategoryConstants.QUERY_FIND_BY_CATEGORY_ID;
+import static com.github.jinahya.persistence.sakila._DomainConstants.MAX_TINYINT_UNSIGNED;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
  * An entity class for mapping {@value Category#TABLE_NAME} table.
@@ -26,15 +30,17 @@ import jakarta.validation.constraints.PositiveOrZero;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-category.html">5.1.3 The category Table</a>
  */
-@NamedQuery(name = "Category_findAllByCategoryIdGreaterThan",
-            query = "SELECT e FROM Category AS e"
-                    + " WHERE e.categoryId > :categoryIdMinExclusive"
-                    + " ORDER BY e.categoryId ASC")
-@NamedQuery(name = "Category_findByCategoryId",
-            query = "SELECT e FROM Category AS e"
-                    + " WHERE e.categoryId = :categoryId")
-@NamedQuery(name = "Category_findAll",
-            query = "SELECT e FROM Category AS e")
+@NamedQuery(name = QUERY_FIND_ALL,
+            query = """
+                    SELECT e
+                    FROM Category AS e
+                    WHERE e.categoryId > :categoryIdMinExclusive
+                    ORDER BY e.categoryId ASC""")
+@NamedQuery(name = QUERY_FIND_BY_CATEGORY_ID,
+            query = """
+                    SELECT e
+                    FROM Category AS e
+                    WHERE e.categoryId = :categoryId""")
 @Entity
 @Table(name = Category.TABLE_NAME)
 public class Category
@@ -132,10 +138,10 @@ public class Category
      * A surrogate primary key used to uniquely identify each category in the table.
      * </blockquote>
      */
-    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
+    @Max(MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = COLUMN_NAME_CATEGORY_ID, nullable = false,
             insertable = true, // EclipseLink
             updatable = false)

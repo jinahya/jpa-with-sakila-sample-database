@@ -5,63 +5,47 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
-import java.util.Comparator;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.persistence.sakila.CategoryConstants.PARAMETER_CATEGORY_ID;
+import static com.github.jinahya.persistence.sakila.CategoryConstants.PARAMETER_CATEGORY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.persistence.sakila.CategoryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.CategoryConstants.QUERY_FIND_BY_CATEGORY_ID;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class Category_NamedQueries_IT
         extends __PersistenceIT {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName("Category_findAll")
-    @Nested
-    class FindAllTest {
-
-        @Test
-        void __() {
-            final int maxResults = ThreadLocalRandom.current().nextInt(1, 8);
-            final var found = applyEntityManager(
-                    em -> em.createNamedQuery("Category_findAll", Category.class)
-                            .setMaxResults(maxResults)
-                            .getResultList()
-            );
-            assertThat(found)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .doesNotContainNull()
-                    .hasSizeLessThanOrEqualTo(maxResults);
-        }
-    }
-
-    @DisplayName("Category_findByCategoryId")
+    @DisplayName(QUERY_FIND_BY_CATEGORY_ID)
     @Nested
     class FindByCategoryIdTest {
 
+        @DisplayName("(0)NoResultException")
         @Test
-        void findByCategoryId__0() {
-            final var categoryId = 0;
+        void __0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery("Category_findByCategoryId", Category.class)
-                                    .setParameter("categoryId", categoryId)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_CATEGORY_ID, Category.class)
+                                    .setParameter(PARAMETER_CATEGORY_ID, 0)
                                     .getSingleResult()
                     )
             ).isInstanceOf(NoResultException.class);
         }
 
+        @DisplayName("(1)!null")
         @Test
-        void findByCategoryId__1() {
+        void __1() {
             final var categoryId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery("Category_findByCategoryId", Category.class)
-                            .setParameter("categoryId", categoryId)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_CATEGORY_ID, Category.class)
+                            .setParameter(PARAMETER_CATEGORY_ID, categoryId)
                             .getSingleResult()
             );
             assertThat(found)
@@ -71,28 +55,32 @@ class Category_NamedQueries_IT
         }
     }
 
-    @DisplayName("Category_findAllByCategoryIdGreaterThan")
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
-    class SelectCategoryIdGreaterThanTest {
+    class FindAllTest {
 
         @Test
         void __() {
-            final int maxResults = ThreadLocalRandom.current().nextInt(4, 8);
-            for (var categoryIdMinExclusive = new AtomicInteger(); ; ) {
-                final var list = applyEntityManager(
-                        em -> em.createNamedQuery("Category_findAllByCategoryIdGreaterThan", Category.class)
-                                .setParameter("categoryIdMinExclusive", categoryIdMinExclusive.get())
+            final int maxResults = current().nextInt(8, 16);
+            for (final var i = new AtomicInteger(0); ; ) {
+                final var categoryIdMinExclusive = i.get();
+                final var found = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Category.class)
+                                .setParameter(PARAMETER_CATEGORY_ID_MIN_EXCLUSIVE, categoryIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
-                log.debug("categoryIds: {}", list.stream().map(Category::getCategoryId).toList());
-                assertThat(list)
+                assertThat(found)
+                        .isNotNull()
+                        .doesNotContainNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
-                        .isSortedAccordingTo(Comparator.comparing(Category::getCategoryId));
-                if (list.isEmpty()) {
+                        .extracting(Category::getCategoryId)
+                        .allMatch(v -> v > categoryIdMinExclusive)
+                        .isSorted();
+                if (found.isEmpty()) {
                     break;
                 }
-                categoryIdMinExclusive.set(list.get(list.size() - 1).getCategoryId());
+                i.set(found.get(found.size() - 1).getCategoryId());
             }
         }
     }

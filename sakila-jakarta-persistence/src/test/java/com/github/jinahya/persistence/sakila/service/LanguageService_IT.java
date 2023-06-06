@@ -14,8 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Locale;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -52,59 +50,6 @@ class LanguageService_IT
 //                    .isNotEmpty()
 //                    .doesNotContainNull()
 //                    .hasSizeLessThanOrEqualTo(maxResults);
-        }
-    }
-
-    @Disabled
-    @DisplayName("findAllByLanguageIdGreaterThan")
-    @Nested
-    class FindAllByLanguageIdGreaterThanTest {
-
-        @DisplayName("findAllByLanguageIdGreaterThan(0, null)")
-        @Test
-        void __MaxResultsNull() {
-            final var languageIdMinExclusive = 0;
-            final Integer maxResults = null;
-            final var list = applyServiceInstance(
-                    s -> s.findAllByLanguageIdGreaterThan(languageIdMinExclusive, maxResults)
-            );
-            assertThat(list)
-                    .isNotEmpty()
-                    .doesNotContainNull();
-        }
-
-        @DisplayName("findAllByLanguageIdGreaterThan(0, !null)")
-        @Test
-        void __MaxResultsNotNull() {
-            final var languageIdMinExclusive = 0;
-            final var maxResults = ThreadLocalRandom.current().nextInt(1, 8);
-            final var list = applyServiceInstance(
-                    s -> s.findAllByLanguageIdGreaterThan(languageIdMinExclusive, maxResults)
-            );
-            assertThat(list)
-                    .isNotEmpty()
-                    .doesNotContainNull()
-                    .hasSizeLessThanOrEqualTo(maxResults);
-        }
-
-        @DisplayName("findAllByLanguageIdGreaterThan(++, !null)")
-        @Test
-        void __Pagination() {
-            final var maxResults = ThreadLocalRandom.current().nextInt(1, 8);
-            log.debug("maxResults: {}", maxResults);
-            for (final var i = new AtomicInteger(0); ; ) {
-                final var list = applyServiceInstance(
-                        s -> s.findAllByLanguageIdGreaterThan(i.get(), maxResults)
-                );
-                log.debug("languageIds: {}", list.stream().map(Language::getLanguageId).toList());
-                assertThat(list)
-                        .doesNotContainNull()
-                        .hasSizeLessThanOrEqualTo(maxResults);
-                if (list.isEmpty()) {
-                    break;
-                }
-                i.set(list.get(list.size() - 1).getLanguageId());
-            }
         }
     }
 
