@@ -4,3 +4,6 @@
 [submodule "sakila-jakarta-persistence/.idea/codeStyles"]
 	path = sakila-jakarta-persistence/.idea/codeStyles
 	url = https://github.com/onacit/dot-idea-codestyles.git
+[submodule "sakila-spring-data-jpa/.idea/codeStyles"]
+	path = sakila-spring-data-jpa/.idea/codeStyles
+	url = https://github.com/onacit/dot-idea-codestyles.git

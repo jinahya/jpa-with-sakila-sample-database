@@ -57,11 +57,10 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
      */
     public @Valid @NotNull ENTITY persist(final @Valid @NotNull ENTITY entity) {
         requireNonNull(entity, "entity is null");
-        applyEntityManagerInTransaction(em -> {
+        return applyEntityManagerInTransaction(em -> {
             em.persist(entity);
-            return null;
+            return entity;
         });
-        return entity;
     }
 
     /**
@@ -105,9 +104,6 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
     @NotNull List<@Valid @NotNull ENTITY> findAll(
             @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends ID>> idExpressionMapper,
             @NotNull final ID idValueMinExclusive, @Positive final int maxResults) {
-        requireNonNull(idExpressionMapper, "idExpressionMapper is null");
-        requireNonNull(idValueMinExclusive, "idValueMinExclusive is null");
-        requireNonNull(maxResults, "maxResults is null");
         return applyEntityManager(em -> {
             final var builder = em.getCriteriaBuilder();
             final var query = builder.createQuery(entityClass);
@@ -127,10 +123,6 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
             @NotNull final ID idValueMinExclusive, @Positive final int maxResults,
             @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends V>> attributeExpressionMapper,
             @NotNull final V attributeValue) {
-        requireNonNull(idExpressionMapper, "idExpressionMapper is null");
-        requireNonNull(idValueMinExclusive, "idValueMinExclusive is null");
-        requireNonNull(attributeExpressionMapper, "attributeExpressionMapper is null");
-        requireNonNull(maxResults, "maxResults is null");
         return applyEntityManager(em -> {
             final var builder = em.getCriteriaBuilder();
             final var query = builder.createQuery(entityClass);

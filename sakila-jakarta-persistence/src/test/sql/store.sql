@@ -20,3 +20,18 @@ FROM store AS s
          JOIN city AS c ON a.city_id = c.city_id
          JOIN country AS c2 on c.country_id = c2.country_id
 ;
+
+-- Store_findByStoreId
+EXPLAIN
+SELECT *
+FROM store
+WHERE store_id = :storeId
+;
+
+-- Store_findAll
+EXPLAIN
+SELECT *
+FROM store
+WHERE store_id > :storeIdMinExclusive
+ORDER BY store_id ASC
+;

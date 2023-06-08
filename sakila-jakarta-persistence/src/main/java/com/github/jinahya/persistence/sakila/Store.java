@@ -6,9 +6,12 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.NamedSubgraph;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -16,7 +19,21 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
+import java.util.Objects;
 import java.util.Optional;
+
+import static com.github.jinahya.persistence.sakila.StoreConstants.ATTRIBUTE_NODE_ADDRESS;
+import static com.github.jinahya.persistence.sakila.StoreConstants.ATTRIBUTE_NODE_MANAGER_STAFF;
+import static com.github.jinahya.persistence.sakila.StoreConstants.ENTITY_GRAPH_ADDRESS;
+import static com.github.jinahya.persistence.sakila.StoreConstants.ENTITY_GRAPH_MANAGER_STAFF;
+import static com.github.jinahya.persistence.sakila.StoreConstants.ENTITY_GRAPH_MANAGER_STAFF_AND_ADDRESS;
+import static com.github.jinahya.persistence.sakila.StoreConstants.ENTITY_GRAPH_MANAGER_STAFF_WITH_ONES_ADDRESS_AND_ADDRESS;
+import static com.github.jinahya.persistence.sakila.StoreConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.StoreConstants.QUERY_FIND_BY_MANAGER_STAFF;
+import static com.github.jinahya.persistence.sakila.StoreConstants.QUERY_FIND_BY_MANAGER_STAFF_ID;
+import static com.github.jinahya.persistence.sakila.StoreConstants.QUERY_FIND_BY_STORE_ID;
+import static com.github.jinahya.persistence.sakila._DomainConstants.MAX_TINYINT_UNSIGNED;
+import static jakarta.persistence.GenerationType.IDENTITY;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -30,7 +47,75 @@ import java.util.Optional;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-store.html">5.1.16 The store Table</a>
+ * @see StoreConstants
+ * @see Store_
  */
+@NamedEntityGraph(
+        name = ENTITY_GRAPH_MANAGER_STAFF_WITH_ONES_ADDRESS_AND_ADDRESS,
+        attributeNodes = {
+                @NamedAttributeNode(
+                        value = ATTRIBUTE_NODE_MANAGER_STAFF,
+                        subgraph = StaffConstants.GRAPH_ADDRESS
+                ),
+                @NamedAttributeNode(ATTRIBUTE_NODE_ADDRESS)
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = StaffConstants.GRAPH_ADDRESS,
+                        attributeNodes = {
+                                @NamedAttributeNode(StaffConstants.GRAPH_NODE_ADDRESS)
+                        }
+                )
+        }
+)
+@NamedEntityGraph(
+        name = ENTITY_GRAPH_MANAGER_STAFF_AND_ADDRESS,
+        attributeNodes = {
+                @NamedAttributeNode(ATTRIBUTE_NODE_MANAGER_STAFF),
+                @NamedAttributeNode(ATTRIBUTE_NODE_ADDRESS)
+        }
+)
+@NamedEntityGraph(
+        name = ENTITY_GRAPH_ADDRESS,
+        attributeNodes = {
+                @NamedAttributeNode(ATTRIBUTE_NODE_ADDRESS)
+        }
+)
+@NamedEntityGraph(
+        name = ENTITY_GRAPH_MANAGER_STAFF,
+        attributeNodes = {
+                @NamedAttributeNode(ATTRIBUTE_NODE_MANAGER_STAFF)
+        }
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_MANAGER_STAFF,
+        query = """
+                SELECT e
+                FROM Store AS e
+                WHERE e.managerStaff = :managerStaff"""
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_MANAGER_STAFF_ID,
+        query = """
+                SELECT e
+                FROM Store AS e
+                WHERE e.managerStaffId = :managerStaffId"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM Store AS e
+                WHERE e.storeId > :storeIdMinExclusive
+                ORDER BY e.storeId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_STORE_ID,
+        query = """
+                SELECT e
+                FROM Store AS e
+                WHERE e.storeId = :storeId"""
+)
 @Entity
 @Table(name = Store.TABLE_NAME)
 public class Store
@@ -67,7 +152,7 @@ public class Store
      * @param storeId the value of the {@link Store_#storeId storeId} attribute.
      * @return a new instance.
      */
-    public static Store ofStoreId(final Integer storeId) {
+    public static Store ofStoreId(final int storeId) {
         final var instance = new Store();
         instance.storeId = storeId;
         return instance;
@@ -90,20 +175,27 @@ public class Store
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Store)) return false;
-        return super.equals(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Store that)) return false;
+        return Objects.equals(managerStaffId, that.managerStaffId);
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return Objects.hash(managerStaffId);
     }
 
     @Override
     Integer identifier() {
         return getStoreId();
+    }
+
+    @PostConstruct
+    void onPostConstruct() {
+        if (managerStaff != null) {
+            managerStaff.setStore(this);
+        }
     }
 
     /**
@@ -113,13 +205,6 @@ public class Store
      */
     public Integer getStoreId() {
         return storeId;
-    }
-
-    @PostConstruct
-    protected void onPostConstruct() {
-        if (managerStaff != null) {
-            managerStaff.setStore(this);
-        }
     }
 
     /**
@@ -169,22 +254,37 @@ public class Store
         this.addressId = addressId;
     }
 
-    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-store.html>
+     * A surrogate primary key that uniquely identifies the store.
+     * </blockquote>
+     */
+    @Max(MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = COLUMN_NAME_STORE_ID, nullable = false,
             insertable = true, // EclipseLink
             updatable = false)
     private Integer storeId;
 
-    @Max(_DomainConstants.MAX_TINYINT_UNSIGNED)
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-store.html>
+     * A foreign key identifying the manager of this store.
+     * </blockquote>
+     */
+    @Max(MAX_TINYINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_MANAGER_STAFF_ID, nullable = false)
     private Integer managerStaffId;
 
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-store.html>
+     * A foreign key identifying the address of this store.
+     * </blockquote>
+     */
     @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull

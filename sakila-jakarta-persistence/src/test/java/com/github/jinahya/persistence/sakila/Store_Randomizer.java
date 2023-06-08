@@ -18,9 +18,9 @@ class Store_Randomizer
                 .excludeField(named(Store_.storeId.getName()))
                 .excludeField(named(Store_.managerStaffId.getName()))
                 .excludeField(named(Store_.addressId.getName()))
-//                .excludeField(named(Store_.staffs.getName()))
                 .excludeField(named(Store_.managerStaff.getName()))
                 .excludeField(named(Store_.address.getName()))
+//                .excludeField(named(Store_.staffs.getName()))
                 ;
     }
 
