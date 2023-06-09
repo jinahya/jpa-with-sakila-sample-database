@@ -37,7 +37,7 @@
       <!--      <property name="eclipselink.logging.level" value="OFF"/>-->
       <property name="eclipselink.logging.parameters" value="true"/>
       <property name="eclipselink.logging.level.sql" value="FINE"/>
-<!--      <property name="eclipselink.weaving" value="static"/>-->
+      <!--      <property name="eclipselink.weaving" value="static"/>-->
       <!--      <property name="org.hibernate.SQL" value="DEBUG"/>-->
       <!--      <property name="org.hibernate.type" value="TRACE"/>-->
       <property name="hibernate.format_sql" value="true"/>

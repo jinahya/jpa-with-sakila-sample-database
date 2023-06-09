@@ -1,7 +1,6 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.Actor;
-import com.github.jinahya.persistence.sakila.ActorConstants;
 import com.github.jinahya.persistence.sakila.Actor_;
 import jakarta.persistence.NoResultException;
 import jakarta.validation.Valid;

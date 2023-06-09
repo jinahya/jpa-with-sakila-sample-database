@@ -1,7 +1,6 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.Category;
-import com.github.jinahya.persistence.sakila.CategoryConstants;
 import com.github.jinahya.persistence.sakila.Category_;
 import jakarta.persistence.NoResultException;
 import jakarta.validation.Valid;
