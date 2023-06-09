@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <!--  <parent>-->
@@ -65,7 +66,6 @@
     <version.org.junit.jupiter>${version.org.junit}</version.org.junit.jupiter>
     <version.org.mockito>5.3.1</version.org.mockito> <!-- https://search.maven.org/artifact/org.mockito/mockito-junit-jupiter -->
     <!--    <version.org.mockito-inline>5.2.0</version.org.mockito-inline> &lt;!&ndash; https://search.maven.org/artifact/org.mockito/mockito-inline &ndash;&gt;-->
-    <!--    <version.org.projectlombok>1.18.26</version.org.projectlombok>-->
     <version.jakarta.persistence-api>3.1.0</version.jakarta.persistence-api>
     <version.jakarta.validation-api>3.0.2</version.jakarta.validation-api>
   </properties>
@@ -256,13 +256,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <!--    <dependency>-->
-    <!--      <groupId>org.projectlombok</groupId>-->
-    <!--      <artifactId>lombok</artifactId>-->
-    <!--      <version>${version.org.projectlombok}</version>-->
-    <!--&lt;!&ndash;      <scope>provided</scope>&ndash;&gt;-->
-    <!--      <scope>test</scope>-->
-    <!--    </dependency>-->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -379,11 +372,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <!--        <configuration>-->
         <!--          <annotationProcessorPaths>-->
-        <!--            <path>-->
-        <!--              <groupId>org.projectlombok</groupId>-->
-        <!--              <artifactId>lombok</artifactId>-->
-        <!--              <version>${version.org.projectlombok}</version>-->
-        <!--            </path>-->
         <!--          </annotationProcessorPaths>-->
         <!--          <compilerArgs>-->
         <!--            <arg>-Xlint</arg>-->
@@ -557,45 +545,40 @@
         </dependency>
       </dependencies>
       <build>
-        <testResources>
-          <testResource>
-            <directory>${project.basedir}/src/test/resources</directory>
-            <excludes>
-              <exclude>META-INF/persistence.xml</exclude>
-            </excludes>
-          </testResource>
-        </testResources>
+        <!--        <testResources>-->
+        <!--          <testResource>-->
+        <!--            <directory>${project.basedir}/src/test/resources</directory>-->
+        <!--            <excludes>-->
+        <!--              <exclude>META-INF/persistence.xml</exclude>-->
+        <!--            </excludes>-->
+        <!--          </testResource>-->
+        <!--        </testResources>-->
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-persistence-xml-from-test-to-main</id>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-                <phase>validate</phase>
-                <configuration>
-                  <target>
-                    <mkdir dir="${project.build.outputDirectory}/META-INF"/>
-                    <copy file="${project.basedir}/src/test/resources/META-INF/persistence.xml"
-                          todir="${project.build.outputDirectory}/META-INF"/>
-                  </target>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
+          <!--          <plugin>-->
+          <!--            <groupId>org.apache.maven.plugins</groupId>-->
+          <!--            <artifactId>maven-antrun-plugin</artifactId>-->
+          <!--            <executions>-->
+          <!--              <execution>-->
+          <!--                <id>copy-persistence-xml-from-test-to-main</id>-->
+          <!--                <goals>-->
+          <!--                  <goal>run</goal>-->
+          <!--                </goals>-->
+          <!--                <phase>validate</phase>-->
+          <!--                <configuration>-->
+          <!--                  <target>-->
+          <!--                    <mkdir dir="${project.build.outputDirectory}/META-INF"/>-->
+          <!--                    <copy file="${project.basedir}/src/test/resources/META-INF/persistence.xml"-->
+          <!--                          todir="${project.build.outputDirectory}/META-INF"/>-->
+          <!--                  </target>-->
+          <!--                </configuration>-->
+          <!--              </execution>-->
+          <!--            </executions>-->
+          <!--          </plugin>-->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
               <annotationProcessorPaths>
-                <!--                <path>-->
-                <!--                  <groupId>org.projectlombok</groupId>-->
-                <!--                  <artifactId>lombok</artifactId>-->
-                <!--                  <version>${version.org.projectlombok}</version>-->
-                <!--                </path>-->
                 <path>
                   <groupId>org.eclipse.persistence</groupId>
                   <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
@@ -686,11 +669,6 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <configuration>
               <annotationProcessorPaths>
-                <!--                <path>-->
-                <!--                  <groupId>org.projectlombok</groupId>-->
-                <!--                  <artifactId>lombok</artifactId>-->
-                <!--                  <version>${version.org.projectlombok}</version>-->
-                <!--                </path>-->
                 <path>
                   <groupId>org.hibernate.orm</groupId>
                   <artifactId>hibernate-jpamodelgen</artifactId>

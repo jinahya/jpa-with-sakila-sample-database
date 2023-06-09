@@ -23,8 +23,8 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
 
-import static com.github.jinahya.persistence.sakila.ActorConstants.ENTITY_GRAPH_FILMS;
 import static com.github.jinahya.persistence.sakila.ActorConstants.ATTRIBUTE_NODE_FILMS;
+import static com.github.jinahya.persistence.sakila.ActorConstants.ENTITY_GRAPH_FILMS;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_BY_ACTOR_ID;
@@ -248,14 +248,23 @@ public class Actor
     @Column(name = COLUMN_NAME_LAST_NAME, nullable = false, length = COLUMN_LENGTH_LAST_NAME)
     private String lastName;
 
+    List<Film> getFilms() {
+        return films;
+    }
+
     /**
      * 이 배우가 출연한 영화 목록.
      */
     @ManyToMany(
             cascade = {
+//                    CascadeType.ALL,
+//                    CascadeType.DETACH,
+//                    CascadeType.MERGE,
+//                    CascadeType.PERSIST,
+//                    CascadeType.REFRESH,
+//                    CascadeType.REMOVE
             },
             fetch = FetchType.LAZY, // default
-//            mappedBy = Film.ATTRIBUTE_NAME_ACTORS,
             targetEntity = Film.class
     )
     @JoinTable(

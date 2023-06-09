@@ -1,6 +1,7 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.Category;
+import com.github.jinahya.persistence.sakila.CategoryConstants;
 import com.github.jinahya.persistence.sakila.Category_;
 import jakarta.persistence.NoResultException;
 import jakarta.validation.Valid;
@@ -99,7 +100,7 @@ public class CategoryService
                                         FROM Category AS e
                                         WHERE e.name = :name
                                               AND e.categoryId > :categoryIdMinExclusive
-                                        ORDER BY e.id ASC""",
+                                        ORDER BY e.categoryId ASC""",
                                 Category.class
                         )
                         .setParameter(PARAMETER_CATEGORY_ID_MIN_EXCLUSIVE, categoryIdMinExclusive)

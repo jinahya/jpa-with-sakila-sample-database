@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.persistence.sakila.ActorConstants.ENTITY_GRAPH_FILMS;
 import static com.github.jinahya.persistence.sakila.ActorConstants.PARAMETER_ACTOR_ID;
 import static com.github.jinahya.persistence.sakila.ActorConstants.PARAMETER_ACTOR_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.ActorConstants.PARAMETER_LAST_NAME;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_BY_ACTOR_ID;
+import static com.github.jinahya.persistence.sakila._PersistenceConstants.PERSISTENCE_FETCHGRAPH;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -124,6 +126,7 @@ class Actor_NamedQueries_IT
     @Nested
     class FindAllByLastNameTest {
 
+        @DisplayName(("'KILMER'"))
         @Test
         void __KILMER() {
             final var lastName = "KILMER";
@@ -143,6 +146,45 @@ class Actor_NamedQueries_IT
                         .doesNotContainNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
                         .isSortedAccordingTo(comparing(Actor::getActorId))
+                        .extracting(Actor::getLastName)
+                        // not using the containsOnly; doesn't work with an empty list
+                        .allMatch(v -> v.equals(lastName));
+                if (list.isEmpty()) {
+                    break;
+                }
+                i.set(list.get(list.size() - 1).getActorId());
+            }
+        }
+
+        @DisplayName(("'KILMER' fetching films"))
+        @Test
+        void __KILMERFetchingFilms() {
+            final var lastName = "KILMER";
+            final var maxResults = current().nextInt(2, 4);
+            for (final var i = new AtomicInteger(0); ; ) {
+                final var actorIdMinExclusive = i.get();
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_LAST_NAME, Actor.class)
+                                .setParameter(PARAMETER_LAST_NAME, lastName)
+                                .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                                .setMaxResults(maxResults)
+                                .setHint(PERSISTENCE_FETCHGRAPH, em.createEntityGraph(ENTITY_GRAPH_FILMS))
+                                .getResultList()
+                );
+                assertThat(list)
+                        .isNotNull()
+                        // not asserting the emptiness; the last page may be empty.
+                        .doesNotContainNull()
+                        .hasSizeLessThanOrEqualTo(maxResults)
+                        .isSortedAccordingTo(comparing(Actor::getActorId))
+                        .allSatisfy(e -> {
+                            assertThat(e.getFilms())
+                                    .isNotNull()
+                                    .doesNotContainNull()
+                                    .allSatisfy(f -> {
+                                        log.debug("film: {}", f);
+                                    });
+                        })
                         .extracting(Actor::getLastName)
                         // not using the containsOnly; doesn't work with an empty list
                         .allMatch(v -> v.equals(lastName));
