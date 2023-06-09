@@ -216,6 +216,7 @@ public class Country
      * @see Locale#getDisplayCountry(Locale)
      * @see Locale#ENGLISH
      */
+    @Transient
     public void setCountryAsLocale(final Locale locale) {
         setCountry(
                 Optional.ofNullable(locale)
