@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
@@ -22,9 +23,7 @@ import org.slf4j.Logger;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
 import static com.github.jinahya.persistence.sakila.AddressConstants.GRAPH_CITY;
@@ -35,6 +34,8 @@ import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_
 import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_ALL_BY_CITY_ID;
 import static com.github.jinahya.persistence.sakila.AddressConstants.QUERY_FIND_BY_ADDRESS_ID;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Arrays.copyOf;
+import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -298,7 +299,7 @@ public class Address
      * @param location new value for the {@link Address_#location location} attribute.
      */
     void setLocation(final byte[] location) {
-        this.location = Optional.ofNullable(location).map(v -> Arrays.copyOf(v, v.length)).orElse(null);
+        this.location = ofNullable(location).map(v -> copyOf(v, v.length)).orElse(null);
     }
 
     /**
@@ -383,6 +384,7 @@ public class Address
      * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
      */
     @NotNull
+    @Lob
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_LOCATION, nullable = false)
     private byte[] location;
@@ -406,7 +408,7 @@ public class Address
     public void setCity(final City city) {
         this.city = city;
         setCityId(
-                Optional.ofNullable(city)
+                ofNullable(city)
                         .map(City::getCityId)
                         .orElse(null)
         );
@@ -419,14 +421,24 @@ public class Address
     @JoinColumn(name = COLUMN_NAME_CITY_ID, nullable = false, insertable = false, updatable = false)
     private City city;
 
+    /**
+     * Returns current value of {@link Address_#locationGeometry locationGeometry} attribute.
+     *
+     * @return current value of the {@link Address_#locationGeometry locationGeometry} attribute.
+     */
     public _DomainTypes.Geometry getLocationGeometry() {
         return locationGeometry;
     }
 
+    /**
+     * Replaces current value of {@link Address_#locationGeometry locationGeometry} attribute with specified value.
+     *
+     * @param locationGeometry new value for the {@link Address_#locationGeometry locationGeometry} attribute.
+     */
     public void setLocationGeometry(final _DomainTypes.Geometry locationGeometry) {
         this.locationGeometry = locationGeometry;
         setLocation(
-                Optional.ofNullable(this.locationGeometry)
+                ofNullable(this.locationGeometry)
                         .map(_DomainTypes.Geometry::toByteArray)
                         .orElse(null)
 
@@ -442,37 +454,45 @@ public class Address
      * Applies current value of {@link Address_#locationGeometry locationGeometry} attribute, as a
      * {@link _DomainTypes.Wkb.Type#POINT} type, to specified function, and returns the result.
      *
-     * @param function the function applies with coordinates.
+     * @param function the function to be applied with coordinates.
      * @param <R>      result type parameter
      * @return the result of the {@code function}.
      */
     public <R> R applyLocationGeometryAsPoint(final BiFunction<? super Double, ? super Double, ? extends R> function) {
         Objects.requireNonNull(function, "function is null");
-        return Optional.ofNullable(getLocationGeometry())
-                .map(lg -> {
-                    final var buffer = lg.toByteBuffer();
+        return ofNullable(getLocationGeometry())
+                .map(g -> {
+                    final var buffer = g.toByteBuffer();
                     final var srid = buffer.getInt();
                     assert srid == 0;
                     buffer.order(_DomainTypes.Wkb.endianToOrder(buffer.get()));
                     final var type = buffer.getInt();
                     if (type != _DomainTypes.Wkb.Type.POINT.type()) {
-                        throw new IllegalArgumentException("not a point type: " + type);
+                        throw new IllegalArgumentException("locationGeometry is not a point; type: " + type);
                     }
-                    final var xCoordinate = buffer.getDouble();
-                    final var yCoordinate = buffer.getDouble();
+                    final var x = buffer.getDouble();
+                    final var y = buffer.getDouble();
                     assert !buffer.hasRemaining();
-                    return function.apply(xCoordinate, yCoordinate);
+                    return function.apply(x, y);
                 })
                 .orElse(null);
     }
 
-    public void setLocationGeometryAsPoint(final double xCoordinate, final double yCoordinate, final int srid) {
+    /**
+     * Replaces current value of {@link Address_#locationGeometry} attribute with a point of specified coordinates and
+     * srid.
+     *
+     * @param x    a value of x coordinate.
+     * @param y    a value of y coordinate.
+     * @param srid a value of srid.
+     */
+    public void setLocationGeometryAsPoint(final double x, final double y, final int srid) {
         final var buffer = ByteBuffer.allocate(Byte.BYTES + Integer.BYTES + Double.BYTES + Double.BYTES);
         buffer.order(ByteOrder.LITTLE_ENDIAN)
                 .put(_DomainTypes.Wkb.orderToEndian(buffer.order()))
                 .putInt(_DomainTypes.Wkb.Type.POINT.type())
-                .putDouble(xCoordinate)
-                .putDouble(yCoordinate);
+                .putDouble(x)
+                .putDouble(y);
         assert !buffer.hasRemaining();
         setLocationGeometry(
                 _DomainTypes.Geometry.of(
@@ -482,30 +502,15 @@ public class Address
         );
     }
 
-    public void setLocationGeometryAsPoint(final double xCoordinate, final double yCoordinate) {
-        setLocationGeometryAsPoint(xCoordinate, yCoordinate, 0);
-    }
-
     /**
-     * Applies coordinates(<em>latitude</em> and <em>longitude</em>), parsed from current value of
-     * {@link Address_#locationGeometry locationGeometry} attribute, to specified function, and returns the result.
+     * Replaces current value of {@link Address_#locationGeometry} attribute with a point of specified coordinates.
      *
-     * @param function the function to be applied with <em>latitude</em> and <em>longitude</em>.
-     * @param <R>      result type parameter
-     * @return the result of the {@code function}.
+     * @param x a value of x coordinate.
+     * @param y a value of y coordinate.
+     * @apiNote This method invokes {@link #setLocationGeometryAsPoint(double, double, int)} with {@code x}, {@code y},
+     * and {@code 0}.
      */
-    public <R> R applyLatitudeLongitude(final BiFunction<? super Double, ? super Double, ? extends R> function) {
-        Objects.requireNonNull(function, "function is null");
-        return applyLocationGeometryAsPoint((x, y) -> function.apply(y, x));
-    }
-
-    /**
-     * Replaces current value of {@link Address_#locationGeometry locationGeometry} attribute with specified values.
-     *
-     * @param latitude  a value of <em>latitude</em>.
-     * @param longitude a value of <em>longitude</em>.
-     */
-    public void setLatitudeLongitude(final double latitude, final double longitude) {
-        setLocationGeometryAsPoint(longitude, latitude);
+    public void setLocationGeometryAsPoint(final double x, final double y) {
+        setLocationGeometryAsPoint(x, y, 0);
     }
 }

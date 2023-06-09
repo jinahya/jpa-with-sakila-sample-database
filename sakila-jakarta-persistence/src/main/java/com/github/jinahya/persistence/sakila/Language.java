@@ -1,6 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.LocaleUtils2;
+import com.github.jinahya.persistence.sakila.util.LocaleUtils;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -189,7 +189,7 @@ public class Language
     public List<Locale> getLocalesForName() {
         return ofNullable(getName())
                 .filter(v -> !v.isBlank())
-                .map(LocaleUtils2::valuesOfDisplayLanguageInEnglish)
+                .map(LocaleUtils::valuesOfDisplayLanguageInEnglish)
                 .orElseGet(Collections::emptyList);
     }
 

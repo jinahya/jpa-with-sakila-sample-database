@@ -1,7 +1,6 @@
 package com.github.jinahya.persistence.sakila.service;
 
 import com.github.jinahya.persistence.sakila.Language;
-import com.github.jinahya.persistence.sakila.util.LocaleUtilsTest;
 import org.jboss.weld.junit5.ExplicitParamInjection;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -57,13 +57,14 @@ class LanguageService_IT
     @Nested
     class LocateByNameTest {
 
-        private static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return LocaleUtilsTest.getLocaleWithNonBlankDisplayLanguageStream();
+        private static Stream<Locale> localeWithNonBlankDisplayLanguageInEnglishStream() {
+            return Arrays.stream(Locale.getAvailableLocales())
+                    .filter(v -> !v.getDisplayLanguage(Locale.ENGLISH).isBlank());
         }
 
         @Disabled
         @ExplicitParamInjection
-        @MethodSource({"localeWithNonBlankDisplayLanguageStream"})
+        @MethodSource({"localeWithNonBlankDisplayLanguageInEnglishStream"})
         @ParameterizedTest
         void __(final Locale locale) {
             final var name = locale.getDisplayLanguage(Locale.ENGLISH);
@@ -82,13 +83,14 @@ class LanguageService_IT
     @Nested
     class LocateByLocaleTest {
 
-        private static Stream<Locale> localeWithNonBlankDisplayLanguageStream() {
-            return LocaleUtilsTest.getLocaleWithNonBlankDisplayLanguageStream();
+        private static Stream<Locale> localeWithNonBlankDisplayLanguageInEnglishStream() {
+            return Arrays.stream(Locale.getAvailableLocales())
+                    .filter(v -> !v.getDisplayLanguage(Locale.ENGLISH).isBlank());
         }
 
         @Disabled
         @ExplicitParamInjection
-        @MethodSource({"localeWithNonBlankDisplayLanguageStream"})
+        @MethodSource({"localeWithNonBlankDisplayLanguageInEnglishStream"})
         @ParameterizedTest
         void __(final Locale locale) {
             if (locale.getDisplayLanguage(Locale.ENGLISH).length() > Language.COLUMN_LENGTH_NAME) {

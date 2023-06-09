@@ -1,6 +1,62 @@
-# sakila-persistence
+# sakila-jakarta-persistence
 
-A persistence-unit for the [Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/).
+A Persistence Unit for the [Sakila Sample Database](https://dev.mysql.com/doc/sakila/en/).
+
+----
+
+## Docker
+
+Sakila DB 를 docker 에서 실행하다.
+
+### [docker build](https://docs.docker.com/engine/reference/commandline/build/)
+
+Build an image from the `Dockerfile`. You don't have to do this every time.
+
+```shell
+$ sh ./.docker.build.sh
+```
+
+### [docker run](https://docs.docker.com/engine/reference/commandline/run/)
+
+Create and run a new container, named `sakila`, from the image built.
+
+```shell
+$ sh ./.docker.run.sh
+```
+
+### [docker exec](https://docs.docker.com/engine/reference/commandline/exec/)
+
+Execute the `mysql` command to connect to the MySQL instance running inside the `sakila` container.
+
+```shell
+$ sh ./.docker.connect.sh
+```
+
+### [docker stop](https://docs.docker.com/engine/reference/commandline/stop/)
+
+Stops the `sakila` container.
+
+```shell
+$ sh ./.docker.stop.sh
+```
+
+----
+
+## How to test
+
+### Using EclipseLink JPA
+
+```commandline
+$ ./mvnw -Peclipselink clean test
+$ ./mvnw -Peclipselink,_failsafe clean verify
+```
+
+### Using Hibernate ORM
+
+```commandline
+$ ./mvnw -Phibernate clean test
+$ ./mvnw -Phibernate,-failsafe clean verify
+```
 
 ----
 
@@ -9,51 +65,13 @@ A persistence-unit for the [Sakila Sample Database](https://dev.mysql.com/doc/sa
 몇몇 클래스들의 javadoc 은 compile 시 생성된는 클래스들를 참조한다. 때문에 javadoc 를 생성할 때 `compile` phase 가 선행되어야 한다.
 
 ```shell
-$ mvn -Dlint=none compile javadoc:javadoc
+$ mvn -Ddoclint=none compile javadoc:javadoc
 ```
 
 혹은 미리 준비된 script 를 실행해도 된다.
 
 ```shell
 $ sh ./.mvn.javadoc.sh
-```
-
-----
-
-## Docker
-
-### How to run Sakila database with Docker
-
-#### [docker build](https://docs.docker.com/engine/reference/commandline/build/)
-
-Build an image from the `Dockerfile`. You don't have to do this every time.
-
-```shell
-$ sh ./.docker.build.sh
-```
-
-#### [docker run](https://docs.docker.com/engine/reference/commandline/run/)
-
-Create and run a new container, named `sakila`, from the image built.
-
-```shell
-$ sh ./.docker.run.sh
-```
-
-#### [docker exec](https://docs.docker.com/engine/reference/commandline/exec/)
-
-Execute the `mysql` command to connect to the MySQL instance running inside the `sakila` container.
-
-```shell
-$ sh ./.docker.connect.sh
-```
-
-#### [docker stop](https://docs.docker.com/engine/reference/commandline/stop/)
-
-Stops the `sakila` container.
-
-```shell
-$ sh ./.docker.stop.sh
 ```
 
 ----

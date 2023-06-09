@@ -1,7 +1,6 @@
 package com.github.jinahya.persistence.sakila;
 
 import com.github.jinahya.persistence.sakila.util.LocaleUtils;
-import com.github.jinahya.persistence.sakila.util.LocaleUtils2;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +20,7 @@ import java.util.Optional;
 
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
+import static java.util.Collections.emptyList;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -64,6 +64,12 @@ public class Country
      * {@value}.
      */
     public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
+
+    /**
+     * The name of the table column to which the {@link Country_#country country} attribute maps. The value is
+     * {@value}.
+     */
+    public static final String COLUMN_NAME_COUNTRY = "country";
 
     /**
      * Returns a new instance of specified {@link Country_#countryId countryId} attribute value.
@@ -181,32 +187,24 @@ public class Country
      */
     @NotNull
     @Basic(optional = false)
-    @Column(name = "country", nullable = false, length = 50)
+    @Column(name = "country", nullable = false, length = 50) // TODO: use COLUMN_NAME_COUNTRY for the name element
     private String country;
 
     /**
-     * Returns a locale whose {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to current value
-     * of {@link Country_#country} attribute.
+     * Returns locales which each {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to current
+     * value of {@link Country_#country} attribute.
      *
-     * @return a locale whose {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to current value
-     * of {@link Country_#country} attribute; {@code null} if current value of {@link Country_#country} attribute is
-     * {@code null} or no locale matched.
-     * @see LocaleUtils#valueOfDisplayCountryInEnglish(String)
+     * @return a list of locales which each {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to
+     * current value of {@link Country_#country} attribute; {@code empty} if current value of {@link Country_#country}
+     * attribute is {@code null} or no locale matched.
+     * @see LocaleUtils#valuesOfDisplayCountryInEnglish(String)
      */
-    @Deprecated(forRemoval = true)
-    @Transient
-    public Locale getCountryAsLocale() {
-        return Optional.ofNullable(getCountry())
-                .flatMap(v -> LocaleUtils2.valuesOfDisplayCountryInEnglish(v).stream().findFirst())
-                .orElse(null);
-    }
-
     @Transient
     public List<Locale> getLocalesForCountry() {
         return Optional.ofNullable(getCountry())
                 .filter(v -> !v.isBlank())
-                .map(LocaleUtils2::valuesOfDisplayCountryInEnglish)
-                .orElse(null);
+                .map(LocaleUtils::valuesOfDisplayCountryInEnglish)
+                .orElse(emptyList());
     }
 
     /**

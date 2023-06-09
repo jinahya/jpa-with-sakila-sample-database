@@ -6,20 +6,20 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class Country_Test
         extends _BaseEntityTest<Country, Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     Country_Test() {
         super(Country.class, Integer.class);
@@ -29,30 +29,24 @@ class Country_Test
     @Nested
     class GetLocalesForCountryTest {
 
-        @DisplayName("getCountry()null -> null")
+        @DisplayName("getCountry()null -> empty")
         @Test
-        void _Null_Null() {
-            // GIVEN
+        void _Empty_GetCountryNull() {
             final var instance = newEntitySpy();
-            // WHEN
             when(instance.getCountry()).thenReturn(null);
-            // THEN
-            assertThat(instance.getLocalesForCountry()).isNull();
+            assertThat(instance.getLocalesForCountry()).isEmpty();
         }
 
         @DisplayName("getCountry()!null -> !null")
         @MethodSource("java.util.Locale#getAvailableLocales")
         @ParameterizedTest
         void _NotNull_NotNull(final Locale locale) {
-            // GIVEN
             final var instance = newEntitySpy();
             final var displayLanguageInEnglish = locale.getDisplayLanguage(Locale.ENGLISH);
             if (displayLanguageInEnglish.isBlank()) {
                 return;
             }
-            // WHEN
             when(instance.getCountry()).thenReturn(displayLanguageInEnglish);
-            // THEN
             assertThat(instance.getLocalesForCountry())
                     .satisfiesAnyOf(
                             l -> {
@@ -70,26 +64,20 @@ class Country_Test
     @Nested
     class SetCountryAsLocaleTest {
 
-        @DisplayName("setCountryAsLocale(null) -> setCountry(null)")
+        @DisplayName("(null) -> setCountry(null)")
         @Test
         void _Null_Null() {
-            // GIVEN
             final var instance = newEntitySpy();
-            // WHEN
             instance.setCountryAsLocale(null);
-            // THEN
             verify(instance, times(1)).setCountry(null);
         }
 
-        @DisplayName("setCountryAsLocale(country) -> setCountry(locale.getDisplayLanguage(ENGLISH)")
+        @DisplayName("(!null) -> setCountry(.displayLanguage(ENGLISH)")
         @MethodSource("java.util.Locale#getAvailableLocales")
         @ParameterizedTest
         void _NotNull_NotNull(final Locale locale) {
-            // GIVEN
             final var instance = newEntitySpy();
-            // WHEN
             instance.setCountryAsLocale(locale);
-            // THEN
             verify(instance, times(1)).setCountry(locale.getDisplayCountry(Locale.ENGLISH));
         }
     }

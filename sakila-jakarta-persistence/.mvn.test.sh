@@ -1,3 +1,2 @@
 #!/bin/sh
-mvn -Peclipselink clean test
-mvn -Phibernate clean test
+mvn clean test

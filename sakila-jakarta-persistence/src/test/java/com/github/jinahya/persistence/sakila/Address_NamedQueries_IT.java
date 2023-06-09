@@ -229,10 +229,9 @@ class Address_NamedQueries_IT
                 ).getResultList()
         );
         list.forEach(a -> {
-            a.applyLatitudeLongitude((latitude, longitude) -> {
+            a.applyLocationGeometryAsPoint((x, y) -> {
                 log.debug("{}, {}; google-maps-location: {}, {}",
-                          a.getCity().getCity(), a.getCity().getCountry().getCountry(),
-                          latitude, longitude
+                          a.getCity().getCity(), a.getCity().getCountry().getCountry(), y, x
                 );
                 return null;
             });
