@@ -41,7 +41,7 @@ import static java.util.Optional.ofNullable;
  *}</td>
  * </tr>
  * </tbody>
- * </table> *
+ * </table>
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see Store

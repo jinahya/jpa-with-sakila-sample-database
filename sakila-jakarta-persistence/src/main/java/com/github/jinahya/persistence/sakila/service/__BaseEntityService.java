@@ -118,11 +118,11 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
         });
     }
 
-    @NotNull <V> List<@Valid @NotNull ENTITY> findAllBy(
+    <A> @NotNull List<@Valid @NotNull ENTITY> findAllBy(
             @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends ID>> idExpressionMapper,
             @NotNull final ID idValueMinExclusive, @Positive final int maxResults,
-            @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends V>> attributeExpressionMapper,
-            @NotNull final V attributeValue) {
+            @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends A>> attributeExpressionMapper,
+            @NotNull final A attributeValue) {
         return applyEntityManager(em -> {
             final var builder = em.getCriteriaBuilder();
             final var query = builder.createQuery(entityClass);
@@ -131,7 +131,7 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
             final var idExpression = idExpressionMapper.apply(root);
             final var attributeExpression = attributeExpressionMapper.apply(root);
             query.where(builder.and(
-                    builder.equal(attributeExpression, attributeValue),           // WHERE e.ATTRIBUTE = :attributeValue
+                    builder.equal(attributeExpression, attributeValue),                   // WHERE e.A = :attributeValue
                     builder.greaterThan(idExpression, idValueMinExclusive)            // AND e.ID > :idValueMinExclusive
             ));
             query.orderBy(builder.asc(idExpression));                                               // ORDER BY e.ID ASC

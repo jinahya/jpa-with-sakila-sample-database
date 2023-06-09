@@ -39,7 +39,7 @@ class ActorRepositoryService_IT
 
         @Test
         void __() {
-            final var size = ThreadLocalRandom.current().nextInt(8, 16);
+            final var size = ThreadLocalRandom.current().nextInt(16, 32);
             applyServiceInstance(s -> {
                 s.testEachPage(
                         size,

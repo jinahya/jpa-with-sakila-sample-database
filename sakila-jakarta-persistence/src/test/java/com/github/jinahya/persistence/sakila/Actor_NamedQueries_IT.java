@@ -39,6 +39,7 @@ class Actor_NamedQueries_IT
     @Nested
     class FindByActorIdTest {
 
+        @DisplayName("(0)NoResultException")
         @Test
         void _NoResultException_0() {
             assertThatThrownBy(
@@ -70,6 +71,28 @@ class Actor_NamedQueries_IT
     @Nested
     class FindAllTest {
 
+        @DisplayName("first page")
+        @Test
+        void __firstPage() {
+            final var actorIdMinExclusive = 0;
+            final var maxResults = current().nextInt(32, 64);
+            final var list = applyEntityManager(
+                    em -> em.createNamedQuery(QUERY_FIND_ALL, Actor.class)
+                            .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                            .setMaxResults(maxResults)
+                            .getResultList()
+            );
+            assertThat(list)
+                    .isNotNull()
+                    .isNotEmpty()
+                    .doesNotContainNull()
+                    .hasSizeLessThanOrEqualTo(maxResults)
+                    .extracting(Actor::getActorId)
+                    .allMatch(v -> v > actorIdMinExclusive)
+                    .isSorted();
+        }
+
+        @DisplayName("all pages")
         @Test
         void __() {
             final var maxResults = current().nextInt(32, 64);
@@ -86,7 +109,9 @@ class Actor_NamedQueries_IT
                         // not asserting the emptiness; the last page may be empty.
                         .doesNotContainNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
-                        .isSortedAccordingTo(comparing(Actor::getActorId));
+                        .extracting(Actor::getActorId)
+                        .allMatch(v -> v > actorIdMinExclusive)
+                        .isSorted();
                 if (list.isEmpty()) {
                     break;
                 }

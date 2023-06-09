@@ -87,7 +87,7 @@ public final class ActorConstants {
 
     /**
      * The name of the query which selects all entities which each {@link Actor_#actorId actorId} attribute is greater
-     * than specific value, ordered by {@link Actor_#actorId actorId} attribute in ascending order. The value is
+     * than a specific value, ordered by {@link Actor_#actorId actorId} attribute in ascending order. The value is
      * {@value}.
      *
      * @see Actor_#actorId
