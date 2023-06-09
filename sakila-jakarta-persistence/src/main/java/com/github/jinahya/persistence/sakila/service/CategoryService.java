@@ -10,15 +10,12 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.WeakHashMap;
 
 import static com.github.jinahya.persistence.sakila.CategoryConstants.PARAMETER_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.CategoryConstants.PARAMETER_CATEGORY_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.CategoryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.CategoryConstants.QUERY_FIND_BY_CATEGORY_ID;
-import static java.util.Collections.synchronizedMap;
 import static java.util.concurrent.ThreadLocalRandom.current;
 
 public class CategoryService
@@ -115,12 +112,16 @@ public class CategoryService
         return findAllByName(0, name, maxResults);
     }
 
-    private static final Map<String, Category> LOCATED_CATEGORIES = synchronizedMap(new WeakHashMap<>());
-
+    /**
+     * Locate the first, or a newly persisted, entity whose {@link Category_#name name} attribute matches to specified
+     * values.
+     *
+     * @param name the value of {@link Category_#name name} attribute to match.
+     * @return the entity for {@code name}.
+     */
     @Valid
     @NotNull
     public Category locateByName(final @NotBlank String name) {
-        // TODO: cache using LOCATED_CATEGORIES
         return findAllByName(name, 1)
                 .stream()
                 .findFirst()
