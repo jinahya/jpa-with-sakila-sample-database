@@ -72,6 +72,11 @@ public class Country
     public static final String COLUMN_NAME_COUNTRY = "country";
 
     /**
+     * The length of the {@link #COLUMN_NAME_COUNTRY} column. The value is {@value}.
+     */
+    public static final int COLUMN_LENGTH_COUNTRY = 50;
+
+    /**
      * Returns a new instance of specified {@link Country_#countryId countryId} attribute value.
      *
      * @param countryId the {@link Country_#countryId countryId} attribute value.
@@ -187,7 +192,9 @@ public class Country
      */
     @NotNull
     @Basic(optional = false)
-    @Column(name = "country", nullable = false, length = 50) // TODO: use COLUMN_NAME_COUNTRY for the name element
+    // TODO: use COLUMN_NAME_COUNTRY for the name element
+    // TODO: use COLUMN_LENGTH_COUNTRY for the length element
+    @Column(name = "country", nullable = false, length = 50)
     private String country;
 
     /**
