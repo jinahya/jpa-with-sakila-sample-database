@@ -37,6 +37,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.github.jinahya.persistence.sakila.FilmConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.FilmConstants.QUERY_FIND_ALL_BY_LANGUAGE;
+import static com.github.jinahya.persistence.sakila.FilmConstants.QUERY_FIND_ALL_BY_LANGUAGE_ID;
+import static com.github.jinahya.persistence.sakila.FilmConstants.QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE;
+import static com.github.jinahya.persistence.sakila.FilmConstants.QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE_ID;
+import static com.github.jinahya.persistence.sakila.FilmConstants.QUERY_FIND_ALL_BY_TITLE;
+import static com.github.jinahya.persistence.sakila.FilmConstants.QUERY_FIND_ALL_BY_TITLE_LIKE;
+import static com.github.jinahya.persistence.sakila.FilmConstants.QUERY_FIND_BY_FILM_ID;
+
 /**
  * An abstract mapped super class for mapping {@value Film#TABLE_NAME} table.
  * <blockquote>
@@ -50,16 +59,83 @@ import java.util.stream.Collectors;
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">5.1.7 The film Table</a>
  */
-@NamedQuery(name = "Film_findAllByOriginalLanguageId",
-            query = "SELECT f FROM Film AS f WHERE f.originalLanguageId = :originLanguageId")
-@NamedQuery(name = "Film_findAllByLanguageId",
-            query = "SELECT f FROM Film AS f WHERE f.languageId = :languageId")
-@NamedQuery(name = "Film_findAllByTitleLike",
-            query = "SELECT f FROM Film AS f WHERE f.title LIKE :titlePattern")
-@NamedQuery(name = "Film_findAllByTitle",
-            query = "SELECT f FROM Film AS f WHERE f.title = :title")
-@NamedQuery(name = "Film_findByFilmId",
-            query = "SELECT f FROM Film AS f WHERE f.filmId = :filmId")
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_TITLE_LIKE,
+        query = """
+                SELECT e
+                FROM Film AS e
+                WHERE e.title LIKE :titlePattern
+                      AND e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC
+                """
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_TITLE,
+        query = """
+                SELECT e
+                FROM Film AS e
+                WHERE e.title = :title
+                      AND e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC
+                """
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE,
+        query = """
+                SELECT e
+                FROM Film AS e
+                WHERE e.originalLanguage = :originalLanguage
+                      AND e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC
+                """
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE_ID,
+        query = """
+                SELECT e
+                FROM Film AS e
+                WHERE e.originalLanguageId = :originalLanguageId
+                      AND e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC
+                """
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_LANGUAGE,
+        query = """
+                SELECT e
+                FROM Film AS e
+                WHERE e.language = :language
+                      AND e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC
+                """
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_LANGUAGE_ID,
+        query = """
+                SELECT e
+                FROM Film AS e
+                WHERE e.languageId = :languageId
+                      AND e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC
+                """
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM Film AS e
+                WHERE e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC
+                """
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_FILM_ID,
+        query = """
+                SELECT e
+                FROM Film AS e
+                WHERE e.filmId = :filmId
+                """
+)
 @Entity
 @Table(name = Film.TABLE_NAME)
 public class Film

@@ -3,39 +3,64 @@ desc film
 ;
 
 -- count
+EXPLAIN
 SELECT COUNT(1)
 FROM film
 ;
 
 -- select
+EXPLAIN
 SELECT *
 FROM film
+ORDER BY film_id ASC
 ;
 
--- films with most actors
-SELECT f.film_id, COUNT(fa.actor_id) AS actors, f.title
+-- most popular languages
+SELECT l.language_id,
+       l.name,
+       COUNT(1) AS count
 FROM film AS f
-         JOIN film_actor AS fa ON f.film_id = fa.film_id
-GROUP BY fa.film_id
-ORDER BY actors DESC
-LIMIT 5
+         JOIN language AS l ON f.language_id = l.language_id
+GROUP BY l.language_id
+ORDER BY count DESC
+LIMIT 10
 ;
 
--- films of Sir Alec Guinness CH CBE
-EXPLAIN
-SELECT f.*
+-- most popular original languages
+SELECT l.language_id,
+       l.name   AS language,
+       COUNT(1) AS count
 FROM film AS f
-         JOIN film_actor AS fa ON f.film_id = fa.film_id
-         JOIN actor AS a ON a.actor_id = fa.actor_id
-WHERE a.last_name = 'Guinness'
-  AND a.first_name = 'Alec'
-ORDER BY f.release_year ASC
+         JOIN language AS l ON f.original_language_id = l.language_id
+GROUP BY l.language_id
+ORDER BY count DESC
+LIMIT 10
 ;
+
+-- duplicate titles?
+SELECT title, COUNT(1) AS count
+FROM film
+GROUP BY title
+HAVING count > 1
+ORDER BY count
+;
+
+-- most occurred title prefix
+-- https://dev.mysql.com/doc/refman/8.0/en/string-functions.html#function_substring
+SET @len = 1;
 EXPLAIN
-SELECT f.*
-FROM film AS f
-         JOIN film_actor AS fa ON f.film_id = fa.film_id
-         JOIN (SELECT * FROM actor WHERE last_name = 'Guinness' AND first_name = 'Alec') AS a
-              ON fa.actor_id = a.actor_id
-ORDER BY f.release_year ASC
+SELECT SUBSTRING(title, 1, @len) AS prefix,
+       count(1)                  AS count,
+       GROUP_CONCAT(title)       AS titles
+FROM film
+GROUP BY SUBSTRING(title, 1, @len)
+ORDER BY count DESC
+;
+
+-- release_year
+EXPLAIN
+SELECT release_year, COUNT(1) AS count
+FROM film
+GROUP BY release_year
+ORDER BY count DESC
 ;

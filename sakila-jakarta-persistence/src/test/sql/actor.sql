@@ -33,18 +33,7 @@ ORDER BY count DESC, last_name ASC
 LIMIT 5
 ;
 
--- films of Sir Alec Guinness CH CBE
-EXPLAIN
-SELECT f.*
-FROM actor AS a
-         JOIN film_actor AS fa ON a.actor_id = fa.actor_id
-         JOIN film AS f ON f.film_id = fa.film_id
-WHERE a.last_name = 'Guinness'
-  AND a.first_name = 'Alec'
-ORDER BY f.release_year ASC
-;
-
--- Actor_findByActorId
+-- Actor_findByActorId (200)
 EXPLAIN
 SELECT *
 FROM actor
@@ -61,9 +50,11 @@ LIMIT :offset,:limit
 ;
 
 -- Actor_findAllByLastName
+EXPLAIN
 SELECT *
 FROM actor
 WHERE last_name = :lastName
   AND actor_id > :actorIdMinExclusive
+ORDER BY actor_id ASC
 LIMIT :offset,:limit
 ;

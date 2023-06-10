@@ -74,6 +74,12 @@ public class Language
      */
     public static final int COLUMN_LENGTH_NAME = 20;
 
+    public static Language ofLanguageId(final int languageId) {
+        final var instance = new Language();
+        instance.languageId = languageId;
+        return instance;
+    }
+
     /**
      * Creates a new instance with specified value of {@link Language_#name name} attribute.
      *
