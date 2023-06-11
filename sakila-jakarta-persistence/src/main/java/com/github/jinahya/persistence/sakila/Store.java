@@ -38,7 +38,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
  * <p>
- * <blockquote>
+ * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-store.html">
  * The {@value #TABLE_NAME} table lists all stores in the system. All inventory is assigned to specific stores, and
  * staff and customers are assigned a “home store”.<br/>The {@value TABLE_NAME} table refers to the
  * {@value Staff#TABLE_NAME} and {@value Address#TABLE_NAME} tables using foreign keys and is referred to by the
@@ -63,7 +63,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
                 @NamedSubgraph(
                         name = StaffConstants.GRAPH_ADDRESS,
                         attributeNodes = {
-                                @NamedAttributeNode(StaffConstants.GRAPH_NODE_ADDRESS)
+                                @NamedAttributeNode(StaffConstants.ATTRIBUTE_NODE_ADDRESS)
                         }
                 )
         }
@@ -211,9 +211,10 @@ public class Store
      * Replaces current value of {@link Store_#storeId storeId} attribute with specified value.
      *
      * @param storeId new value for the {@link Store_#storeId storeId} attribute.
-     * @deprecated for removal
+     * @deprecated for removal; The {@value #COLUMN_NAME_STORE_ID} column is an auto-increment column.
      */
-    @Deprecated
+    // TODO: remove!
+    @Deprecated(forRemoval = true)
     private void setStoreId(final Integer storeId) {
         this.storeId = storeId;
     }
@@ -341,7 +342,7 @@ public class Store
      * Replaces current value of {@link Store_#address address} attribute with specified value.
      *
      * @param address new value for the {@link Store_#address address} attribute.
-     * @apiNote This method also updates {@link Store_#addressId addressId} attribute with {@code address?.addressId}.
+     * @implNote This method also updates {@link Store_#addressId addressId} attribute with {@code address?.addressId}.
      */
     public void setAddress(final Address address) {
         this.address = address;

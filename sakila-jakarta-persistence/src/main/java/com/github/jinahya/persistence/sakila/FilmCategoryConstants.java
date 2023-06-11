@@ -16,9 +16,8 @@ public class FilmCategoryConstants {
      * The name of the query selects the entity whose {@link FilmCategory_#id id} attribute matches specified value.
      * <p>
      * The JPQL and an equivalent SQL are as follows.
-     * <table>
-     * <caption>The JPQL and an equivalent SQL</caption>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <table summery="Named queries, JPQLs, and SQLs">
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -53,7 +52,7 @@ public class FilmCategoryConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -92,7 +91,7 @@ public class FilmCategoryConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -129,7 +128,7 @@ public class FilmCategoryConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -168,7 +167,7 @@ public class FilmCategoryConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -210,7 +209,7 @@ public class FilmCategoryConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":

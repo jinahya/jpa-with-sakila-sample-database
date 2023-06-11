@@ -19,7 +19,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 /**
  * .
@@ -38,13 +39,37 @@ import java.util.Optional;
 public class Customer
         extends _BaseEntity<Integer> {
 
+    /**
+     * The name of the database table to which this class maps. The value is {@value}.
+     */
     public static final String TABLE_NAME = "customer";
 
+    /**
+     * The name of the table column to which {@link Customer_#customerId customerId} attribute maps. The value is
+     * {@value}.
+     */
     public static final String COLUMN_NAME_CUSTOMER_ID = "customer_id";
 
+    /**
+     * The name of the table column to which {@link Customer_#storeId storeId} attribute maps. The value is {@value}.
+     */
     public static final String COLUMN_NAME_STORE_ID = Store.COLUMN_NAME_STORE_ID;
 
+    /**
+     * The name of the table column to which {@link Customer_#address address} attribute maps. The value is {@value}.
+     */
     public static final String COLUMN_NAME_ADDRESS_ID = Address.COLUMN_NAME_ADDRESS_ID;
+
+    /**
+     * The name of the table column to which {@link Customer_#active active} attribute maps. The value is {@value}.
+     */
+    public static final String COLUMN_NAME_ACTIVE = "active";
+
+    /**
+     * The name of the table column to which {@link Customer_#createDate createDate} attribute maps. The value is
+     * {@value}.
+     */
+    public static final String COLUMN_NAME_CREATE_DATE = "create_date";
 
     /**
      * Creates a new instance.
@@ -84,11 +109,22 @@ public class Customer
         return getCustomerId();
     }
 
+    /**
+     * Returns current value of {@link Customer_#customerId customerId} attribute.
+     *
+     * @return current value of the {@link Customer_#customerId customerId} attribute.
+     */
     public Integer getCustomerId() {
         return customerId;
     }
 
-    @Deprecated
+    /**
+     * Replaces current value of {@link Customer_#customerId customerId} attribute with specified value.
+     *
+     * @param customerId new value for the {@link Customer_#customerId customerId} attribute.
+     * @deprecated for removal; the {@link Customer_#customerId customerId} is an auto-increment column.
+     */
+    @Deprecated(forRemoval = true)
     private void setCustomerId(final Integer customerId) {
         this.customerId = customerId;
     }
@@ -111,51 +147,113 @@ public class Customer
         this.storeId = storeId;
     }
 
+    /**
+     * Returns current value of {@link Customer_#firstName firstName} attribute.
+     *
+     * @return current value of the {@link Customer_#firstName firstName} attribute.
+     */
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    /**
+     * Replaces current value of {@link Customer_#firstName firstName} attribute with specified value.
+     *
+     * @param firstName new value for the {@link Customer_#firstName firstName} attribute
+     */
+    public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
+    /**
+     * Returns current value of {@link Customer_#lastName lastName} attribute.
+     *
+     * @return current value of the {@link Customer_#lastName lastName} attribute.
+     */
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    /**
+     * Replaces current value of {@link Customer_#lastName lastName} attribute with specified value.
+     *
+     * @param lastName new value for the {@link Customer_#lastName lastName} attribute
+     */
+    public void setLastName(final String lastName) {
         this.lastName = lastName;
     }
 
+    /**
+     * Returns current value of {@link Customer_#email email} attribute.
+     *
+     * @return current value of the {@link Customer_#email email} attribute.
+     */
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    /**
+     * Replaces current value of {@link Customer_#email email} attribute with specified value.
+     *
+     * @param email new value for the {@link Customer_#email email} attribute
+     */
+    public void setEmail(final String email) {
         this.email = email;
     }
 
+    /**
+     * Returns current value of {@link Customer_#addressId addressId} attribute.
+     *
+     * @return current value of the {@link Customer_#addressId addressId} attribute.
+     */
     public Integer getAddressId() {
         return addressId;
     }
 
-    public void setAddressId(Integer addressId) {
+    /**
+     * Replaces current value of {@link Customer_#addressId addressId} attribute with specified value.
+     *
+     * @param addressId new value for the {@link Customer_#addressId addressId} attribute
+     */
+    void setAddressId(final Integer addressId) {
         this.addressId = addressId;
     }
 
+    /**
+     * Returns current value of {@link Customer_#active active} attribute.
+     *
+     * @return current value of the {@link Customer_#active active} attribute.
+     */
     public Integer getActive() {
         return active;
     }
 
-    public void setActive(Integer active) {
+    /**
+     * Replaces current value of {@link Customer_#active active} attribute with specified value.
+     *
+     * @param active new value for the {@link Customer_#active active} attribute
+     */
+    void setActive(final Integer active) {
         this.active = active;
     }
 
+    /**
+     * Returns current value of {@link Customer_#createDate createDate} attribute.
+     *
+     * @return current value of the {@link Customer_#createDate createDate} attribute.
+     */
     public LocalDateTime getCreateDate() {
         return createDate;
     }
 
-    @Deprecated
+    /**
+     * Replaces current value of {@link Customer_#createDate createdDate} attribute with specified value.
+     *
+     * @param createDate new value for the {@link Customer_#createDate createdDate} attribute
+     * @deprecated for removal; the {@value #COLUMN_NAME_CREATE_DATE} column is set while being inserted; see
+     * {@code customer_create_date} trigger.
+     */
+    @Deprecated(forRemoval = true)
     private void setCreateDate(final LocalDateTime createDate) {
         this.createDate = createDate;
     }
@@ -239,7 +337,7 @@ public class Customer
     @Min(Byte.MIN_VALUE)
     @NotNull
     @Basic(optional = false)
-    @Column(name = "active", nullable = false)
+    @Column(name = "active", nullable = false) // TODO: Use COLUMN_NAME_ACTIVE for the name element!
     private Integer active;
 
     /**
@@ -269,7 +367,7 @@ public class Customer
     public void setStore(final Store store) {
         this.store = store;
         setStoreId(
-                Optional.ofNullable(this.store)
+                ofNullable(this.store)
                         .map(Store::getStoreId)
                         .orElse(null)
         );
@@ -278,21 +376,6 @@ public class Customer
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false, insertable = false, updatable = false)
     private Store store;
-
-    @Transient
-    public Boolean getActiveAsBoolean() {
-        return Optional.ofNullable(getActive())
-                .map(_DomainConverters.BooleanConverter::intToBoolean)
-                .orElse(null);
-    }
-
-    public void setActiveAsBoolean(final Boolean activeAsBoolean) {
-        setActive(
-                Optional.ofNullable(activeAsBoolean)
-                        .map(_DomainConverters.BooleanConverter::booleanToInt)
-                        .orElse(null)
-        );
-    }
 
     /**
      * Returns current value of {@link Customer_#address address} attribute.
@@ -307,11 +390,12 @@ public class Customer
      * Replaces current value of {@link Customer_#address address} attribute with specified value.
      *
      * @param address new value of the {@link Customer_#address address} attribute.
+     * @apiNote This method also updates {@link Customer_#addressId} attribute with {@code address?.addressId}.
      */
     public void setAddress(final Address address) {
         this.address = address;
         setAddressId(
-                Optional.ofNullable(this.address)
+                ofNullable(this.address)
                         .map(Address::getAddressId)
                         .orElse(null)
         );
@@ -320,4 +404,53 @@ public class Customer
     @OneToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_ADDRESS_ID, nullable = false, insertable = false, updatable = false)
     private Address address;
+
+    /**
+     * Returns current value of {@link Customer_#active active} attribute as a boolean value.
+     *
+     * @return a boolean value represents current value of the {@link Customer_#active active} attribute.
+     */
+    @Transient
+    public Boolean getActiveAsBoolean() {
+        return ofNullable(getActive())
+                .map(_DomainConverters.BooleanConverter::intToBoolean)
+                .orElse(null);
+    }
+
+    /**
+     * Replaces current value of {@link Customer_#active active} attribute with a value converted from specified boolean
+     * value.
+     *
+     * @param activeAsBoolean the boolean value for the {@link Customer_#active active} attribute; {@link Boolean#FALSE}
+     *                        for {@code 0}, {@link Boolean#TRUE} for {@code 1}.
+     */
+    public void setActiveAsBoolean(final Boolean activeAsBoolean) {
+        setActive(
+                ofNullable(activeAsBoolean)
+                        .map(_DomainConverters.BooleanConverter::booleanToInt)
+                        .orElse(null)
+        );
+    }
+
+    /**
+     * Activates this customer, and returns this customer.
+     *
+     * @return this customer.
+     * @implNote This method invokes {@link #setActiveAsBoolean(Boolean)} method with {@link Boolean#TRUE}.
+     */
+    public Customer activate() {
+        setActiveAsBoolean(Boolean.TRUE);
+        return this;
+    }
+
+    /**
+     * Deactivates this customer, and returns this customer.
+     *
+     * @return this customer.
+     * @implNote This method invokes {@link #setActiveAsBoolean(Boolean)} method with {@link Boolean#FALSE}.
+     */
+    public Customer deactivate() {
+        setActiveAsBoolean(Boolean.FALSE);
+        return this;
+    }
 }

@@ -18,6 +18,16 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.Optional;
 
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_FILM;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_STORE;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_BY_INVENTORY_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID;
+
 /**
  * An entity class for mapping {@value Inventory#TABLE_NAME} table.
  * <p>
@@ -32,68 +42,84 @@ import java.util.Optional;
  * Table</a>
  * @see InventoryConstants
  */
-@NamedQuery(name = InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE,
-            query = """
-                    SELECT DISTINCT e.film
-                    FROM Inventory AS e
-                    WHERE e.store = :store
-                          AND e.filmId > :filmIdMinExclusive
-                    ORDER BY e.filmId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID,
-            query = """
-                    SELECT DISTINCT e.film
-                    FROM Inventory AS e
-                    WHERE e.storeId = :storeId
-                          AND e.filmId > :filmIdMinExclusive
-                    ORDER BY e.filmId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_STORE,
-            query = """
-                    SELECT e
-                    FROM Inventory AS e
-                    WHERE e.store = :store
-                          AND e.inventoryId > :inventoryIdMinExclusive
-                    ORDER BY e.inventoryId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID,
-            query = """
-                    SELECT e
-                    FROM Inventory AS e
-                    WHERE e.storeId = :storeId
-                          AND e.inventoryId > :inventoryIdMinExclusive
-                    ORDER BY e.inventoryId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_FILM,
+@NamedQuery(
+        name = QUERY_FIND_DISTINCT_FILMS_BY_STORE,
+        query = """
+                SELECT DISTINCT e.film
+                FROM Inventory AS e
+                WHERE e.store = :store
+                      AND e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID,
+        query = """
+                SELECT DISTINCT e.film
+                FROM Inventory AS e
+                WHERE e.storeId = :storeId
+                      AND e.filmId > :filmIdMinExclusive
+                ORDER BY e.filmId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID,
+        query = """
+                SELECT e
+                FROM Inventory AS e
+                WHERE e.storeId = :storeId
+                      AND e.filmId = :filmId
+                      AND e.inventoryId > :inventoryIdMinExclusive
+                ORDER BY e.inventoryId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_STORE,
+        query = """
+                SELECT e
+                FROM Inventory AS e
+                WHERE e.store = :store
+                      AND e.inventoryId > :inventoryIdMinExclusive
+                ORDER BY e.inventoryId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_STORE_ID,
+        query = """
+                SELECT e
+                FROM Inventory AS e
+                WHERE e.storeId = :storeId
+                      AND e.inventoryId > :inventoryIdMinExclusive
+                ORDER BY e.inventoryId ASC"""
+)
+@NamedQuery(name = QUERY_FIND_ALL_BY_FILM,
             query = """
                     SELECT e
                     FROM Inventory AS e
                     WHERE e.film = :film
                           AND e.inventoryId > :inventoryIdMinExclusive
-                    ORDER BY e.inventoryId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID,
-            query = """
-                    SELECT e
-                    FROM Inventory AS e
-                    WHERE e.filmId = :filmId
-                          AND e.inventoryId > :inventoryIdMinExclusive
-                    ORDER BY e.inventoryId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID,
-            query = """
-                    SELECT e
-                    FROM Inventory AS e
-                    WHERE e.storeId = :storeId
-                          AND e.filmId = :filmId
-                          AND e.inventoryId > :inventoryIdMinExclusive
-                    ORDER BY e.inventoryId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL_INVENTORY_ID_GREATER_THAN,
-            query = """
-                    SELECT e
-                    FROM Inventory AS e
-                    WHERE e.inventoryId > :inventoryIdMinExclusive
-                    ORDER BY e.inventoryId ASC""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM Inventory AS e""")
-@NamedQuery(name = InventoryConstants.QUERY_FIND_BY_INVENTORY_ID,
-            query = "SELECT e FROM Inventory AS e WHERE e.inventoryId = :inventoryId")
+                    ORDER BY e.inventoryId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_FILM_ID,
+        query = """
+                SELECT e
+                FROM Inventory AS e
+                WHERE e.filmId = :filmId
+                      AND e.inventoryId > :inventoryIdMinExclusive
+                ORDER BY e.inventoryId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM Inventory AS e
+                WHERE e.inventoryId > :inventoryIdMinExclusive
+                ORDER BY e.inventoryId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_INVENTORY_ID,
+        query = """
+                SELECT e
+                FROM Inventory AS e
+                WHERE e.inventoryId = :inventoryId"""
+)
 @Entity
 @Table(name = Inventory.TABLE_NAME,
        indexes = {
@@ -235,7 +261,7 @@ public class Inventory
      *
      * @param film new value for the {@link Inventory_#film film} attribute.
      * @apiNote This method also replaces {@link Inventory#filmId filmId} attribute with {@code film?.filmId}.
-     * @see Film#ofFilmId(Integer)
+     * @see Film#ofFilmId(int)
      */
     public void setFilm(final Film film) {
         this.film = film;
@@ -247,7 +273,7 @@ public class Inventory
     }
 
     /**
-     * 이 인벤토리 항목의 영화.
+     * 이 재고(Inventory) 항목의 영화.
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
@@ -267,7 +293,7 @@ public class Inventory
      *
      * @param store new value for the {@link Inventory_#store store} attribute.
      * @apiNote This method also replaces {@link Inventory#storeId storeId} attribute with {@code store?.storeId}.
-     * @see Store#ofStoreId(Integer)
+     * @see Store#ofStoreId(int)
      */
     public void setStore(final Store store) {
         this.store = store;
@@ -279,7 +305,7 @@ public class Inventory
     }
 
     /**
-     * 이 인벤토리 항목의 점포.
+     * 이 재고(Inventory) 항목 점포(Store).
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false, insertable = false, updatable = false)

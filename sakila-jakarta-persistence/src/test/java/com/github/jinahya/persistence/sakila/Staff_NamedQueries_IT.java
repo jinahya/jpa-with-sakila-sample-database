@@ -13,11 +13,11 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.persistence.sakila.StaffConstants.PARAMETER_STAFF_ID;
+import static com.github.jinahya.persistence.sakila.StaffConstants.PARAMETER_STAFF_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_ALL_BY_CITY;
 import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_BY_STAFF_ID;
-import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_PARAM_STAFF_ID;
-import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_PARAM_STAFF_ID_MIN_EXCLUSIVE;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +43,7 @@ class Staff_NamedQueries_IT
             assertThatThrownBy(
                     () -> applyEntityManager(
                             em -> em.createNamedQuery(QUERY_FIND_BY_STAFF_ID, Staff.class)
-                                    .setParameter(QUERY_PARAM_STAFF_ID, staffId)
+                                    .setParameter(PARAMETER_STAFF_ID, staffId)
                                     .getSingleResult() // NoResultException
                     )
             ).isInstanceOf(NoResultException.class);
@@ -55,7 +55,7 @@ class Staff_NamedQueries_IT
             final var staffId = 1;
             final var found = applyEntityManager(
                     em -> em.createNamedQuery(QUERY_FIND_BY_STAFF_ID, Staff.class)
-                            .setParameter(QUERY_PARAM_STAFF_ID, staffId)
+                            .setParameter(PARAMETER_STAFF_ID, staffId)
                             .getSingleResult() // NoResultException
             );
             assertThat(found)
@@ -76,7 +76,7 @@ class Staff_NamedQueries_IT
                 final var staffIdMinExclusive = i.get();
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL, Staff.class)
-                                .setParameter(QUERY_PARAM_STAFF_ID_MIN_EXCLUSIVE, staffIdMinExclusive)
+                                .setParameter(PARAMETER_STAFF_ID_MIN_EXCLUSIVE, staffIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -106,8 +106,8 @@ class Staff_NamedQueries_IT
                 final var staffIdMinExclusive = i.get();
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL_BY_CITY, Staff.class)
-                                .setParameter(StaffConstants.QUERY_PARAM_CITY, city)
-                                .setParameter(QUERY_PARAM_STAFF_ID_MIN_EXCLUSIVE, staffIdMinExclusive)
+                                .setParameter(StaffConstants.PARAMETER_CITY, city)
+                                .setParameter(PARAMETER_STAFF_ID_MIN_EXCLUSIVE, staffIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

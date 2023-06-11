@@ -4,17 +4,64 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static com.github.jinahya.persistence.sakila.__ActivatableTestUtils.getActive_DoesNotThrow_;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.intThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class Customer_Test
-        extends _BaseEntityTest<Customer, Integer> {
+/**
+ * An abstract class for testing entities implement {@link __Activatable} interface.
+ *
+ * @param <ENTITY> entity type parameter
+ */
+abstract class __ActivatableEntityTest<
+        ENTITY extends __BaseEntity<?> & __Activatable<ENTITY>>
+        extends ____BaseEntityTestBase<ENTITY> {
 
-    Customer_Test() {
-        super(Customer.class, Integer.class);
+    __ActivatableEntityTest(final Class<ENTITY> entityClass) {
+        super(entityClass);
+    }
+
+    @DisplayName("getActive()Integer")
+    @Nested
+    class GetActiveTest {
+
+        @DisplayName("() does not throw")
+        @Test
+        void _DoesNotThrow_() {
+            getActive_DoesNotThrow_(__ActivatableEntityTest.this::newEntityInstance);
+        }
+    }
+
+    @DisplayName("setActive(Integer)")
+    @Nested
+    class setActiveTest {
+
+        @DisplayName("(null) does not throw")
+        @Test
+        void _DoesNotThrow_Null() {
+            final var instance = newEntityInstance();
+            assertThatCode(
+                    () -> {
+                        instance.setActive(null);
+                    }
+            ).doesNotThrowAnyException();
+        }
+
+        @DisplayName("(!null) does not throw")
+        @Test
+        void _DoesNotThrow_NotNull() {
+            final var instance = newEntityInstance();
+            assertThatCode(
+                    () -> {
+                        instance.setActive(current().nextInt());
+                    }
+            ).doesNotThrowAnyException();
+        }
     }
 
     @DisplayName("getActiveAsBoolean()Boolean")
@@ -23,7 +70,7 @@ class Customer_Test
 
         @DisplayName("getActive()null -> null")
         @Test
-        void __() {
+        void _Null_GetActiveNull() {
             // GIVEN
             final var instance = newEntitySpy();
             when(instance.getActive()).thenReturn(null);
@@ -31,12 +78,11 @@ class Customer_Test
             final var activeAsBoolean = instance.getActiveAsBoolean();
             // THEN
             assertThat(activeAsBoolean).isNull();
-            verify(instance, times(1)).getActive();
         }
 
-        @DisplayName("getActive()0 -> FALSE")
+        @DisplayName("getActive()zero -> FALSE")
         @Test
-        void _False_Zero() {
+        void _False_GetActiveZero() {
             // GIVEN
             final var instance = newEntitySpy();
             when(instance.getActive()).thenReturn(0);
@@ -44,12 +90,11 @@ class Customer_Test
             final var activeAsBoolean = instance.getActiveAsBoolean();
             // THEN
             assertThat(activeAsBoolean).isFalse();
-            verify(instance, times(1)).getActive();
         }
 
-        @DisplayName("getActive()!0 -> TRUE")
+        @DisplayName("getActive()!zero -> TRUE")
         @Test
-        void _True_NonZero() {
+        void _True_GetActiveNonZero() {
             // GIVEN
             final var instance = newEntitySpy();
             when(instance.getActive()).thenReturn(current().nextInt() | 1);
@@ -57,7 +102,6 @@ class Customer_Test
             final var activeAsBoolean = instance.getActiveAsBoolean();
             // THEN
             assertThat(activeAsBoolean).isTrue();
-            verify(instance, times(1)).getActive();
         }
     }
 
@@ -87,49 +131,15 @@ class Customer_Test
             verify(instance, times(1)).setActive(0);
         }
 
-        @DisplayName("(TRUE) -> setActive(1)")
+        @DisplayName("(TRUE) -> setActive(!0)")
         @Test
-        void _SetActiveOne_True() {
+        void _SetActiveNonZero_True() {
             // GIVEN
             final var instance = newEntitySpy();
             // WHEN
             instance.setActiveAsBoolean(Boolean.TRUE);
             // THEN
-            verify(instance, times(1)).setActive(1);
-        }
-    }
-
-    @DisplayName("activate()")
-    @Nested
-    class ActivateTest {
-
-        @DisplayName("() -> setActive(TRUE)")
-        @Test
-        void __() {
-            // GIVEN
-            final var instance = newEntitySpy();
-            // WHEN
-            final var result = instance.activate();
-            // THEN
-            verify(instance, times(1)).setActiveAsBoolean(Boolean.TRUE);
-            assertThat(result).isSameAs(instance);
-        }
-    }
-
-    @DisplayName("deactivate()")
-    @Nested
-    class DeactivateTest {
-
-        @DisplayName("() -> setActive(FALSE)")
-        @Test
-        void __() {
-            // GIVEN
-            final var instance = newEntitySpy();
-            // WHEN
-            final var result = instance.deactivate();
-            // THEN
-            verify(instance, times(1)).setActiveAsBoolean(Boolean.FALSE);
-            assertThat(result).isSameAs(instance);
+            verify(instance, times(1)).setActive(intThat(v -> v != 0));
         }
     }
 }

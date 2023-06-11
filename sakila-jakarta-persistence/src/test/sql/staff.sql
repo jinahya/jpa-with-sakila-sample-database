@@ -26,6 +26,13 @@ FROM staff AS s
          JOIN country AS c2 ON c.country_id = c2.country_id
 ;
 
+--
+EXPLAIN
+SELECT *
+FROM staff AS s
+         JOIN address AS a ON s.address_id = a.address_id
+;
+
 
 -- Staff_findAllByCity
 select s.staff_id,

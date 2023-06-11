@@ -24,7 +24,8 @@ public final class CityConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <caption>Named queries, JPQLs, and SQLs</caption>
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -60,7 +61,7 @@ public final class CityConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":
@@ -107,7 +108,7 @@ public final class CityConstants {
      * <p>
      * The JPQL and an equivalent SQL are as follows.
      * <table>
-     * <head><tr><th>JPQL</th><th>(My)SQL</th></tr></head>
+     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
      * <tbody>
      * <tr>
      * <td>{@snippet lang = "jpql":

@@ -11,7 +11,7 @@ FROM city
 EXPLAIN
 SELECT c.country_id,
        c2.country,
-       COUNT(1) AS city_count,
+       COUNT(1)             AS city_count,
        GROUP_CONCAT(c.city) AS cities
 FROM city AS c
          JOIN country AS c2 ON c.country_id = c2.country_id

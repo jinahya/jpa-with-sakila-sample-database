@@ -625,7 +625,7 @@ public class Film
     private Rating rating;
 
     /**
-     * <blockquote site="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film.html">
      * Lists which common special features are included on the DVD. Can be zero or more of: {@code Trailers},
      * {@code Commentaries}, {@code Deleted Scenes}, {@code Behind the Scenes}.
      * </blockquote>

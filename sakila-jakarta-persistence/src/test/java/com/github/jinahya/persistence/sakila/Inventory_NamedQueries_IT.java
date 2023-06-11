@@ -8,17 +8,33 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.persistence.sakila.InventoryConstants.PARAMETER_FILM;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.PARAMETER_FILM_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.PARAMETER_INVENTORY_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.PARAMETER_STORE_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_FILM;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_STORE;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_BY_INVENTORY_ID;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE;
+import static com.github.jinahya.persistence.sakila.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Comparator.comparing;
+import static java.util.Map.entry;
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A class for testing named queries defined on {@link Inventory} class.
@@ -28,9 +44,35 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class Inventory_NamedQueries_IT
         extends __PersistenceIT {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(InventoryConstants.QUERY_FIND_BY_INVENTORY_ID)
+    private static List<Integer> getStoreIdList() {
+        return List.of(2, 1);
+    }
+
+    private static List<Store> getStoreList() {
+        return getStoreIdList()
+                .stream()
+                .map(Store::ofStoreId)
+                .toList();
+    }
+
+    private static List<Integer> getFilmIdList() {
+        return List.of(1, 31, 69, 73, 86, 91, 103, 109);
+    }
+
+    private static List<Film> getFilmList() {
+        return getFilmIdList()
+                .stream()
+                .map(Film::ofFilmId)
+                .toList();
+    }
+
+    Inventory_NamedQueries_IT() {
+        super();
+    }
+
+    @DisplayName(QUERY_FIND_BY_INVENTORY_ID)
     @Nested
     class FindByInventoryIdTest {
 
@@ -40,20 +82,20 @@ class Inventory_NamedQueries_IT
             final var inventoryId = 0;
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_BY_INVENTORY_ID, Inventory.class)
-                                    .setParameter(InventoryConstants.QUERY_PARAM_INVENTORY_ID, inventoryId)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_INVENTORY_ID, Inventory.class)
+                                    .setParameter(PARAMETER_INVENTORY_ID, inventoryId)
                                     .getSingleResult() // NoResultException
                     )
             ).isInstanceOf(NoResultException.class);
         }
 
-        @DisplayName("()!null")
+        @DisplayName("(1)!null")
         @Test
         void __1() {
             final var inventoryId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_BY_INVENTORY_ID, Inventory.class)
-                            .setParameter(InventoryConstants.QUERY_PARAM_INVENTORY_ID, inventoryId)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_INVENTORY_ID, Inventory.class)
+                            .setParameter(PARAMETER_INVENTORY_ID, inventoryId)
                             .getSingleResult()
             );
             assertThat(found)
@@ -64,50 +106,18 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
         @Test
-        void __WithoutMaxResults() {
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL, Inventory.class)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .doesNotContainNull();
-        }
-
-        @Test
-        void __WithMaxResults() {
-            final var maxResults = ThreadLocalRandom.current().nextInt(8, 16);
-            final var list = applyEntityManager(
-                    em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL, Inventory.class)
-                            .setMaxResults(maxResults)
-                            .getResultList()
-            );
-            assertThat(list)
-                    .isNotNull()
-                    .isNotEmpty()
-                    .doesNotContainNull()
-                    .hasSizeLessThanOrEqualTo(maxResults);
-        }
-    }
-
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_INVENTORY_ID_GREATER_THAN)
-    @Nested
-    class FindAllInventoryIdGreaterThanTest {
-
-        @Test
         void __() {
-            final var maxResults = ThreadLocalRandom.current().nextInt(64, 128);
+            final var maxResults = current().nextInt(64, 128);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var inventoryIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL_INVENTORY_ID_GREATER_THAN, Inventory.class)
-                                .setParameter(InventoryConstants.QUERY_PARAM_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Inventory.class)
+                                .setParameter(PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -115,7 +125,9 @@ class Inventory_NamedQueries_IT
                         .isNotNull()
                         .doesNotContainNull()
                         .hasSizeLessThanOrEqualTo(maxResults)
-                        .isSortedAccordingTo(Comparator.comparing(Inventory::getInventoryId));
+                        .extracting(Inventory::getInventoryId)
+                        .allMatch(v -> v > inventoryIdMinExclusive)
+                        .isSorted();
                 if (list.isEmpty()) {
                     break;
                 }
@@ -124,77 +136,26 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID)
-    @Nested
-    class FindAllByStoreIdAndFilmIdTest {
-
-        @Test
-        void __() {
-            final var map = Map.of(
-                    1, List.of(1, 4, 10, 11),
-                    2, List.of(1, 3, 8, 12)
-            );
-            map.forEach((storeId, filmIds) -> {
-                for (final var filmId : filmIds) {
-                    for (final var i = new AtomicInteger(0); ; ) {
-                        final var inventoryIdMinExclusive = i.get();
-                        final var list = applyEntityManager(
-                                em -> em.createNamedQuery(
-                                                InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID,
-                                                Inventory.class
-                                        )
-                                        .setParameter(InventoryConstants.QUERY_PARAM_STORE_ID, storeId)
-                                        .setParameter(InventoryConstants.QUERY_PARAM_FILM_ID, filmId)
-                                        .setParameter(InventoryConstants.QUERY_PARAM_INVENTORY_ID_MIN_EXCLUSIVE,
-                                                      inventoryIdMinExclusive)
-                                        .getResultList()
-                        );
-                        assertThat(list)
-                                .isNotNull()
-                                .doesNotContainNull()
-                                .allSatisfy(e -> {
-                                    assertThat(e.getStoreId()).isEqualTo(storeId);
-                                    assertThat(e.getFilmId()).isEqualTo(filmId);
-                                    assertThat(e.getInventoryId()).isGreaterThan(inventoryIdMinExclusive);
-                                });
-                        if (list.isEmpty()) {
-                            break;
-                        }
-                        i.set(list.get(list.size() - 1).getInventoryId());
-                    }
-                }
-            });
-        }
-    }
-
-    private static List<Integer> getFilmIdList() {
-        return List.of(1, 31, 69, 73, 86, 91, 103, 109);
-    }
-
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_FILM_ID)
     @Nested
     class FindAllByFilmIdTest {
 
-        private static List<Integer> getFilmIdList() {
-            return Inventory_NamedQueries_IT.getFilmIdList();
-        }
-
         @ExplicitParamInjection
-        @MethodSource({"getFilmIdList"})
+        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getFilmIdList"})
         @ParameterizedTest
         void __(final int filmId) {
             for (final var i = new AtomicInteger(0); ; ) {
                 final var inventoryIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID, Inventory.class)
-                                .setParameter(InventoryConstants.QUERY_PARAM_FILM_ID, filmId)
-                                .setParameter(InventoryConstants.QUERY_PARAM_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_FILM_ID, Inventory.class)
+                                .setParameter(PARAMETER_FILM_ID, filmId)
+                                .setParameter(PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
                                 .getResultList()
                 );
                 assertThat(list)
                         .isNotNull()
                         .doesNotContainNull()
-                        .isSortedAccordingTo(Comparator.comparing(Inventory::getInventoryId))
+                        .isSortedAccordingTo(comparing(Inventory::getInventoryId))
                         .allSatisfy(e -> {
                             assertThat(e.getFilmId()).isEqualTo(filmId);
                             assertThat(e.getInventoryId()).isGreaterThan(inventoryIdMinExclusive);
@@ -207,34 +168,26 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_FILM)
     @Nested
     class FindAllByFilmTest {
 
-        private static List<Film> getFilmList() {
-            return Inventory_NamedQueries_IT.getFilmIdList()
-                    .stream()
-                    .map(Film::ofFilmId)
-                    .toList();
-        }
-
         @ExplicitParamInjection
-        @MethodSource({"getFilmList"})
+        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getFilmList"})
         @ParameterizedTest
         void __(final Film film) {
             for (final var i = new AtomicInteger(0); ; ) {
                 final var inventoryIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL_BY_FILM, Inventory.class)
-                                .setParameter(InventoryConstants.QUERY_PARAM_FILM, film)
-                                .setParameter(InventoryConstants.QUERY_PARAM_INVENTORY_ID_MIN_EXCLUSIVE,
-                                              inventoryIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_FILM, Inventory.class)
+                                .setParameter(PARAMETER_FILM, film)
+                                .setParameter(PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
                                 .getResultList()
                 );
                 assertThat(list)
                         .isNotNull()
                         .doesNotContainNull()
-                        .isSortedAccordingTo(Comparator.comparing(Inventory::getInventoryId))
+                        .isSortedAccordingTo(comparing(Inventory::getInventoryId))
                         .allSatisfy(e -> {
                             assertThat(e.getFilmId()).isEqualTo(film.getFilmId());
                             assertThat(e.getInventoryId()).isGreaterThan(inventoryIdMinExclusive);
@@ -247,22 +200,15 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    private static List<Integer> getStoreIdList() {
-        return List.of(2, 1);
-    }
-
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_STORE_ID)
     @Nested
     class FindAllByStoreIdTest {
 
-        private static List<Integer> getStoreIdList() {
-            return Inventory_NamedQueries_IT.getStoreIdList();
-        }
-
         @ExplicitParamInjection
-        @MethodSource({"getStoreIdList"})
+        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getStoreIdList"})
         @ParameterizedTest
         void __(final int storeId) {
+            final var maxResults = current().nextInt(32, 64);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var inventoryIdMinExclusive = i.get();
                 // TODO: implement!
@@ -271,21 +217,15 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_STORE)
     @Nested
     class FindAllByStoreTest {
 
-        private static List<Store> getStoreList() {
-            return Inventory_NamedQueries_IT.getStoreIdList()
-                    .stream()
-                    .map(Store::ofStoreId)
-                    .toList();
-        }
-
         @ExplicitParamInjection
-        @MethodSource({"getStoreList"})
+        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getStoreList"})
         @ParameterizedTest
         void __(final Store store) {
+            final var maxResults = current().nextInt(32, 64);
             for (final var i = new AtomicInteger(0); ; ) {
                 final var inventoryIdMinExclusive = i.get();
                 // TODO: implement!
@@ -294,15 +234,95 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID)
+    @Nested
+    class FindAllByStoreIdAndFilmIdTest {
+
+        @Test
+        void __() {
+            final var map = Map.of(
+                    1, List.of(1, 4, 10, 11, Integer.MAX_VALUE),
+                    2, List.of(1, 3, 8, 12, Integer.MAX_VALUE)
+            );
+            map.entrySet().stream().flatMap(e -> e.getValue().stream().map(v -> entry(e.getKey(), v))).forEach(e -> {
+                final var storeId = e.getKey();
+                final var filmId = e.getValue();
+                final var maxResults = current().nextInt(3, 6);
+                for (final var i = new AtomicInteger(0); ; ) {
+                    final var inventoryIdMinExclusive = i.get();
+                    final var list = applyEntityManager(
+                            em -> em.createNamedQuery(QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID, Inventory.class)
+                                    .setParameter(PARAMETER_STORE_ID, storeId)
+                                    .setParameter(PARAMETER_FILM_ID, filmId)
+                                    .setParameter(PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
+                                    .setMaxResults(maxResults)
+                                    .getResultList()
+                    );
+                    assertThat(list)
+                            .isNotNull()
+                            .doesNotContainNull()
+                            .hasSizeLessThanOrEqualTo(maxResults)
+                            .allSatisfy(v -> {
+                                assertThat(v.getStoreId()).isEqualTo(storeId);
+                                assertThat(v.getFilmId()).isEqualTo(filmId);
+                                assertThat(v.getInventoryId()).isGreaterThan(inventoryIdMinExclusive);
+                            });
+                    if (list.isEmpty()) {
+                        break;
+                    }
+                    i.set(list.get(list.size() - 1).getInventoryId());
+                }
+            });
+        }
+    }
+
+    @DisplayName(QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID)
     @Nested
     class FindDistinctFilmsByStoreIdTest {
 
+        @ExplicitParamInjection
+        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getStoreIdList"})
+        @ParameterizedTest
+        void __(final int storeId) {
+            final var maxResults = current().nextInt(32, 64);
+            for (final var i = new AtomicInteger(0); ; ) {
+                final var filmIdMinExclusive = i.get();
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID, Film.class)
+                                .setParameter(PARAMETER_STORE_ID, storeId)
+                                .setParameter(PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
+                                .setMaxResults(maxResults)
+                                .getResultList()
+                );
+                assertThat(list)
+                        .isNotNull()
+                        .doesNotContainNull()
+                        .hasSizeLessThanOrEqualTo(maxResults)
+                        .extracting(Film::getFilmId)
+                        .allMatch(v -> v > filmIdMinExclusive)
+                        .isSorted();
+                if (list.isEmpty()) {
+                    break;
+                }
+                i.set(list.get(list.size() - 1).getFilmId());
+            }
+        }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE)
+    @DisplayName(QUERY_FIND_DISTINCT_FILMS_BY_STORE)
     @Nested
     class FindDistinctFilmsByStoreTest {
 
+        @ExplicitParamInjection
+        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getStoreList"})
+        @ParameterizedTest
+        void __(final Store store) {
+            final var maxResults = current().nextInt(32, 64);
+            for (final var i = new AtomicInteger(0); ; ) {
+                final var filmIdMinExclusive = i.get();
+                // TODO: implement!
+                break;
+            }
+        }
     }
 }

@@ -6,22 +6,20 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.invoke.MethodHandles;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -33,11 +31,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class Staff_Test
         extends _BaseEntityTest<Staff, Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     private static byte[] getPictureBytes() throws URISyntaxException, IOException {
         final var uri = Objects.requireNonNull(Staff_Test.class.getResource("/picture.png")).toURI();
@@ -234,91 +233,6 @@ class Staff_Test
         }
     }
 
-    @DisplayName("getActiveAsBoolean()Boolean")
-    @Nested
-    class GetActiveAsBooleanTest {
-
-        @DisplayName("getActive()null -> getActiveAsBoolean()null")
-        @Test
-        void getActiveAsBoolean_Null_GetActiveNull() {
-            // GIVEN
-            final var instance = newEntitySpy();
-            when(instance.getActive()).thenReturn(null);
-            clearInvocations(instance); // EclipseLink
-            // WHEN
-            final Boolean activeAsBoolean = instance.getActiveAsBoolean();
-            // THEN
-            assertThat(activeAsBoolean).isNull();
-            verify(instance, times(1)).getActive();
-        }
-
-        @DisplayName("getActive()0 -> getActiveAsBoolean()FALSE")
-        @Test
-        void getActiveAsBoolean_False_0() {
-            // GIVEN
-            final var instance = newEntitySpy();
-            when(instance.getActive()).thenReturn(0);
-            clearInvocations(instance); // EclipseLink
-            // WHEN
-            final var activeAsBoolean = instance.getActiveAsBoolean();
-            // THEN
-            assertThat(activeAsBoolean).isFalse();
-            verify(instance, times(1)).getActive();
-        }
-
-        @DisplayName("getActive()!0 -> getActiveAsBoolean()TRUE")
-        @Test
-        void getActiveAsBoolean_False_Not0() {
-            // GIVEN
-            final var instance = newEntitySpy();
-            when(instance.getActive()).thenReturn(ThreadLocalRandom.current().nextInt() | 1); // !0, simply.
-            clearInvocations(instance); // EclipseLink
-            // WHEN
-            final Boolean activeAsBoolean = instance.getActiveAsBoolean();
-            // THEN
-            assertThat(activeAsBoolean).isTrue();
-            verify(instance, times(1)).getActive();
-        }
-    }
-
-    @DisplayName("setActiveAsBoolean(Boolean)")
-    @Nested
-    class SetActiveAsBooleanTest {
-
-        @DisplayName("null -> setActive(null)")
-        @Test
-        void _Null_Null() {
-            // GIVEN
-            final var instance = newEntitySpy();
-            // WHEN
-            instance.setActiveAsBoolean(null);
-            // THEN
-            verify(instance, times(1)).setActive(null);
-        }
-
-        @DisplayName("FALSE -> setActive(0)")
-        @Test
-        void setActiveAsBoolean_SetActive0_False() {
-            // GIVEN
-            final var instance = newEntitySpy();
-            // WHEN
-            instance.setActiveAsBoolean(Boolean.FALSE);
-            // THEN
-            verify(instance, times(1)).setActive(0);
-        }
-
-        @DisplayName("TRUE -> setActive(1)")
-        @Test
-        void setActiveAsBoolean_SetActive1_True() {
-            // GIVEN
-            final var instance = newEntitySpy();
-            // WHEN
-            instance.setActiveAsBoolean(Boolean.TRUE);
-            // THEN
-            verify(instance, times(1)).setActive(1);
-        }
-    }
-
     @DisplayName("activate()Staff")
     @Nested
     class ActivateTest {
@@ -330,7 +244,7 @@ class Staff_Test
             // WHEN
             final var result = instance.activate();
             // THEN
-            verify(instance, times(1)).setActiveAsBoolean(Boolean.TRUE);
+            verify(instance, times(1)).setActive(Boolean.TRUE);
             assertThat(result).isSameAs(instance);
         }
     }
@@ -346,7 +260,7 @@ class Staff_Test
             // WHEN
             final var result = instance.deactivate();
             // THEN
-            verify(instance, times(1)).setActiveAsBoolean(Boolean.FALSE);
+            verify(instance, times(1)).setActive(Boolean.FALSE);
             assertThat(result).isSameAs(instance);
         }
     }
@@ -358,66 +272,88 @@ class Staff_Test
         @DisplayName("signIn(null) -> does not throw")
         @Test
         void _DoesNotThrow_Null() {
-            final var instance = newEntityInstance();
-            assertThatCode(() -> instance.signIn(null))
-                    .doesNotThrowAnyException();
+            // GIVEN
+            final var instance = newEntitySpy();
+            when(instance.getPassword()).thenReturn(null);
+            // WHEN/THEN
+            assertThatCode(
+                    () -> instance.signIn(null)
+            ).doesNotThrowAnyException();
         }
 
         @DisplayName("signIn(byte[0]) -> IllegalArgumentException")
         @Test
         void _IllegalArgumentException_Empty() {
+            // GIVEN
             final var instance = newEntityInstance();
-            assertThatThrownBy(() -> instance.signIn(new byte[0]))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // WHEN/THEN
+            assertThatThrownBy(
+                    () -> instance.signIn(new byte[0])
+            ).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("getPassword()null <- signIn(null)")
         @Test
         void _DoesNotThrow_NullNull() {
+            // GIVEN
             final var instance = newEntitySpy();
             when(instance.getPassword()).thenReturn(null);
-            assertThatCode(() -> instance.signIn(null))
-                    .doesNotThrowAnyException();
+            // WHEN/THEN
+            assertThatCode(
+                    () -> instance.signIn(null)
+            ).doesNotThrowAnyException();
         }
 
         @DisplayName("getPassword()!null <- signIn(null) -> IllegalStateException")
         @Test
         void _IllegalArgumentException_NullNotNull() {
+            // GIVEN
             final var instance = newEntitySpy();
             when(instance.getPassword()).thenReturn("");
-            assertThatThrownBy(() -> instance.signIn(null))
-                    .isInstanceOf(IllegalStateException.class);
+            // WHEN/THEN
+            assertThatThrownBy(
+                    () -> instance.signIn(null)
+            ).isInstanceOf(IllegalStateException.class);
         }
 
         @DisplayName("getPassword()!null <- signIn(wrong) -> IllegalArgumentException")
         @Test
         void _IllegalArgumentException_WrongNotNull() {
+            // GIVEN
             final var instance = newEntitySpy();
             when(instance.getPassword()).thenReturn("");
-            assertThatThrownBy(() -> instance.signIn(new byte[0]))
-                    .isInstanceOf(IllegalArgumentException.class);
+            // WHEN/THEN
+            assertThatThrownBy(
+                    () -> instance.signIn(new byte[0])
+            ).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("getPassword()!null <- signIn(SHA1)")
         @Test
         void _SHA1_() {
+            // GIVEN
             final var instance = newEntitySpy();
             final var clientPassword = new byte[1];
             final var password = SecurityUtils.sha1(clientPassword);
             when(instance.getPassword()).thenReturn(password);
-            assertThatCode(() -> instance.signIn(clientPassword))
-                    .doesNotThrowAnyException();
+            // WHEN/THEN
+            assertThatCode(
+                    () -> instance.signIn(clientPassword)
+            ).doesNotThrowAnyException();
         }
 
         @DisplayName("getPassword()!null <- signIn(SHA2)")
         @Test
         void _SHA2_() {
+            // GIVEN
             final var instance = newEntitySpy();
             final var clientPassword = new byte[1];
             final var password = SecurityUtils.sha2(clientPassword);
             when(instance.getPassword()).thenReturn(password);
-            assertThatCode(() -> instance.signIn(clientPassword))
-                    .doesNotThrowAnyException();
+            // WHEN/THEN
+            assertThatCode(
+                    () -> instance.signIn(clientPassword)
+            ).doesNotThrowAnyException();
         }
     }
 

@@ -51,18 +51,19 @@
     <!--    <sonar.organization>jinahya-github</sonar.organization>-->
     <!--    <sonar.host.url>https://sonarcloud.io</sonar.host.url>-->
     <version.maven-failsafe>${version.maven-surefire}</version.maven-failsafe>
-    <version.maven-surefire>3.1.0</version.maven-surefire>
+    <version.maven-surefire>3.1.2</version.maven-surefire>
     <version.com.h2database>2.1.214</version.com.h2database>
-    <version.nl.jqno.equalsverifier>3.14.1</version.nl.jqno.equalsverifier>
+    <version.nl.jqno.equalsverifier>3.14.2</version.nl.jqno.equalsverifier>
     <version.org.eclipse.persistence>4.0.1</version.org.eclipse.persistence>
     <version.org.eclipse.persistence.jpa>${version.org.eclipse.persistence}</version.org.eclipse.persistence.jpa>
     <version.org.glassfish.expressly>5.0.0</version.org.glassfish.expressly>
     <!--    <version.org.hibernate.orm>6.2.2.Final</version.org.hibernate.orm>-->
-    <version.org.hibernate.orm>6.2.3.Final</version.org.hibernate.orm>
+    <version.org.hibernate.orm>6.2.4.Final</version.org.hibernate.orm>
     <version.org.hibernate.validator>8.0.0.Final</version.org.hibernate.validator>
     <version.org.jboss.weld>5.1.0.Final</version.org.jboss.weld>
     <version.org.jboss.weld.se>${version.org.jboss.weld}</version.org.jboss.weld.se>
-    <version.org.junit>5.9.3</version.org.junit>
+<!--    <version.org.junit>5.9.3</version.org.junit>-->
+    <version.org.junit>5.10.0-M1</version.org.junit>
     <version.org.junit.jupiter>${version.org.junit}</version.org.junit.jupiter>
     <version.org.mockito>5.3.1</version.org.mockito> <!-- https://search.maven.org/artifact/org.mockito/mockito-junit-jupiter -->
     <!--    <version.org.mockito-inline>5.2.0</version.org.mockito-inline> &lt;!&ndash; https://search.maven.org/artifact/org.mockito/mockito-inline &ndash;&gt;-->
@@ -285,7 +286,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.4.0</version>
+          <version>3.5.0</version>
           <configuration>
             <doclint>all</doclint>
             <show>package</show>
@@ -323,7 +324,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>4.0.0-M3</version>
+          <version>4.0.0-M8</version>
         </plugin>
         <plugin><!-- used by maven-site-plugin -->
           <groupId>org.apache.maven.plugins</groupId>
@@ -333,7 +334,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.13.0</version>
+          <version>2.16.0</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -398,7 +399,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>license-maven-plugin</artifactId>
-        <version>2.0.0</version>
+        <version>2.1.0</version>
         <configuration>
           <licenseName>apache_v2</licenseName>
         </configuration>
@@ -443,22 +444,22 @@
       <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
-        <version>4.7.2.0</version>
+        <version>4.7.3.4</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jxr-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.2</version>
+        <version>3.3.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.5</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -474,7 +475,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.17.0</version>
+        <version>3.21.0</version>
         <configuration>
           <targetJdk>${maven.compiler.source}</targetJdk>
           <skipEmptyReport>false</skipEmptyReport> <!-- https://issues.apache.org/jira/browse/MPMD-225 -->
@@ -535,7 +536,7 @@
       </activation>
       <properties>
         <!-- https://www.eclipse.org/eclipselink/documentation/4.0/solutions/solutions.html#TESTINGJPA004 -->
-        <argLine>-javaagent:${basedir}/target/dependencies-copied/eclipselink.jar</argLine>
+<!--        <argLine>-javaagent:${basedir}/target/dependencies-copied/eclipselink.jar</argLine>-->
       </properties>
       <dependencies>
         <dependency>

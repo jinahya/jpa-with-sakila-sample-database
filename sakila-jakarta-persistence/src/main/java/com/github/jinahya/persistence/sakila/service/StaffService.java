@@ -26,7 +26,7 @@ public class StaffService
                     applyEntityManager(em -> {
                         try {
                             return em.createNamedQuery(StaffConstants.QUERY_FIND_BY_STAFF_ID, Staff.class)
-                                    .setParameter(StaffConstants.QUERY_PARAM_STAFF_ID, staffId)
+                                    .setParameter(StaffConstants.PARAMETER_STAFF_ID, staffId)
                                     .getSingleResult(); // NoResultException
                         } catch (final NoResultException nre) {
                             return null;
@@ -42,7 +42,7 @@ public class StaffService
         if (ThreadLocalRandom.current().nextBoolean()) {
             return applyEntityManager(
                     em -> em.createNamedQuery(StaffConstants.QUERY_FIND_ALL, Staff.class)
-                            .setParameter(StaffConstants.QUERY_PARAM_STAFF_ID_MIN_EXCLUSIVE, staffIdMinExclusive)
+                            .setParameter(StaffConstants.PARAMETER_STAFF_ID_MIN_EXCLUSIVE, staffIdMinExclusive)
                             .setMaxResults(maxResults)
                             .getResultList()
             );

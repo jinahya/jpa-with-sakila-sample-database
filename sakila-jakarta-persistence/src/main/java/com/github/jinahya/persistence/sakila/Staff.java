@@ -3,6 +3,7 @@ package com.github.jinahya.persistence.sakila;
 import com.github.jinahya.persistence.sakila.util.SecurityUtils;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +24,6 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.DataBuffer;
@@ -33,7 +33,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -41,7 +40,14 @@ import java.nio.channels.WritableByteChannel;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
+
+import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_ALL_BY_CITY;
+import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_ALL_BY_COUNTRY;
+import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_BY_STAFF_ID;
+import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Optional.ofNullable;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -73,7 +79,7 @@ import java.util.Optional;
 @NamedEntityGraph(
         name = StaffConstants.GRAPH_ADDRESS,
         attributeNodes = {
-                @NamedAttributeNode(value = StaffConstants.GRAPH_NODE_ADDRESS,
+                @NamedAttributeNode(value = StaffConstants.ATTRIBUTE_NODE_ADDRESS,
                                     subgraph = "staff-graph-address-subgraph-city")
         },
         subgraphs = {
@@ -85,42 +91,50 @@ import java.util.Optional;
                 )
         }
 )
-@NamedQuery(name = StaffConstants.QUERY_FIND_ALL_BY_COUNTRY,
-            query = """
-                    SELECT e
-                    FROM Staff AS e
-                            JOIN FETCH e.address AS a
-                            JOIN FETCH a.city AS c
-                            JOIN FETCH c.country AS c2
-                    WHERE c2 = :country
-                          AND e.staffId > :staffIdMinExclusive
-                    ORDER BY e.staffId ASC""")
-@NamedQuery(name = StaffConstants.QUERY_FIND_ALL_BY_CITY,
-            query = """
-                    SELECT e
-                    FROM Staff AS e
-                            JOIN FETCH e.address AS a
-                            JOIN FETCH a.city AS c
-                    WHERE e.address.city = :city
-                          AND e.staffId > :staffIdMinExclusive
-                    ORDER BY e.staffId ASC""")
-@NamedQuery(name = StaffConstants.QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM Staff AS e
-                    WHERE e.staffId > :staffIdMinExclusive
-                    ORDER BY e.staffId ASC""")
-@NamedQuery(name = StaffConstants.QUERY_FIND_BY_STAFF_ID,
-            query = """
-                    SELECT e
-                    FROM Staff AS e
-                    WHERE e.staffId = :staffId""")
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_COUNTRY,
+        query = """
+                SELECT e
+                FROM Staff AS e
+                        JOIN FETCH e.address AS a
+                        JOIN FETCH a.city AS c
+                        JOIN FETCH c.country AS c2
+                WHERE c2 = :country
+                      AND e.staffId > :staffIdMinExclusive
+                ORDER BY e.staffId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_CITY,
+        query = """
+                SELECT e
+                FROM Staff AS e
+                        JOIN FETCH e.address AS a
+                        JOIN FETCH a.city AS c
+                WHERE e.address.city = :city
+                      AND e.staffId > :staffIdMinExclusive
+                ORDER BY e.staffId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM Staff AS e
+                WHERE e.staffId > :staffIdMinExclusive
+                ORDER BY e.staffId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_STAFF_ID,
+        query = """
+                SELECT e
+                FROM Staff AS e
+                WHERE e.staffId = :staffId"""
+)
 @Entity
 @Table(name = Staff.TABLE_NAME)
 public class Staff
         extends _BaseEntity<Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
      * The name of the database table to which this class maps. The value is {@value}.
@@ -150,8 +164,16 @@ public class Staff
 
     /**
      * The default value of the {@link #COLUMN_NAME_ACTIVE} column. The value is {@value}.
+     *
+     * @deprecated by {@link #COLUMN_VALUE_ACTIVE_TRUE}
      */
+    @Deprecated(forRemoval = true)
     public static final int COLUMN_VALUE_ACTIVE_1 = 1;
+
+    /**
+     * The default value of the {@link #COLUMN_NAME_ACTIVE} column. The value is {@value}.
+     */
+    public static final boolean COLUMN_VALUE_ACTIVE_TRUE = true;
 
     /**
      * Creates a new instance with specified value of {@link Staff_#staffId staffId} attribute.
@@ -273,11 +295,11 @@ public class Staff
         this.storeId = storeId;
     }
 
-    public Integer getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(final Integer active) {
+    public void setActive(final boolean active) {
         this.active = active;
     }
 
@@ -381,10 +403,10 @@ public class Staff
      * column is set to {@code FALSE}.
      * </blockquote>
      */
-    @NotNull
+    @Convert(converter = _DomainConverters.BooleanConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_ACTIVE, nullable = false)
-    private Integer active = COLUMN_VALUE_ACTIVE_1;
+    private boolean active = COLUMN_VALUE_ACTIVE_TRUE;
 
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
@@ -424,7 +446,7 @@ public class Staff
     public void setAddress(final Address address) {
         this.address = address;
         setAddressId(
-                Optional.ofNullable(this.address)
+                ofNullable(this.address)
                         .map(Address::getAddressId)
                         .orElse(null)
         );
@@ -534,67 +556,35 @@ public class Staff
     public void setStore(final Store store) {
         this.store = store;
         setStoreId(
-                Optional.ofNullable(this.store)
+                ofNullable(this.store)
                         .map(Store::getStoreId)
                         .orElse(null)
         );
     }
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false,
-                insertable = false, // !!!
-                updatable = false   // !!!
-                )
+    @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false, insertable = false, updatable = false)
     private Store store;
 
     /**
-     * Returns current value of {@link Staff_#active active} attribute as a {@link Boolean} value.
-     *
-     * @return {@link Boolean#FALSE} if current value of {@link Staff_#active active} attribute is {@code 0};
-     * {@link Boolean#FALSE} otherwise excluding {@code null}; {@code null} if current value of the
-     * {@link Staff_#active active} attribute is {@code null}.
-     */
-    @Transient
-    public Boolean getActiveAsBoolean() {
-        return Optional.ofNullable(getActive())
-                .map(_DomainConverters.BooleanConverter::intToBoolean)
-                .orElse(null);
-    }
-
-    /**
-     * Replaces current value of {@link Staff_#active active} attribute with specified {@code boolean} value.
-     *
-     * @param activeAsBoolean the {@code boolean} value for the {@link Staff_#active active} attribute;
-     *                        {@link Boolean#FALSE} for {@code 0};  {@link Boolean#TRUE} for {@code 1}; {@code null} for
-     *                        {@code null}.
-     */
-    public void setActiveAsBoolean(final Boolean activeAsBoolean) {
-        setActive(
-                Optional.ofNullable(activeAsBoolean)
-                        .map(_DomainConverters.BooleanConverter::booleanToInt)
-                        .orElse(null)
-        );
-    }
-
-    /**
-     * Activates this staff by updating current value of {@link Staff_#active active} attribute with {@code 1}, and
+     * Activates this staff by updating current value of {@link Staff_#active active} attribute with {@code true}, and
      * returns this staff.
      *
      * @return this staff.
      */
     public Staff activate() {
-        setActiveAsBoolean(Boolean.TRUE);
+        setActive(true);
         return this;
     }
 
     /**
-     * Deactivates this staff by updating current value of {@link Staff_#active active} attribute with {@code 0}, and
-     * returns this staff.
+     * Deactivates this staff by updating current value of {@link Staff_#active active} attribute with {@code false},
+     * and returns this staff.
      *
      * @return this staff.
      */
     public Staff deactivate() {
-        setActiveAsBoolean(Boolean.FALSE);
+        setActive(false);
         return this;
     }
 
@@ -643,7 +633,7 @@ public class Staff
         if (newClientPassword != null && newClientPassword.length == 0) {
             throw new IllegalArgumentException("empty new client password");
         }
-        final byte[] newClientPassword_ = Optional.ofNullable(newClientPassword).map(v -> Arrays.copyOf(v, v.length)).orElse(null);
+        final byte[] newClientPassword_ = ofNullable(newClientPassword).map(v -> Arrays.copyOf(v, v.length)).orElse(null);
         newClientPassword = null;
         signIn(oldClientPassword);
         if (newClientPassword_ == null) {

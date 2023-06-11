@@ -10,7 +10,7 @@ import static java.util.Optional.ofNullable;
  * Predefined named queries, its JPQLs and equivalent SQLs are as follows.
  * <table>
  * <caption>Named queries, JPQLs, and SQLs</caption>
- * <head><tr><th>Name</th><th>JPQL</th><th>SQL</th></tr></head>
+ * <thead><tr><th>Name</th><th>JPQL</th><th>SQL</th></tr></thead>
  * <tbody>
  * <tr>
  * <td>{@link #QUERY_FIND_BY_STORE_ID}<br/>({@value #QUERY_FIND_BY_STORE_ID})</td>

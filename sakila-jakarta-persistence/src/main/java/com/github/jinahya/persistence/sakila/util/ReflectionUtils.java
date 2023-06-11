@@ -104,6 +104,22 @@ public final class ReflectionUtils {
         return list;
     }
 
+    public static Field findFieldNamed(final Class<?> cls, final String name, final Class<?> type) throws NoSuchFieldException {
+        Objects.requireNonNull(cls, "cls is null");
+        if (Objects.requireNonNull(name, "name is null").isBlank()) {
+            throw new IllegalArgumentException("blank name");
+        }
+        Objects.requireNonNull(type, "type is null");
+        for (Class<?> c = cls; c != null; c = c.getSuperclass()) {
+            for (final var field : c.getDeclaredFields()) {
+                if (field.getName().equals(name) && type.isAssignableFrom(field.getType())) {
+                    return field;
+                }
+            }
+        }
+        throw new NoSuchFieldException("no field named as '" + name + "' found in " + cls + " and its superclasses");
+    }
+
     private ReflectionUtils() {
         throw new AssertionError("instantiation is not allowed");
     }
