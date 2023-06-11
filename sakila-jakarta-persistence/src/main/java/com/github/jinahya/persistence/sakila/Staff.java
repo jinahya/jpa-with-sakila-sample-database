@@ -295,11 +295,11 @@ public class Staff
         this.storeId = storeId;
     }
 
-    public boolean isActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(final boolean active) {
+    public void setActive(final Boolean active) {
         this.active = active;
     }
 
@@ -406,7 +406,7 @@ public class Staff
     @Convert(converter = _DomainConverters.BooleanConverter.class)
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_ACTIVE, nullable = false)
-    private boolean active = COLUMN_VALUE_ACTIVE_TRUE;
+    private Boolean active = COLUMN_VALUE_ACTIVE_TRUE;
 
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
@@ -567,24 +567,24 @@ public class Staff
     private Store store;
 
     /**
-     * Activates this staff by updating current value of {@link Staff_#active active} attribute with {@code true}, and
-     * returns this staff.
+     * Activates this staff by updating current value of {@link Staff_#active active} attribute with
+     * {@link Boolean#TRUE}, and returns this staff.
      *
      * @return this staff.
      */
     public Staff activate() {
-        setActive(true);
+        setActive(Boolean.TRUE);
         return this;
     }
 
     /**
-     * Deactivates this staff by updating current value of {@link Staff_#active active} attribute with {@code false},
-     * and returns this staff.
+     * Deactivates this staff by updating current value of {@link Staff_#active active} attribute with
+     * {@link Boolean#FALSE}, and returns this staff.
      *
      * @return this staff.
      */
     public Staff deactivate() {
-        setActive(false);
+        setActive(Boolean.FALSE);
         return this;
     }
 
