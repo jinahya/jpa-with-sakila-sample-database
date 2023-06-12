@@ -7,19 +7,24 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.PositiveOrZero;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.github.jinahya.persistence.sakila._DomainConstants.MAX_SMALLINT_UNSIGNED;
+
 /**
- * .
+ * An entity class for mapping {@value #TABLE_NAME} table.
  * <p>
  * <blockquote>
  * The {@value #TABLE_NAME} table contains one row for each rental of each inventory item with information about who
@@ -32,7 +37,21 @@ import java.util.Optional;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-rental.html">5.1.14 The rental Table</a>
  */
 @Entity
-@Table(name = Rental.TABLE_NAME)
+@Table(
+        name = Rental.TABLE_NAME,
+        indexes = {
+                @Index(columnList = Rental.COLUMN_NAME_INVENTORY_ID),
+                @Index(columnList = Rental.COLUMN_NAME_CUSTOMER_ID),
+                @Index(columnList = Rental.COLUMN_NAME_STAFF_ID)
+        },
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {
+                        Rental.COLUMN_NAME_RENTAL_DATE,
+                        Rental.COLUMN_NAME_INVENTORY_ID,
+                        Rental.COLUMN_NAME_CUSTOMER_ID
+                })
+        }
+)
 public class Rental
         extends _BaseEntity<Integer> {
 
@@ -43,15 +62,25 @@ public class Rental
 
     public static final String COLUMN_NAME_RENTAL_ID = "rental_id";
 
+    public static final String COLUMN_NAME_RENTAL_DATE = "rental_date";
+
+    /**
+     * The name of the table column to which {@link Rental_#inventoryId inventoryId} attribute maps. The value is
+     * {@value}.
+     */
     public static final String COLUMN_NAME_INVENTORY_ID = Inventory.COLUMN_NAME_INVENTORY_ID;
 
     public static final String COLUMN_NAME_CUSTOMER_ID = Customer.COLUMN_NAME_CUSTOMER_ID;
 
     public static final String COLUMN_NAME_STAFF_ID = Staff.COLUMN_NAME_STAFF_ID;
 
-    @Override
-    Integer identifier() {
-        return getRentalId();
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Creates a new instance.
+     */
+    public Rental() {
+        super();
     }
 
     @Override
@@ -72,15 +101,29 @@ public class Rental
         );
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+    @Override
+    Integer identifier() {
+        return getRentalId();
+    }
+
+    // -------------------------------------------------------------------------------------------------------- rentalId
     public Integer getRentalId() {
         return rentalId;
     }
 
-    @Deprecated
+    /**
+     * Replaces current value of {@link Rental_#rentalId rentalId} attribute with specified value.
+     *
+     * @param rentalId new value for the {@link Rental_#rentalId rentalId} attribute.
+     * @deprecated for removal; The {@value #COLUMN_NAME_RENTAL_ID} column is an auto-increment column.
+     */
+    @Deprecated(forRemoval = true)
     private void setRentalId(final Integer rentalId) {
         this.rentalId = rentalId;
     }
 
+    // ------------------------------------------------------------------------------------------------------ rentalDate
     public LocalDateTime getRentalDate() {
         return rentalDate;
     }
@@ -89,6 +132,7 @@ public class Rental
         this.rentalDate = rentalDate;
     }
 
+    // ------------------------------------------------------------------------------------------- inventoryId/inventory
     public Integer getInventoryId() {
         return inventoryId;
     }
@@ -97,14 +141,49 @@ public class Rental
         this.inventoryId = inventoryId;
     }
 
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(final Inventory inventory) {
+        this.inventory = inventory;
+        setInventoryId(
+                Optional.ofNullable(this.inventory)
+                        .map(Inventory::getInventoryId)
+                        .orElse(null)
+        );
+    }
+
+    // --------------------------------------------------------------------------------------------- customerId/customer
     public Integer getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(final Integer customerId) {
+    void setCustomerId(final Integer customerId) {
         this.customerId = customerId;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    /**
+     * Replaces current value of {@link Rental_#customer customer} attribute with specified value.
+     *
+     * @param customer new value for the {@link Rental_#customer customer} attribute.
+     * @apiNote This method also replaces current value of {@link Rental_#customerId customerId} with
+     * {@code customer?.customerId}.
+     */
+    public void setCustomer(final Customer customer) {
+        this.customer = customer;
+        setCustomerId(
+                Optional.ofNullable(this.customer)
+                        .map(Customer::getCustomerId)
+                        .orElse(null)
+        );
+    }
+
+    // ------------------------------------------------------------------------------------------------------ returnDate
     public LocalDateTime getReturnDate() {
         return returnDate;
     }
@@ -113,13 +192,41 @@ public class Rental
         this.returnDate = returnDate;
     }
 
+    // --------------------------------------------------------------------------------------------------- staffId/staff
     public Integer getStaffId() {
         return staffId;
     }
 
-    public void setStaffId(final Integer staffId) {
+    void setStaffId(final Integer staffId) {
         this.staffId = staffId;
     }
+
+    /**
+     * Returns current value of {@link Rental_#staff staff} attribute.
+     *
+     * @return current value of the {@link Rental_#staff staff} attribute.
+     */
+    public Staff getStaff() {
+        return staff;
+    }
+
+    /**
+     * Replaces current value of {@link Rental_#staff staff} attribute with specified value.
+     *
+     * @param staff new value for the {@link Rental_#staff staff} attribute.
+     * @apiNote This method also replaces current value of {@link Rental_#staffId staffId} attribute with
+     * {@code staff?.staffId}.
+     */
+    public void setStaff(final Staff staff) {
+        this.staff = staff;
+        setStaffId(
+                Optional.ofNullable(this.staff)
+                        .map(Staff::getStaffId)
+                        .orElse(null)
+        );
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-rental.html">
@@ -138,8 +245,10 @@ public class Rental
      * The date and time that the item was rented.
      * </blockquote>
      */
+    @PastOrPresent
+    @NotNull
     @Basic(optional = false)
-    @Column(name = "rental_date", nullable = false, insertable = false, updatable = false)
+    @Column(name = "rental_date", nullable = false, insertable = true, updatable = false)
     private LocalDateTime rentalDate;
 
     /**
@@ -151,26 +260,38 @@ public class Rental
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_INVENTORY_ID, nullable = false, updatable = false)
+    @Column(name = COLUMN_NAME_INVENTORY_ID, nullable = false, insertable = true, updatable = false)
     private Integer inventoryId;
+
+    /**
+     * 이 대여 항목에 매핑된 재고.
+     */
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_INVENTORY_ID, nullable = false, insertable = false, updatable = false)
+    private Inventory inventory;
 
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-rental.html">
      * The customer renting the item.
      * </blockquote>
      */
-    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
-    @Column(name = COLUMN_NAME_CUSTOMER_ID, nullable = false, updatable = false)
+    @Column(name = COLUMN_NAME_CUSTOMER_ID, nullable = false, insertable = true, updatable = false)
     private Integer customerId;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_CUSTOMER_ID, nullable = false, insertable = false, updatable = false)
+    private Customer customer;
 
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-rental.html">
      * The date and time the item was returned.
      * </blockquote>
      */
+    @PastOrPresent
     @Basic(optional = true)
     @Column(name = "return_date", nullable = true, insertable = false)
     private LocalDateTime returnDate;
@@ -187,53 +308,9 @@ public class Rental
     @Column(name = COLUMN_NAME_STAFF_ID, nullable = false, updatable = false)
     private Integer staffId;
 
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public void setInventory(final Inventory inventory) {
-        this.inventory = inventory;
-        setInventoryId(
-                Optional.ofNullable(this.inventory)
-                        .map(Inventory::getInventoryId)
-                        .orElse(null)
-        );
-    }
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_INVENTORY_ID, nullable = false, insertable = false, updatable = false)
-    private Inventory inventory;
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(final Customer customer) {
-        this.customer = customer;
-        setCustomerId(
-                Optional.ofNullable(this.customer)
-                        .map(Customer::getCustomerId)
-                        .orElse(null)
-        );
-    }
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_CUSTOMER_ID, nullable = false, insertable = false, updatable = false)
-    private Customer customer;
-
-    public Staff getStaff() {
-        return staff;
-    }
-
-    public void setStaff(final Staff staff) {
-        this.staff = staff;
-        setStaffId(
-                Optional.ofNullable(this.staff)
-                        .map(Staff::getStaffId)
-                        .orElse(null)
-        );
-    }
-
+    /**
+     * 이 대여 항목을 처리(process)한 직원.
+     */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = COLUMN_NAME_STAFF_ID, nullable = false, insertable = false, updatable = false)
     private Staff staff;

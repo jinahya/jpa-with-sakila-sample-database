@@ -1,6 +1,5 @@
 package com.github.jinahya.persistence.sakila;
 
-import com.github.jinahya.persistence.sakila.util.SecurityUtils;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -28,24 +27,30 @@ import org.slf4j.Logger;
 import javax.imageio.ImageIO;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.OpenOption;
+import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Objects;
 
 import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_ALL_BY_CITY;
 import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_ALL_BY_COUNTRY;
 import static com.github.jinahya.persistence.sakila.StaffConstants.QUERY_FIND_BY_STAFF_ID;
+import static com.github.jinahya.persistence.sakila.util.SecurityUtils.sha1;
+import static com.github.jinahya.persistence.sakila.util.SecurityUtils.sha2;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.nio.ByteBuffer.wrap;
+import static java.util.Arrays.copyOf;
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -150,7 +155,7 @@ public class Staff
      * The name of the table column to which the {@link Staff_#addressId addressId} attribute maps. The value is
      * {@value}.
      */
-    public static final String COLUMN_NAME_ADDRESS_ID = "address_id";
+    public static final String COLUMN_NAME_ADDRESS_ID = Address.COLUMN_NAME_ADDRESS_ID;
 
     /**
      * The name of the table column to which the {@link Staff_#storeId storeId} attribute maps. The value is {@value}.
@@ -187,6 +192,8 @@ public class Staff
         return instance;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Creates a new instance.
      */
@@ -194,6 +201,7 @@ public class Staff
         super();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public String toString() {
         return super.toString() + '{' +
@@ -222,10 +230,13 @@ public class Staff
         return super.hashCode();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @Override
     Integer identifier() {
         return getStaffId();
     }
+
+    // --------------------------------------------------------------------------------------------------------- staffId
 
     /**
      * Returns current value of {@link Staff_#staffId staffId} attribute.
@@ -247,14 +258,27 @@ public class Staff
         this.staffId = staffId;
     }
 
+    // ------------------------------------------------------------------------------------------------------- firstName
+
+    /**
+     * Returns current value of {@link Staff_#firstName firstName} attribute.
+     *
+     * @return current value of the {@link Staff_#firstName firstName} attribute.
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Replaces current value of {@link Staff_#firstName firstName} attribute with specified value.
+     *
+     * @param firstName new value for the {@link Staff_#firstName firstName} attribute.
+     */
     public void setFirstName(final String firstName) {
         this.firstName = firstName;
     }
 
+    // -------------------------------------------------------------------------------------------------------- lastName
     public String getLastName() {
         return lastName;
     }
@@ -263,6 +287,7 @@ public class Staff
         this.lastName = lastName;
     }
 
+    // ----------------------------------------------------------------------------------------------- addressId/address
     public Integer getAddressId() {
         return addressId;
     }
@@ -271,53 +296,404 @@ public class Staff
         this.addressId = addressId;
     }
 
+    /**
+     * Returns current value of {@link Staff_#address address} attribute.
+     *
+     * @return current value of the {@link Staff_#address address} attribute.
+     */
+    public Address getAddress() {
+        return address;
+    }
+
+    /**
+     * Replaces current value of {@link Staff_#address address} attribute with specified value.
+     *
+     * @param address new value for the {@link Staff_#address address} attribute.
+     * @apiNote This method also updates {@link Staff_#addressId addressId} attribute with {@code address?.addressId}.
+     */
+    public void setAddress(final Address address) {
+        this.address = address;
+        setAddressId(
+                ofNullable(this.address)
+                        .map(Address::getAddressId)
+                        .orElse(null)
+        );
+    }
+
+    // --------------------------------------------------------------------------------------------------------- picture
+
+    /**
+     * Returns current value of {@link Staff_#picture picture} attribute.
+     *
+     * @return current value of the {@link Staff_#picture picture} attribute.
+     */
+    @_VisibleForTesting
     byte[] getPicture() {
         return picture;
     }
 
+    /**
+     * Replaces current value of {@link Staff_#picture picture} attribute with specified value.
+     *
+     * @param picture new value for the {@link Staff_#picture picture} attribute.
+     */
+    @_VisibleForTesting
     void setPicture(final byte[] picture) {
         this.picture = picture;
     }
 
+    /**
+     * Writes current value of {@link Staff_#picture picture} attribute to specified output stream.
+     *
+     * @param stream the output stream to which the {@link Staff_#picture picture} bytes are written.
+     * @throws IOException           if an I/O error occurs.
+     * @throws IllegalStateException if current value of the {@link Staff_#picture picture} attribute is {@code null}.
+     */
+    @Transient
+    public void getPictureWritingTo(final OutputStream stream) throws IOException {
+        requireNonNull(stream, "stream is null");
+        final var data = getPicture();
+        if (data == null) {
+            throw new IllegalStateException("data is currently null");
+        }
+        stream.write(data);
+    }
+
+    @Transient
+    public void getPictureWritingTo(final File file) throws IOException {
+        requireNonNull(file, "file is null");
+        try (final var stream = new FileOutputStream(file)) {
+            getPictureWritingTo(stream);
+            stream.flush();
+        }
+    }
+
+    @Transient
+    public void getPictureWritingTo(final WritableByteChannel channel) throws IOException {
+        requireNonNull(channel, "channel is null");
+        final var data = getPicture();
+        if (data == null) {
+            throw new IllegalStateException("data is currently null");
+        }
+        for (final var b = wrap(data); b.hasRemaining(); channel.write(b)) {
+            // empty
+        }
+    }
+
+    @Transient
+    public void getPictureWritingTo(final Path path, final OpenOption... options) throws IOException {
+        requireNonNull(path, "path is null");
+        requireNonNull(options, "options is null");
+        try (final var channel = FileChannel.open(path, options)) {
+            getPictureWritingTo(channel);
+            channel.force(false);
+        }
+    }
+
+    @Transient
+    public void getPictureWritingTo(final Path path) throws IOException {
+        getPictureWritingTo(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+    }
+
+    @Transient
+    public void getPictureAppendingTo(final Path path) throws IOException {
+        getPictureWritingTo(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
+    }
+
+    @Transient
+    public void setPictureReadingFrom(final InputStream stream) throws IOException {
+        requireNonNull(stream, "stream is null");
+        final var image = ImageIO.read(stream);
+        if (image == null) {
+            throw new IllegalArgumentException("no registered ImageReader claims to be able to read");
+        }
+        final var raster = image.getRaster();
+        final var buffer = raster.getDataBuffer();
+        if (buffer.getDataType() != DataBuffer.TYPE_BYTE) {
+            throw new IllegalArgumentException(
+                    "image.raster.dataBuffer.type(" + buffer.getDataType() +
+                    ") != TYPE_BYTE(" + DataBuffer.TYPE_BYTE + ")");
+        }
+        final byte[] data = ((DataBufferByte) buffer).getData();
+        setPicture(data);
+    }
+
+    @Transient
+    public void setPictureReadingFrom(final File file) throws IOException {
+        requireNonNull(file, "file is null");
+        try (final var stream = new FileInputStream(file)) {
+            setPictureReadingFrom(stream);
+        }
+    }
+
+    @Transient
+    public void setPictureReadingFrom(final Path path) throws IOException {
+        requireNonNull(path, "path is null");
+        try (final var channel = FileChannel.open(path, StandardOpenOption.READ)) {
+            setPictureReadingFrom(Channels.newInputStream(channel));
+        }
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- email
+
+    /**
+     * Returns current value of {@link Staff_#email email} attribute.
+     *
+     * @return current value of the {@link Staff_#email email} attribute.
+     */
     public String getEmail() {
         return email;
     }
 
+    /**
+     * Replaces current value of {@link Staff_#email email} attribute with specified value.
+     *
+     * @param email new value for the {@link Staff_#email email} attribute.
+     */
     public void setEmail(final String email) {
         this.email = email;
     }
 
+    // --------------------------------------------------------------------------------------------------- storeId/store
+
+    /**
+     * Returns current value of {@link Staff_#storeId storeId} attribute.
+     *
+     * @return current value of the {@link Staff_#storeId storeId} attribute.
+     */
     public Integer getStoreId() {
         return storeId;
     }
 
+    /**
+     * Replaces current value of {@link Staff_#storeId storeId} attribute with specified value.
+     *
+     * @param storeId new value for the {@link Staff_#storeId storeId} attribute.
+     */
     void setStoreId(final Integer storeId) {
         this.storeId = storeId;
     }
 
+    /**
+     * Returns current value of {@link Staff_#store store} attribute.
+     *
+     * @return current value of the {@link Staff_#store store} attribute.
+     */
+    public Store getStore() {
+        return store;
+    }
+
+    /**
+     * Replaces current value of {@link Staff_#store store} attribute with specified value.
+     *
+     * @param store new value for the {@link Staff_#store store} attribute.
+     * @apiNote This method also updates current value of {@link Staff#storeId storeId} attribute with
+     * {@code store?.storeId}.
+     */
+    public void setStore(final Store store) {
+        this.store = store;
+        setStoreId(
+                ofNullable(this.store)
+                        .map(Store::getStoreId)
+                        .orElse(null)
+        );
+    }
+
+    // ---------------------------------------------------------------------------------------------------------- active
+
+    /**
+     * Replaces current value of {@link Staff_#active active} attribute.
+     *
+     * @return current value of the {@link Staff_#active active} attribute.
+     */
     public Boolean getActive() {
         return active;
     }
 
+    /**
+     * Replaces current value of {@link Staff_#active active} attribute with specified value.
+     *
+     * @param active new value for the {@link Staff_#active active} attribute.
+     */
     public void setActive(final Boolean active) {
         this.active = active;
     }
 
+    /**
+     * Activates this staff by updating current value of {@link Staff_#active active} attribute with
+     * {@link Boolean#TRUE}, and returns this staff.
+     *
+     * @return this staff.
+     */
+    public Staff activate() {
+        setActive(Boolean.TRUE);
+        return this;
+    }
+
+    /**
+     * Deactivates this staff by updating current value of {@link Staff_#active active} attribute with
+     * {@link Boolean#FALSE}, and returns this staff.
+     *
+     * @return this staff.
+     */
+    public Staff deactivate() {
+        setActive(Boolean.FALSE);
+        return this;
+    }
+
+    // -------------------------------------------------------------------------------------------------------- username
+
+    /**
+     * Returns current value of {@link Staff_#username username} attribute.
+     *
+     * @return current value of the {@link Staff_#username username} attribute.
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Replaces current value of {@link Staff_#username username} attribute with specified value.
+     *
+     * @param username new value for the {@link Staff_#username username} attribute.
+     */
     public void setUsername(final String username) {
         this.username = username;
     }
 
+    // -------------------------------------------------------------------------------------------------------- password
+
+    /**
+     * Returns current value of {@link Staff_#password password} attribute.
+     *
+     * @return current value of the {@link Staff_#password password} attribute.
+     */
+    // package-private scope just for testing.
     String getPassword() {
         return password;
     }
 
+    /**
+     * Replaces current value of {@link Staff_#password password} attribute with specified value.
+     *
+     * @param password new value for the {@link Staff_#password password} attribute.
+     */
     private void setPassword(final String password) {
         this.password = password;
     }
+
+    /**
+     * Signs in with specified client password.
+     *
+     * @param clientPassword the client password to verity with; may be {@code null} but should not be <em>empty</em>.
+     * @throws IllegalArgumentException if failed to sign in with {@code clientPassword}.
+     */
+    public void signIn(byte[] clientPassword) {
+        clientPassword = ofNullable(clientPassword).map(v -> copyOf(v, v.length)).orElse(null);
+        if (clientPassword != null && clientPassword.length == 0) {
+            throw new IllegalArgumentException("empty password");
+        }
+        final var password_ = getPassword();
+        if (clientPassword == null) {
+            if (password_ != null) {
+                throw new IllegalStateException("unable to sign in without password");
+            }
+            log.warn("signed in without password; username: " + username);
+            return;
+        }
+        if (Objects.equals(sha1(clientPassword), password_)) {
+            log.info("signed in with sha1");
+            if (false) {
+                log.info("updating password with sha2...");
+                setPassword(sha2(clientPassword));
+            }
+            return;
+        }
+        if (Objects.equals(sha2(clientPassword), password_)) {
+            log.info("signed in with sha2");
+            return;
+        }
+        throw new IllegalArgumentException("unable to sign in");
+    }
+
+    /**
+     * Updates the password of this staff using specified values.
+     *
+     * @param oldClientPassword an old password to verify; may be {@code null} but it should not be <em>empty</em>.
+     * @param newClientPassword a new password to set; may be {@code null} but it should not be <em>empty</em>.
+     * @throws IllegalArgumentException if failed to sign in with {@code oldClientPassword}.
+     */
+    public void changePassword(final byte[] oldClientPassword, byte[] newClientPassword) {
+        newClientPassword = ofNullable(newClientPassword).map(v -> copyOf(v, v.length)).orElse(null);
+        if (newClientPassword != null && newClientPassword.length == 0) {
+            throw new IllegalArgumentException("empty newClientPassword");
+        }
+        signIn(oldClientPassword);
+        if (newClientPassword == null) {
+            log.warn("setting an empty password for {}", getUsername());
+            setPassword(null);
+            return;
+        }
+        if (false) {
+            setPassword(sha2(newClientPassword));
+        }
+        setPassword(sha1(newClientPassword));
+    }
+
+    public void signIn(final String username, byte[] clientPassword) {
+        requireNonNull(username, "username is null");
+        clientPassword = ofNullable(clientPassword).map(v -> copyOf(v, v.length)).orElse(null);
+        if (clientPassword != null && clientPassword.length == 0) {
+            throw new IllegalArgumentException("empty password");
+        }
+        final var username_ = getUsername();
+        if (username_ == null) {
+            throw new IllegalStateException("this.username is currently null");
+        }
+        if (!Objects.equals(username_, username)) {
+            throw new IllegalArgumentException("invalid username");
+        }
+        final var password_ = getPassword();
+        if (clientPassword == null) {
+            if (password_ != null) {
+                throw new IllegalStateException("unable to sign in without password");
+            }
+            log.warn("signed in without password; username: " + username);
+            return;
+        }
+        if (Objects.equals(sha1(clientPassword), password_)) {
+            log.info("signed in with sha1");
+            if (false) {
+                log.info("updating password with sha2...");
+                setPassword(sha2(clientPassword));
+            }
+            return;
+        }
+        if (Objects.equals(sha2(clientPassword), password_)) {
+            log.info("signed in with sha2");
+            return;
+        }
+        throw new IllegalArgumentException("unable to sign in");
+    }
+
+    public void changePassword(final String username, final byte[] oldClientPassword, byte[] newClientPassword) {
+        newClientPassword = ofNullable(newClientPassword).map(v -> copyOf(v, v.length)).orElse(null);
+        if (newClientPassword != null && newClientPassword.length == 0) {
+            throw new IllegalArgumentException("empty newClientPassword");
+        }
+        signIn(username, oldClientPassword);
+        if (newClientPassword == null) {
+            log.warn("setting an empty password for {}", getUsername());
+            setPassword(null);
+            return;
+        }
+        if (false) {
+            setPassword(sha2(newClientPassword));
+        }
+        setPassword(sha1(newClientPassword));
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
@@ -365,6 +741,15 @@ public class Staff
     @Column(name = COLUMN_NAME_ADDRESS_ID, nullable = false)
     private Integer addressId;
 
+    @Valid
+    @NotNull
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_ADDRESS_ID, nullable = false,
+                insertable = false, // !!!
+                updatable = false   // !!!
+                )
+    private Address address;
+
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * A {@code BLOB} containing a photograph of the employee.
@@ -397,6 +782,10 @@ public class Staff
     @Column(name = COLUMN_NAME_STORE_ID, nullable = false)
     private Integer storeId;
 
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false, insertable = false, updatable = false)
+    private Store store;
+
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-staff.html">
      * Whether this is an active employee. If employees leave, their rows are not deleted from this table; instead, this
@@ -427,222 +816,4 @@ public class Staff
     @Basic(optional = true)
     @Column(name = "password", nullable = true, length = 40)
     private String password;
-
-    /**
-     * Returns current value of {@link Staff_#address address} attribute.
-     *
-     * @return current value of the {@link Staff_#address address} attribute.
-     */
-    public Address getAddress() {
-        return address;
-    }
-
-    /**
-     * Replaces current value of {@link Staff_#address address} attribute with specified value.
-     *
-     * @param address new value for the {@link Staff_#address address} attribute.
-     * @apiNote This method also updates {@link Staff_#addressId addressId} attribute with {@code address?.addressId}.
-     */
-    public void setAddress(final Address address) {
-        this.address = address;
-        setAddressId(
-                ofNullable(this.address)
-                        .map(Address::getAddressId)
-                        .orElse(null)
-        );
-    }
-
-    @Valid
-    @NotNull
-    @OneToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_ADDRESS_ID, nullable = false,
-                insertable = false, // !!!
-                updatable = false   // !!!
-                )
-    private Address address;
-
-    @Transient
-    public void getPictureWritingTo(final OutputStream stream) throws IOException {
-        Objects.requireNonNull(stream, "stream is null");
-        final var data = getPicture();
-        if (data == null) {
-            throw new IllegalStateException("data is currently null");
-        }
-        stream.write(data);
-    }
-
-    @Transient
-    public void getPictureWritingTo(final java.io.File file) throws IOException {
-        Objects.requireNonNull(file, "file is null");
-        try (final var stream = new FileOutputStream(file)) {
-            getPictureWritingTo(stream);
-            stream.flush();
-        }
-    }
-
-    @Transient
-    public void getPictureWritingTo(final WritableByteChannel channel) throws IOException {
-        Objects.requireNonNull(channel, "channel is null");
-        final var data = getPicture();
-        if (data == null) {
-            throw new IllegalStateException("data is currently null");
-        }
-        for (final var buffer = ByteBuffer.wrap(data);
-             buffer.hasRemaining();
-             channel.write(buffer)) {
-            // empty
-        }
-    }
-
-    @Transient
-    public void getPictureWritingTo(final java.nio.file.Path path) throws IOException {
-        Objects.requireNonNull(path, "path is null");
-        try (final var channel = FileChannel.open(
-                path, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.DSYNC)) {
-            getPictureWritingTo(channel);
-            channel.force(false);
-        }
-    }
-
-    @Transient
-    public void setPictureReadingFrom(final InputStream stream) throws IOException {
-        Objects.requireNonNull(stream, "stream is null");
-        final var image = ImageIO.read(stream);
-        if (image == null) {
-            throw new IllegalArgumentException("no registered ImageReader claims to be able to read");
-        }
-        final var raster = image.getRaster();
-        final var buffer = raster.getDataBuffer();
-        if (buffer.getDataType() != DataBuffer.TYPE_BYTE) {
-            throw new IllegalArgumentException(
-                    "image.raster.dataBuffer.type(" + buffer.getDataType() +
-                    ") != TYPE_BYTE(" + DataBuffer.TYPE_BYTE + ")");
-        }
-        final byte[] data = ((DataBufferByte) buffer).getData();
-        setPicture(data);
-    }
-
-    @Transient
-    public void setPictureReadingFrom(final java.io.File file) throws IOException {
-        Objects.requireNonNull(file, "file is null");
-        try (final var stream = new FileInputStream(file)) {
-            setPictureReadingFrom(stream);
-        }
-    }
-
-    @Transient
-    public void setPictureReadingFrom(final java.nio.file.Path path) throws IOException {
-        Objects.requireNonNull(path, "path is null");
-        try (final var channel = FileChannel.open(path, StandardOpenOption.READ)) {
-            setPictureReadingFrom(Channels.newInputStream(channel));
-        }
-    }
-
-    /**
-     * Returns current value of {@link Staff_#store store} attribute.
-     *
-     * @return current value of the {@link Staff_#store store} attribute.
-     */
-    public Store getStore() {
-        return store;
-    }
-
-    /**
-     * Replaces current value of {@link Staff_#store store} attribute with specified value.
-     *
-     * @param store new value for the {@link Staff_#store store} attribute.
-     * @apiNote This method also updates current value of {@link Staff#storeId storeId} with {@code store?.storeId}.
-     */
-    public void setStore(final Store store) {
-        this.store = store;
-        setStoreId(
-                ofNullable(this.store)
-                        .map(Store::getStoreId)
-                        .orElse(null)
-        );
-    }
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_STORE_ID, nullable = false, insertable = false, updatable = false)
-    private Store store;
-
-    /**
-     * Activates this staff by updating current value of {@link Staff_#active active} attribute with
-     * {@link Boolean#TRUE}, and returns this staff.
-     *
-     * @return this staff.
-     */
-    public Staff activate() {
-        setActive(Boolean.TRUE);
-        return this;
-    }
-
-    /**
-     * Deactivates this staff by updating current value of {@link Staff_#active active} attribute with
-     * {@link Boolean#FALSE}, and returns this staff.
-     *
-     * @return this staff.
-     */
-    public Staff deactivate() {
-        setActive(Boolean.FALSE);
-        return this;
-    }
-
-    /**
-     * Signs in with specified client password.
-     *
-     * @param clientPassword the password to verity with; may be {@code null} but should have a non-zero length.
-     * @throws IllegalArgumentException if failed to sign in with {@code clientPassword}.
-     */
-    public void signIn(byte[] clientPassword) {
-        if (clientPassword != null && clientPassword.length == 0) {
-            throw new IllegalArgumentException("empty password");
-        }
-        final var password_ = getPassword();
-        if (clientPassword == null) {
-            if (password_ != null) {
-                throw new IllegalStateException("unable to sign in without password");
-            }
-            log.warn("signed in without password; username: " + username);
-            return;
-        }
-        final byte[] clientPassword_ = Arrays.copyOf(clientPassword, clientPassword.length);
-        clientPassword = null;
-        if (Objects.equals(SecurityUtils.sha1(clientPassword_), password_)) {
-            log.info("signed in with sha1");
-            if (false) {
-                log.info("updating password with sha2...");
-                setPassword(SecurityUtils.sha2(clientPassword_));
-            }
-            return;
-        }
-        if (Objects.equals(SecurityUtils.sha2(clientPassword_), password_)) {
-            return;
-        }
-        throw new IllegalArgumentException("unable to sign in");
-    }
-
-    /**
-     * Updates the password of this staff using specified values.
-     *
-     * @param oldClientPassword an old password to verify.
-     * @param newClientPassword a new password to set.
-     * @throws IllegalArgumentException if failed to sign in with {@code oldClientPassword}.
-     */
-    public void changePassword(final byte[] oldClientPassword, byte[] newClientPassword) {
-        if (newClientPassword != null && newClientPassword.length == 0) {
-            throw new IllegalArgumentException("empty new client password");
-        }
-        final byte[] newClientPassword_ = ofNullable(newClientPassword).map(v -> Arrays.copyOf(v, v.length)).orElse(null);
-        newClientPassword = null;
-        signIn(oldClientPassword);
-        if (newClientPassword_ == null) {
-            setPassword(null);
-            return;
-        }
-        if (false) {
-            setPassword(SecurityUtils.sha2(newClientPassword_));
-        }
-        setPassword(SecurityUtils.sha1(newClientPassword_));
-    }
 }

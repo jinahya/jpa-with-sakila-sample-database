@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Positive;
 
 import java.util.List;
 
-public interface ___HasAddress<ENTITY extends __BaseEntity<ID>, ID extends Comparable<? super ID>>
+public interface __HasAddress<ENTITY extends __BaseEntity<ID>, ID extends Comparable<? super ID>>
         extends ____PersistenceService {
 
     default List<ENTITY> findAllByCity(final @NotNull City city, final @Positive int maxResults) {

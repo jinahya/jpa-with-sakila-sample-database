@@ -3,6 +3,7 @@ package com.github.jinahya.persistence.sakila;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
@@ -51,5 +52,12 @@ class Rental_IT
         final var instance = applyEntityManager(Rental_IT::newPersistedInstance);
         assertThat(instance).isNotNull();
         assertThatBean(instance).isValid();
+    }
+
+    @Test
+    void merge__() {
+        final var persisted = applyEntityManager(Rental_IT::newPersistedInstance);
+        persisted.setReturnDate(LocalDateTime.now());
+        final var merged = applyEntityManager(em -> em.merge(persisted));
     }
 }

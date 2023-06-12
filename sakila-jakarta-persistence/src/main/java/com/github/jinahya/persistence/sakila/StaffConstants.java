@@ -57,6 +57,8 @@ import static java.util.Optional.ofNullable;
  */
 public final class StaffConstants {
 
+    // --------------------------------------------------------------------------------------------------------- staffId
+
     /**
      * The name of the query selects the entity whose {@link Staff_#staffId staffId} attribute matches a specific
      * value.
@@ -88,6 +90,8 @@ public final class StaffConstants {
      */
     public static final String PARAMETER_STAFF_ID_MIN_EXCLUSIVE = "staffIdMinExclusive";
 
+    // --------------------------------------------------------------------------------------------------------- address
+
     /**
      * The name of the query selects all entities which each {@code address.city} attribute matches to a specific
      * value.
@@ -103,6 +107,19 @@ public final class StaffConstants {
     public static final String QUERY_FIND_ALL_BY_COUNTRY = "Staff_findAllByCountry";
 
     public static final String PARAMETER_COUNTRY = "country";
+
+    // --------------------------------------------------------------------------------------------------- storeId/store
+
+    // -------------------------------------------------------------------------------------------------------- username
+    public static final String QUERY_FIND_ALL_BY_USERNAME = "Staff_findAllByUsername";
+
+    public static final String PARAMETER_USERNAME = "username";
+
+    static {
+        ofNullable(Staff_.username).map(Attribute::getName).ifPresent(v -> {
+            assert v.equals(PARAMETER_USERNAME);
+        });
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
     public static final String GRAPH_ADDRESS = "Staff_graph_address";

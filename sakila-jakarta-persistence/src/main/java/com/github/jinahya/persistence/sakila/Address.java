@@ -138,6 +138,8 @@ public class Address
      */
     public static final String COLUMN_NAME_LOCATION = "location";
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * Creates a new instance.
      */
@@ -175,6 +177,8 @@ public class Address
         return getAddressId();
     }
 
+    // ------------------------------------------------------------------------------------------------------- addressId
+
     /**
      * Returns current value of {@link Address_#addressId addressId} attribute.
      *
@@ -196,6 +200,8 @@ public class Address
         this.addressId = addressId;
     }
 
+    // --------------------------------------------------------------------------------------------------------- address
+
     /**
      * Returns current value of {@link Address_#address address} attribute.
      *
@@ -213,6 +219,8 @@ public class Address
     public void setAddress(final String address) {
         this.address = address;
     }
+
+    // -------------------------------------------------------------------------------------------------------- address2
 
     /**
      * Returns current value of {@link Address_#address2 address2} attribute.
@@ -232,6 +240,8 @@ public class Address
         this.address2 = address2;
     }
 
+    // -------------------------------------------------------------------------------------------------------- district
+
     /**
      * Returns current value of {@link Address_#district district} attribute.
      *
@@ -250,6 +260,7 @@ public class Address
         this.district = district;
     }
 
+    // ----------------------------------------------------------------------------------------------------- cityId/city
     public Integer getCityId() {
         return cityId;
     }
@@ -257,137 +268,6 @@ public class Address
     protected void setCityId(final Integer cityId) {
         this.cityId = cityId;
     }
-
-    /**
-     * Returns current value of {@link Address_#postalCode postalCode} attribute.
-     *
-     * @return current value of the {@link Address_#postalCode postalCode} attribute.
-     */
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    /**
-     * Replaces current value of {@link Address_#postalCode postalCode} attribute with specified value.
-     *
-     * @param postalCode new value for the {@link Address_#postalCode postalCode} attribute.
-     */
-    public void setPostalCode(final String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(final String phone) {
-        this.phone = phone;
-    }
-
-    /**
-     * Returns current value of {@link Address_#location location} attribute.
-     *
-     * @return current value of the {@link Address_#location location} attribute.
-     */
-    byte[] getLocation() {
-        return location;
-    }
-
-    /**
-     * Replaces current value of {@link Address_#location location} attribute with specified value.
-     *
-     * @param location new value for the {@link Address_#location location} attribute.
-     */
-    void setLocation(final byte[] location) {
-        this.location = ofNullable(location).map(v -> copyOf(v, v.length)).orElse(null);
-    }
-
-    /**
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
-     * A surrogate primary key used to uniquely identify each address in the table.
-     * </blockquote>
-     */
-    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
-    @PositiveOrZero
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = COLUMN_NAME_ADDRESS_ID, nullable = false,
-            insertable = true, // EclipseLink
-            updatable = false)
-    private Integer addressId;
-
-    /**
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
-     * The first line of an address.
-     * </blockquote>
-     */
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = "address", nullable = false, length = 50)
-    private String address;
-
-    /**
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
-     * An optional second line of an address.
-     * </blockquote>
-     */
-    @Basic(optional = true)
-    @Column(name = "address2", nullable = true, length = 50)
-    private String address2;
-
-    /**
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
-     * The region of an address, this may be a state, province, prefecture, etc.
-     * </blockquote>
-     */
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = "district", nullable = false, length = 20)
-    private String district;
-
-    /**
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
-     * A foreign key pointing to the {@link City#TABLE_NAME} table.
-     * </blockquote>
-     */
-    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
-    @PositiveOrZero
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_CITY_ID, nullable = false)
-    private Integer cityId;
-
-    /**
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
-     * The postal code or ZIP code of the address (where applicable).
-     * </blockquote>
-     */
-    @Basic(optional = true)
-    @Column(name = "postal_code", nullable = true, length = 10)
-    private String postalCode;
-
-    /**
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
-     * The telephone number for the address.
-     * </blockquote>
-     */
-    @NotNull
-    @Basic(optional = false)
-    @Column(name = "phone", nullable = false, length = 20)
-    private String phone;
-
-    /**
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
-     * A Geometry column with a spatial index on it.
-     * </blockquote>
-     *
-     * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
-     */
-    @NotNull
-    @Lob
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_LOCATION, nullable = false)
-    private byte[] location;
 
     /**
      * Returns current value of {@link Address_#city city} attribute.
@@ -414,12 +294,56 @@ public class Address
         );
     }
 
+    // ------------------------------------------------------------------------------------------------------ postalCode
+
     /**
-     * 이 주소(Address)를 포함하는 도시(City).
+     * Returns current value of {@link Address_#postalCode postalCode} attribute.
+     *
+     * @return current value of the {@link Address_#postalCode postalCode} attribute.
      */
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_CITY_ID, nullable = false, insertable = false, updatable = false)
-    private City city;
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    /**
+     * Replaces current value of {@link Address_#postalCode postalCode} attribute with specified value.
+     *
+     * @param postalCode new value for the {@link Address_#postalCode postalCode} attribute.
+     */
+    public void setPostalCode(final String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    // ----------------------------------------------------------------------------------------------------------- phone
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(final String phone) {
+        this.phone = phone;
+    }
+
+    // -------------------------------------------------------------------------------------------------------- location
+
+    /**
+     * Returns current value of {@link Address_#location location} attribute.
+     *
+     * @return current value of the {@link Address_#location location} attribute.
+     */
+    @_VisibleForTesting
+    byte[] getLocation() {
+        return location;
+    }
+
+    /**
+     * Replaces current value of {@link Address_#location location} attribute with specified value.
+     *
+     * @param location new value for the {@link Address_#location location} attribute.
+     */
+    @_VisibleForTesting
+    void setLocation(final byte[] location) {
+        this.location = ofNullable(location).map(v -> copyOf(v, v.length)).orElse(null);
+    }
 
     /**
      * Returns current value of {@link Address_#locationGeometry locationGeometry} attribute.
@@ -444,11 +368,6 @@ public class Address
 
         );
     }
-
-    @Convert(converter = _DomainConverters.GeometryConverter.class)
-    @Basic(optional = false)
-    @Column(name = COLUMN_NAME_LOCATION, nullable = false, insertable = false, updatable = false)
-    private _DomainTypes.Geometry locationGeometry;
 
     /**
      * Applies current value of {@link Address_#locationGeometry locationGeometry} attribute, as a
@@ -513,4 +432,105 @@ public class Address
     public void setLocationGeometryAsPoint(final double x, final double y) {
         setLocationGeometryAsPoint(x, y, 0);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * A surrogate primary key used to uniquely identify each address in the table.
+     * </blockquote>
+     */
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
+    @PositiveOrZero
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = COLUMN_NAME_ADDRESS_ID, nullable = false,
+            insertable = true, // EclipseLink
+            updatable = false)
+    private Integer addressId;
+
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * The first line of an address.
+     * </blockquote>
+     */
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "address", nullable = false, length = 50)
+    private String address;
+
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * An optional second line of an address.
+     * </blockquote>
+     */
+    @Basic(optional = true)
+    @Column(name = "address2", nullable = true, length = 50)
+    private String address2;
+
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * The region of an address, this may be a state, province, prefecture, etc.
+     * </blockquote>
+     */
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "district", nullable = false, length = 20)
+    private String district;
+
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * A foreign key pointing to the {@link City#TABLE_NAME} table.
+     * </blockquote>
+     */
+    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
+    @PositiveOrZero
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_CITY_ID, nullable = false)
+    private Integer cityId;
+
+    /**
+     * 이 주소(Address)를 포함하는 도시(City).
+     */
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_CITY_ID, nullable = false, insertable = false, updatable = false)
+    private City city;
+
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * The postal code or ZIP code of the address (where applicable).
+     * </blockquote>
+     */
+    @Basic(optional = true)
+    @Column(name = "postal_code", nullable = true, length = 10)
+    private String postalCode;
+
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * The telephone number for the address.
+     * </blockquote>
+     */
+    @NotNull
+    @Basic(optional = false)
+    @Column(name = "phone", nullable = false, length = 20)
+    private String phone;
+
+    /**
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-address.html">
+     * A Geometry column with a spatial index on it.
+     * </blockquote>
+     *
+     * @see <a href="https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html">11.4.1 Spatial Data Types</a>
+     */
+    @NotNull
+    @Lob
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_LOCATION, nullable = false)
+    private byte[] location;
+
+    @Convert(converter = _DomainConverters.GeometryConverter.class)
+    @Basic(optional = false)
+    @Column(name = COLUMN_NAME_LOCATION, nullable = false, insertable = false, updatable = false)
+    private _DomainTypes.Geometry locationGeometry;
 }
