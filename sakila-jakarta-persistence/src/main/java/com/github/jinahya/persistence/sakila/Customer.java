@@ -71,6 +71,12 @@ public class Customer
      */
     public static final String COLUMN_NAME_CREATE_DATE = "create_date";
 
+    public static Customer ofCustomerId(final int customerId) {
+        final var instance = new Customer();
+        instance.customerId = customerId;
+        return instance;
+    }
+
     /**
      * Creates a new instance.
      */

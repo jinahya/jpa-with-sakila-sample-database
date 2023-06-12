@@ -12,6 +12,19 @@ SELECT COUNT(1)
 FROM rental
 ;
 
+-- rental_date
+EXPLAIN
+SELECT MIN(rental_date), MAX(rental_date)
+FROM rental
+;
+-- https://stackoverflow.com/q/53874286/330457
+SELECT COUNT(*)
+FROM (SELECT ROW_NUMBER() OVER (ORDER BY rental_id)              AS r_id,
+             ROW_NUMBER() OVER (ORDER BY rental_date, rental_id) AS r_date
+      FROM rental) t
+WHERE r_id <> r_date
+;
+
 -- inventory.store <> customer.store
 SELECT i.store_id, c.store_id
 FROM rental AS r

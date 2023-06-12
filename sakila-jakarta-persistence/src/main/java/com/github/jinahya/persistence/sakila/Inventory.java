@@ -145,6 +145,12 @@ public class Inventory
 
     public static final String COLUMN_NAME_STORE_ID = Store.COLUMN_NAME_STORE_ID;
 
+    public static Inventory ofInventoryId(final int inventoryId) {
+        final var instance = new Inventory();
+        instance.inventoryId = inventoryId;
+        return instance;
+    }
+
     /**
      * Creates a new instance.
      */

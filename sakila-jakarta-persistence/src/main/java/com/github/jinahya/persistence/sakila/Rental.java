@@ -5,11 +5,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.Max;
@@ -21,7 +21,14 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.github.jinahya.persistence.sakila.RentalConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN;
+import static com.github.jinahya.persistence.sakila.RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN;
+import static com.github.jinahya.persistence.sakila.RentalConstants.QUERY_FIND_BY_RENTAL_ID;
+import static com.github.jinahya.persistence.sakila._DomainConstants.MAX_MEDIUMINT_UNSIGNED;
 import static com.github.jinahya.persistence.sakila._DomainConstants.MAX_SMALLINT_UNSIGNED;
+import static jakarta.persistence.GenerationType.IDENTITY;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -36,6 +43,41 @@ import static com.github.jinahya.persistence.sakila._DomainConstants.MAX_SMALLIN
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-rental.html">5.1.14 The rental Table</a>
  */
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN,
+        query = """
+                SELECT e
+                FROM Rental AS e
+                WHERE (e.rentalDate >= :rentalDateMinInclusive AND e.rentalDate < :rentalDateMaxExclusive)
+                      AND ((e.rentalDate = :rentalDateMin AND e.rentalId > :rentalIdMinExclusive)
+                           OR e.rentalDate > :rentalDateMin)
+                ORDER BY e.rentalDate ASC, e.rentalId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN,
+        query = """
+                SELECT e
+                FROM Rental AS e
+                WHERE (e.rentalDate BETWEEN :rentalDateMinInclusive AND :rentalDateMaxInclusive)
+                      AND ((e.rentalDate = :rentalDateMin AND e.rentalId > :rentalIdMinExclusive)
+                           OR e.rentalDate > :rentalDateMin)
+                ORDER BY e.rentalDate ASC, e.rentalId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM Rental AS e
+                WHERE e.rentalId > :rentalIdMinExclusive
+                ORDER BY e.rentalId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_RENTAL_ID,
+        query = """
+                SELECT e
+                FROM Rental AS e
+                WHERE e.rentalId = :rentalId"""
+)
 @Entity
 @Table(
         name = Rental.TABLE_NAME,
@@ -84,6 +126,18 @@ public class Rental
     }
 
     @Override
+    public String toString() {
+        return super.toString() + '{' +
+               "rentalId=" + rentalId +
+               ", rentalDate=" + rentalDate +
+               ", inventoryId=" + inventoryId +
+               ", customerId=" + customerId +
+               ", returnDate=" + returnDate +
+               ", staffId=" + staffId +
+               '}';
+    }
+
+    @Override
     public boolean equals(final Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof Rental that)) return false;
@@ -124,10 +178,23 @@ public class Rental
     }
 
     // ------------------------------------------------------------------------------------------------------ rentalDate
+
+    /**
+     * Returns current value of {@link Rental_#rentalDate rentalDate} attribute.
+     *
+     * @return current value of the {@link Rental_#rentalDate rentalDate} attribute.
+     */
     public LocalDateTime getRentalDate() {
         return rentalDate;
     }
 
+    /**
+     * Replace current value of {@link Rental_#rentalDate rentalDate} attribute with specified value.
+     *
+     * @param rentalDate new value for the {@link Rental_#rentalDate rentalDate} attribute.
+     * @deprecated The {@link Rental_#rentalDate rentalDate} attribute is not insertable nor updatable.
+     */
+    @Deprecated(forRemoval = true)
     public void setRentalDate(final LocalDateTime rentalDate) {
         this.rentalDate = rentalDate;
     }
@@ -137,7 +204,7 @@ public class Rental
         return inventoryId;
     }
 
-    protected void setInventoryId(final Integer inventoryId) {
+    void setInventoryId(final Integer inventoryId) {
         this.inventoryId = inventoryId;
     }
 
@@ -145,6 +212,13 @@ public class Rental
         return inventory;
     }
 
+    /**
+     * Replaces current value of {@link Rental_#inventory inventory} attribute with specified value.
+     *
+     * @param inventory new value for the {@link Rental_#inventory inventory} attribute.
+     * @apiNote This method also updates current value of {@link Rental_#inventoryId inventoryId} attribute with
+     * {@code inventory?.inventoryId}.
+     */
     public void setInventory(final Inventory inventory) {
         this.inventory = inventory;
         setInventoryId(
@@ -171,7 +245,7 @@ public class Rental
      * Replaces current value of {@link Rental_#customer customer} attribute with specified value.
      *
      * @param customer new value for the {@link Rental_#customer customer} attribute.
-     * @apiNote This method also replaces current value of {@link Rental_#customerId customerId} with
+     * @apiNote This method also updates current value of {@link Rental_#customerId customerId} attribute with
      * {@code customer?.customerId}.
      */
     public void setCustomer(final Customer customer) {
@@ -190,6 +264,29 @@ public class Rental
 
     public void setReturnDate(final LocalDateTime returnDate) {
         this.returnDate = returnDate;
+    }
+
+    /**
+     * Sets {@link Rental_#returnDate returnDate} with specified value, and returns this object.
+     *
+     * @param returnDate the value for the {@link Rental_#rentalDate returnDate}.
+     * @return this object.
+     * @see #setReturnDate(LocalDateTime)
+     */
+    public Rental returnDate(final LocalDateTime returnDate) {
+        requireNonNull(returnDate, "returnDate is null");
+        setReturnDate(returnDate);
+        return this;
+    }
+
+    /**
+     * Sets {@link Rental_#returnDate returnDate} with {@link LocalDateTime#now() now}, and returns this object.
+     *
+     * @return this object.
+     * @see #returnDate(LocalDateTime)
+     */
+    public Rental returnDateNow() {
+        return returnDate(LocalDateTime.now());
     }
 
     // --------------------------------------------------------------------------------------------------- staffId/staff
@@ -234,7 +331,7 @@ public class Rental
      * </blockquote>
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = COLUMN_NAME_RENTAL_ID, nullable = false,
             insertable = true, // EclipseLink
             updatable = false)
@@ -248,7 +345,7 @@ public class Rental
     @PastOrPresent
     @NotNull
     @Basic(optional = false)
-    @Column(name = "rental_date", nullable = false, insertable = true, updatable = false)
+    @Column(name = "rental_date", nullable = false, insertable = false, updatable = false)
     private LocalDateTime rentalDate;
 
     /**
@@ -256,7 +353,7 @@ public class Rental
      * The item being rented.
      * </blockquote>
      */
-    @Max(_DomainConstants.MAX_MEDIUMINT_UNSIGNED)
+    @Max(MAX_MEDIUMINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
