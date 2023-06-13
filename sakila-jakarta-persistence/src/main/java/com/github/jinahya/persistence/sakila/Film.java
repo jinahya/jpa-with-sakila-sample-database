@@ -159,7 +159,7 @@ public class Film
     public static final String COLUMN_NAME_LANGUAGE_ID = "language_id";
 
     /**
-     * The name of the table column to which the {@link Film_#originalLanguageId originLanguageId} attribute maps. The
+     * The name of the table column to which the {@link Film_#originalLanguageId originalLanguageId} attribute maps. The
      * value is {@value}.
      */
     public static final String COLUMN_NAME_ORIGINAL_LANGUAGE_ID = "original_language_id";

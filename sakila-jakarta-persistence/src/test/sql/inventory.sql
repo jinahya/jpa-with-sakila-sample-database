@@ -97,7 +97,7 @@ LIMIT :limit
 EXPLAIN
 SELECT DISTINCT f.*
 FROM inventory AS i
-         JOIN film f on i.film_id = f.film_id
+         JOIN film AS f ON i.film_id = f.film_id
 WHERE i.store_id = :storeId
   AND i.film_id > :filmIdMinExclusive
 ORDER BY f.film_id ASC -- i.film_id 하면 에러나네....

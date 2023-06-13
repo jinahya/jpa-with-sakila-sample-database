@@ -21,7 +21,7 @@ WHERE s.store_id IS NULL
 
 SELECT COUNT(1) AS count
 FROM customer AS c
-         JOIN address a on a.address_id = c.address_id
+         JOIN address AS a ON a.address_id = c.address_id
 GROUP BY a.city_id
 ORDER BY count DESC
 ;
