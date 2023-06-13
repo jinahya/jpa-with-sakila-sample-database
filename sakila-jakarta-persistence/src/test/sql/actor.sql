@@ -15,7 +15,9 @@ FROM actor
 ORDER BY actor_id ASC
 ;
 
--- most common first_names
+-- ---------------------------------------------------------------------------------------------------------- first_name
+
+-- 가장 많은 名
 EXPLAIN
 SELECT first_name, COUNT(1) AS count
 FROM actor
@@ -24,7 +26,9 @@ ORDER BY count DESC, first_name ASC
 LIMIT 5
 ;
 
--- most common last_names
+-- ----------------------------------------------------------------------------------------------------------- last_name
+
+-- 가장 많은 姓
 EXPLAIN
 SELECT last_name, COUNT(1) AS count
 FROM actor
@@ -33,6 +37,18 @@ ORDER BY count DESC, last_name ASC
 LIMIT 5
 ;
 
+-- ----------------------------------------------------------------------------------------------- first_name, last_name
+
+-- 同名異人?
+EXPLAIN
+SELECT first_name, last_name, COUNT(1) AS count
+FROM actor
+GROUP BY first_name, last_name
+HAVING count > 1
+ORDER BY first_name, last_name
+;
+
+-- ---------------------------------------------------------------------------------------------------------------------
 -- Actor_findByActorId (200)
 EXPLAIN
 SELECT *
