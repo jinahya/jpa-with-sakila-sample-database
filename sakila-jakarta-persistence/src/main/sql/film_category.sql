@@ -1,5 +1,5 @@
 -- desc
-desc film_category
+DESC film_category
 ;
 
 -- count

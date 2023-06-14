@@ -1,5 +1,5 @@
 -- desc
-desc actor_info
+DESC actor_info
 ;
 
 -- count

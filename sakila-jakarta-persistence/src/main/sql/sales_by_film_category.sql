@@ -1,5 +1,5 @@
 -- desc
-desc sales_by_film_category
+DESC sales_by_film_category
 ;
 
 -- select

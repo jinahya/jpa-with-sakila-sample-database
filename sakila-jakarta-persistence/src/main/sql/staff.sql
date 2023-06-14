@@ -1,5 +1,5 @@
 -- desc
-desc staff
+DESC staff
 ;
 
 -- select

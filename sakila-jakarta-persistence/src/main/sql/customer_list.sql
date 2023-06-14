@@ -1,5 +1,5 @@
 -- desc
-desc customer_list
+DESC customer_list
 ;
 
 -- select

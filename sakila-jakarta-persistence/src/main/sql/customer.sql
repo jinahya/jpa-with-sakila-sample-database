@@ -1,5 +1,5 @@
 -- desc
-desc customer
+DESC customer
 ;
 
 -- select

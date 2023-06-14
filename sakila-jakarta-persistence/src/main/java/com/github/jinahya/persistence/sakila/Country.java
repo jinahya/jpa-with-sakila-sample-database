@@ -7,6 +7,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -17,6 +18,9 @@ import jakarta.validation.constraints.PositiveOrZero;
 import java.util.List;
 import java.util.Locale;
 
+import static com.github.jinahya.persistence.sakila.CountryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET;
+import static com.github.jinahya.persistence.sakila.CountryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET;
+import static com.github.jinahya.persistence.sakila.CountryConstants.NATIVE_QUERY_SELECT_BY_COUNTRY_ID;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
 import static java.util.Collections.emptyList;
@@ -49,6 +53,33 @@ import static java.util.Optional.ofNullable;
                 FROM Country AS e
                 WHERE e.countryId = :countryId"""
 )
+@NamedNativeQuery(
+        name = NATIVE_QUERY_SELECT_ALL_KEYSET,
+        query = """
+                SELECT *
+                FROM country
+                WHERE country_id > ?
+                ORDER BY country_id ASC
+                LIMIT ?""",
+        resultClass = Country.class
+)
+@NamedNativeQuery(
+        name = NATIVE_QUERY_SELECT_ALL_ROWSET,
+        query = """
+                SELECT *
+                FROM country
+                ORDER BY country_id ASC
+                LIMIT ?,?""",
+        resultClass = Country.class
+)
+@NamedNativeQuery(
+        name = NATIVE_QUERY_SELECT_BY_COUNTRY_ID,
+        query = """
+                SELECT *
+                FROM country
+                WHERE country_id = ?""",
+        resultClass = Country.class
+)
 @Entity
 @Table(name = Country.TABLE_NAME)
 public class Country
@@ -68,6 +99,7 @@ public class Country
     public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
 
     // --------------------------------------------------------------------------------------------------------- country
+
     /**
      * The name of the table column to which the {@link Country_#country country} attribute maps. The value is
      * {@value}.

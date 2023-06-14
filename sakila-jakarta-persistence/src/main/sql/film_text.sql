@@ -1,5 +1,5 @@
 -- desc
-desc film_text
+DESC film_text
 ;
 
 -- count

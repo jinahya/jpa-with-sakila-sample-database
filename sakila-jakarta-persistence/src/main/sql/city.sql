@@ -1,5 +1,5 @@
 -- desc
-desc city
+DESC city
 ;
 
 -- select

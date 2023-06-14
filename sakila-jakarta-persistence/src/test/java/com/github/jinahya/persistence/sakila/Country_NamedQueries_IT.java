@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import static com.github.jinahya.persistence.sakila.CountryConstants.PARAMETER_COUNTRY_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
@@ -81,9 +79,9 @@ class Country_NamedQueries_IT
 
         @Test
         void __() {
-            final var maxResults = current().nextInt(8, 16);
-            for (final var i = new AtomicInteger(0); ; ) {
-                final var countryIdMinExclusive = i.get();
+            final var maxResults = 64;
+            for (var i = 0; ; ) {
+                final var countryIdMinExclusive = i;
                 // WHEN
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL, Country.class)
@@ -103,7 +101,7 @@ class Country_NamedQueries_IT
                 if (list.isEmpty()) {
                     break;
                 }
-                i.set(list.get(list.size() - 1).getCountryId());
+                i = list.get(list.size() - 1).getCountryId();
             }
         }
     }

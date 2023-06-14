@@ -1,5 +1,5 @@
 -- desc
-desc inventory
+DESC inventory
 ;
 
 -- count

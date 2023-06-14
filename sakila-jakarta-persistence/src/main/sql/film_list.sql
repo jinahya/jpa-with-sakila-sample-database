@@ -1,5 +1,5 @@
 -- desc
-desc film_list
+DESC film_list
 ;
 
 -- count

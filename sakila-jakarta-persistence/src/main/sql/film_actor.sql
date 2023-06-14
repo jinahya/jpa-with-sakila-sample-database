@@ -1,5 +1,5 @@
 -- desc
-desc film_actor
+DESC film_actor
 ;
 
 -- count

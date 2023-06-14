@@ -3,7 +3,7 @@ SHOW CREATE TABLE rental
 ;
 
 -- desc
-desc rental
+DESC rental
 ;
 
 -- select

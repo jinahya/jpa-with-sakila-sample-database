@@ -82,6 +82,11 @@ $ sh ./.mvn.javadoc.sh
 
 * [How to Select the First/Least/Max Row per Group in SQL](https://www.xaprb.com/blog/2006/12/07/how-to-select-the-firstleastmax-row-per-group-in-sql/)
 
+#### [USE THE INDEX, LUKE](https://use-the-index-luke.com/)
+
+* [Paging Through Results](https://use-the-index-luke.com/sql/partial-results/fetch-next-page)
+* [We need tool support for keyset pagination](https://use-the-index-luke.com/no-offset)
+
 ### MySQL
 
 * MySQL Reference Manual

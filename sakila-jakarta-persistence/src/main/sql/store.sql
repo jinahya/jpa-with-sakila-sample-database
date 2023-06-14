@@ -1,5 +1,5 @@
 -- desc
-desc store
+DESC store
 ;
 
 -- select

@@ -1,5 +1,5 @@
 -- desc
-desc payment
+DESC payment
 ;
 
 -- select

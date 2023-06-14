@@ -1,5 +1,5 @@
 -- desc
-desc actor
+DESC actor
 ;
 
 -- count

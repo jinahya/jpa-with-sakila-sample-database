@@ -1,5 +1,5 @@
 -- desc
-desc sales_by_store
+DESC sales_by_store
 ;
 
 -- select

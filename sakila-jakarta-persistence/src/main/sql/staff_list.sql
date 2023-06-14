@@ -1,5 +1,5 @@
 -- desc
-desc staff_list
+DESC staff_list
 ;
 
 -- select

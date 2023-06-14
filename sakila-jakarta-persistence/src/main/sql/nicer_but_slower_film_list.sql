@@ -1,5 +1,5 @@
 -- desc
-desc nicer_but_slower_film_list
+DESC nicer_but_slower_film_list
 ;
 
 -- is FID unique?
