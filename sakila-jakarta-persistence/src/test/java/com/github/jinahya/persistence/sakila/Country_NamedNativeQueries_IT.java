@@ -18,6 +18,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  * A class for testing named native queries defined on {@link Country} class.
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
+ * @see Country
+ * @see CountryConstants
  */
 class Country_NamedNativeQueries_IT
         extends __PersistenceIT {

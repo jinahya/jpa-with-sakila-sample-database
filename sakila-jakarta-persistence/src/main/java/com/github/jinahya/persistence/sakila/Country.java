@@ -37,6 +37,7 @@ import static java.util.Optional.ofNullable;
  *
  * @author Jin Kwon &lt;onacit_at_gmail.com&gt;
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">5.1.5 The country Table</a>
+ * @see CountryConstants
  */
 @NamedQuery(
         name = QUERY_FIND_ALL,
