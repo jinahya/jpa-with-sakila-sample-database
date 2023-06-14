@@ -16,11 +16,11 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
 import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -59,12 +59,15 @@ public class Country
      */
     public static final String TABLE_NAME = "country";
 
+    // ------------------------------------------------------------------------------------------------------ country_id
+
     /**
      * The name of the table column to which the {@link Country_#countryId countryId} attribute maps. The value is
      * {@value}.
      */
     public static final String COLUMN_NAME_COUNTRY_ID = "country_id";
 
+    // --------------------------------------------------------------------------------------------------------- country
     /**
      * The name of the table column to which the {@link Country_#country country} attribute maps. The value is
      * {@value}.
@@ -75,6 +78,8 @@ public class Country
      * The length of the {@link #COLUMN_NAME_COUNTRY} column. The value is {@value}.
      */
     public static final int COLUMN_LENGTH_COUNTRY = 50;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Returns a new instance of specified {@link Country_#countryId countryId} attribute value.
@@ -89,9 +94,9 @@ public class Country
     }
 
     /**
-     * Creates new instance with specified {@link Country_#country country} attribute value.
+     * Creates new instance with specified value of {@link Country_#country country} attribute.
      *
-     * @param country the value for {@link Country_#country country} attribute.
+     * @param country the value for the {@link Country_#country country} attribute.
      * @return a new instance of {@code country}.
      */
     public static Country of(final String country) {
@@ -107,6 +112,7 @@ public class Country
         super();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @Override
     public String toString() {
         return super.toString() + '{' +
@@ -127,10 +133,13 @@ public class Country
         return super.hashCode();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
     @Override
     Integer identifier() {
         return getCountryId();
     }
+
+    // ------------------------------------------------------------------------------------------------------- countryId
 
     /**
      * Returns current value of {@link Country_#countryId countryId} attribute.
@@ -153,6 +162,8 @@ public class Country
         this.countryId = countryId;
     }
 
+    // --------------------------------------------------------------------------------------------------------- country
+
     /**
      * Returns current value of {@link Country_#country country} attribute.
      *
@@ -170,6 +181,43 @@ public class Country
     public void setCountry(final String country) {
         this.country = country;
     }
+
+    /**
+     * Returns locales which each {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to current
+     * value of {@link Country_#country} attribute.
+     *
+     * @return a list of locales which each {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to
+     * current value of {@link Country_#country} attribute; {@code empty} if current value of {@link Country_#country}
+     * attribute is {@code null} or no locales matched.
+     * @see LocaleUtils#valuesOfDisplayCountryInEnglish(String)
+     */
+    @Transient
+    public List<Locale> getLocalesForCountry() {
+        return ofNullable(getCountry())
+                .filter(v -> !v.isBlank())
+                .map(LocaleUtils::valuesOfDisplayCountryInEnglish)
+                .orElse(emptyList());
+    }
+
+    /**
+     * Replaces current value of {@link Country_#country country} attribute with specified locale's
+     * {@link Locale#getDisplayCountry(Locale) display country} represented in {@link Locale#ENGLISH ENGLISH}.
+     *
+     * @param locale the locale whose {@link Locale#getDisplayCountry(Locale) display country} value is used for the
+     *               {@link Country_#country country} attribute; may be {@code null}.
+     * @see Locale#getDisplayCountry(Locale)
+     * @see Locale#ENGLISH
+     */
+    @Transient
+    public void setCountryAsLocale(final Locale locale) {
+        setCountry(
+                ofNullable(locale)
+                        .map(l -> l.getDisplayCountry(Locale.ENGLISH))
+                        .orElse(null)
+        );
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-country.html">
@@ -196,39 +244,4 @@ public class Country
     // TODO: use COLUMN_LENGTH_COUNTRY for the length element
     @Column(name = "country", nullable = false, length = 50)
     private String country;
-
-    /**
-     * Returns locales which each {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to current
-     * value of {@link Country_#country} attribute.
-     *
-     * @return a list of locales which each {@link Locale#getDisplayCountry(Locale) displayCountry(ENGLISH)} is equal to
-     * current value of {@link Country_#country} attribute; {@code empty} if current value of {@link Country_#country}
-     * attribute is {@code null} or no locale matched.
-     * @see LocaleUtils#valuesOfDisplayCountryInEnglish(String)
-     */
-    @Transient
-    public List<Locale> getLocalesForCountry() {
-        return Optional.ofNullable(getCountry())
-                .filter(v -> !v.isBlank())
-                .map(LocaleUtils::valuesOfDisplayCountryInEnglish)
-                .orElse(emptyList());
-    }
-
-    /**
-     * Replaces current value of {@link Country_#country country} attribute with specified locale's
-     * {@link Locale#getDisplayCountry(Locale) display country} represented in {@link Locale#ENGLISH ENGLISH}.
-     *
-     * @param locale the locale whose {@link Locale#getDisplayCountry(Locale) display country} value is used for the
-     *               {@link Country_#country country} attribute.
-     * @see Locale#getDisplayCountry(Locale)
-     * @see Locale#ENGLISH
-     */
-    @Transient
-    public void setCountryAsLocale(final Locale locale) {
-        setCountry(
-                Optional.ofNullable(locale)
-                        .map(l -> l.getDisplayCountry(Locale.ENGLISH))
-                        .orElse(null)
-        );
-    }
 }

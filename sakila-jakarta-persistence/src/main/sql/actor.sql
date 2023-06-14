@@ -49,6 +49,7 @@ ORDER BY first_name, last_name
 ;
 
 -- ---------------------------------------------------------------------------------------------------------------------
+
 -- Actor_findByActorId (200)
 EXPLAIN
 SELECT *
@@ -60,17 +61,30 @@ WHERE actor_id = :actorId
 EXPLAIN
 SELECT *
 FROM actor
-WHERE actor_id > :actorIdMinExclusive
 ORDER BY actor_id ASC
 LIMIT :offset,:limit
 ;
+EXPLAIN
+SELECT *
+FROM actor
+WHERE actor_id > :actorIdMinExclusive
+ORDER BY actor_id ASC
+LIMIT :limit
+;
 
--- Actor_findAllByLastName
+-- Actor_findAllByLastName ('KILMER')
+EXPLAIN
+SELECT *
+FROM actor
+WHERE last_name = :lastName
+ORDER BY actor_id ASC
+LIMIT :offset,:limit
+;
 EXPLAIN
 SELECT *
 FROM actor
 WHERE last_name = :lastName
   AND actor_id > :actorIdMinExclusive
 ORDER BY actor_id ASC
-LIMIT :offset,:limit
+LIMIT :limit
 ;

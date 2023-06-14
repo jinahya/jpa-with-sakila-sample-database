@@ -66,6 +66,18 @@ import java.util.Optional;
 public final class ActorConstants {
 
     /**
+     * The name of the query which selects a rorw whose value of {@value Actor#COLUMN_NAME_ACTOR_ID} column matches a
+     * specific value. The value is {@value}.
+     */
+    public static final String NATIVE_QUERY_SELECT_BY_ACTOR_ID = "Actor_selectByActorId_Native";
+
+    /**
+     * The name of the query which selects all rows ordered by {@value Actor#COLUMN_NAME_ACTOR_ID} column in ascending
+     * order. The value is {@value}.
+     */
+    public static final String NATIVE_QUERY_SELECT_ALL = "Actor_selectAll";
+
+    /**
      * The name of the query which selects an entity whose value of {@link Actor_#actorId actorId} attribute matches a
      * specific value. The value is {@value}.
      *

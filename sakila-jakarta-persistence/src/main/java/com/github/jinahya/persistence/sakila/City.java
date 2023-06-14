@@ -28,6 +28,7 @@ import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_FIND_ALL
 import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID;
 import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_FIND_BY_CITY_ID;
 import static com.github.jinahya.persistence.sakila.CityConstants.QUERY_PARAM_CITY_ID;
+import static com.github.jinahya.persistence.sakila._DomainConstants.MAX_SMALLINT_UNSIGNED;
 
 /**
  * An entity for mapping {@value #TABLE_NAME} table.
@@ -204,11 +205,37 @@ public class City
     }
 
     /**
+     * Returns current value of {@link City_#country country} attribute.
+     *
+     * @return current value of the {@link City_#country country} attribute.
+     */
+    public Country getCountry() {
+        return country;
+    }
+
+    /**
+     * Replaces current value of {@link City_#country country} attribute with specified value.
+     *
+     * @param country new value for the {@link City_#country country} attribute.
+     * @apiNote This method also update {@link City_#countryId countryId} attribute with {@code country?.countryId}.
+     */
+    public void setCountry(final Country country) {
+        this.country = country;
+        setCountryId(
+                Optional.ofNullable(this.country)
+                        .map(Country::getCountryId)
+                        .orElse(null)
+        );
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
      * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-city.html">
      * A surrogate primary key used to uniquely identify each city in the table.
      * </blockquote>
      */
-    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -232,36 +259,12 @@ public class City
      * A foreign key identifying the country that the city belongs to.
      * </blockquote>
      */
-    @Max(_DomainConstants.MAX_SMALLINT_UNSIGNED)
+    @Max(MAX_SMALLINT_UNSIGNED)
     @PositiveOrZero
     @NotNull
     @Basic(optional = false)
     @Column(name = COLUMN_NAME_COUNTRY_ID, nullable = false)
     private Integer countryId;
-
-    /**
-     * Returns current value of {@link City_#country country} attribute.
-     *
-     * @return current value of the {@link City_#country country} attribute.
-     */
-    public Country getCountry() {
-        return country;
-    }
-
-    /**
-     * Replaces current value of {@link City_#country country} attribute with specified value.
-     *
-     * @param country new value for the {@link City_#country country} attribute.
-     * @apiNote This method also update {@link City_#countryId countryId} attribute with {@code country?.countryId}.
-     */
-    public void setCountry(final Country country) {
-        this.country = country;
-        setCountryId(
-                Optional.ofNullable(this.country)
-                        .map(Country::getCountryId)
-                        .orElse(null)
-        );
-    }
 
     /**
      * 이 도시가 포함된 국가. {@link Country_#countryId countryId} attribute 에 더하여, 같은 컬럼({@value #COLUMN_NAME_COUNTRY_ID})에 매핑된

@@ -14,6 +14,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
+import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -25,6 +26,8 @@ import java.util.List;
 
 import static com.github.jinahya.persistence.sakila.ActorConstants.ATTRIBUTE_NODE_FILMS;
 import static com.github.jinahya.persistence.sakila.ActorConstants.ENTITY_GRAPH_FILMS;
+import static com.github.jinahya.persistence.sakila.ActorConstants.NATIVE_QUERY_SELECT_ALL;
+import static com.github.jinahya.persistence.sakila.ActorConstants.NATIVE_QUERY_SELECT_BY_ACTOR_ID;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME;
 import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_BY_ACTOR_ID;
@@ -71,6 +74,23 @@ import static com.github.jinahya.persistence.sakila.ActorConstants.QUERY_FIND_BY
                 SELECT e
                 FROM Actor AS e
                 WHERE e.actorId = :actorId"""
+)
+@NamedNativeQuery(
+        name = NATIVE_QUERY_SELECT_ALL,
+        query = """
+                SELECT *
+                FROM actor
+                ORDER BY actor_id ASC
+                LIMIT ?,?""",
+        resultClass = Actor.class
+)
+@NamedNativeQuery(
+        name = NATIVE_QUERY_SELECT_BY_ACTOR_ID,
+        query = """
+                SELECT *
+                FROM actor
+                WHERE actor_id = ?""",
+        resultClass = Actor.class
 )
 @Entity
 @Table(name = Actor.TABLE_NAME, indexes = {@Index(columnList = Actor.COLUMN_NAME_LAST_NAME)})
