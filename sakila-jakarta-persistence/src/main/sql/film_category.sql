@@ -29,6 +29,22 @@ FROM film_category
 ORDER BY film_id ASC
 ;
 
+-- ------------------------------------------------------------------------------------------------------------- film_id
+
+-- films with most categories
+EXPLAIN
+SELECT fc.film_id,
+       f.title              AS film_title,
+       COUNT(1)             AS category_count,
+       GROUP_CONCAT(c.name) AS category_names
+FROM film_category AS fc
+         JOIN film AS f ON fc.film_id = f.film_id
+         JOIN category AS c ON c.category_id = fc.category_id
+GROUP BY film_id
+ORDER BY category_count DESC
+LIMIT 5
+;
+
 -- --------------------------------------------------------------------------------------------------------- category_id
 
 -- categories with most films
@@ -42,20 +58,6 @@ FROM film_category AS fc
          JOIN category AS c ON c.category_id = fc.category_id
 GROUP BY c.category_id
 ORDER BY film_count DESC
-LIMIT 5
-;
-
--- films with most categories
-EXPLAIN
-SELECT fc.film_id,
-       f.title              AS film_title,
-       COUNT(1)             AS category_count,
-       GROUP_CONCAT(c.name) AS category_names
-FROM film_category AS fc
-         JOIN film AS f ON fc.film_id = f.film_id
-         JOIN category AS c ON c.category_id = fc.category_id
-GROUP BY film_id
-ORDER BY category_count DESC
 LIMIT 5
 ;
 

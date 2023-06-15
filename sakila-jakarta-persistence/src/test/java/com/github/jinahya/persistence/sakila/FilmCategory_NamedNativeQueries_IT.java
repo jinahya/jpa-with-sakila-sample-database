@@ -25,6 +25,7 @@ class FilmCategory_NamedNativeQueries_IT
     @Nested
     class SelectByFilmIdAndCategoryIdTest {
 
+        @DisplayName("(0, 0)NoResultException")
         @Test
         void _NoResultException_00() {
             assertThatThrownBy(
@@ -38,6 +39,7 @@ class FilmCategory_NamedNativeQueries_IT
             ).isInstanceOf(NoResultException.class);
         }
 
+        @DisplayName("(1, 6)!null")
         @Test
         void _NotNull_16() {
             final var filmId = 1;
