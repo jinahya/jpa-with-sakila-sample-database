@@ -154,3 +154,76 @@ SELECT *
 FROM film
 WHERE special_features = 12;
 ;
+
+-- --------------------------------------------------------------------------------------------------------- last_update
+
+
+-- ---------------------------------------------------------------------------------------------------------------------
+
+-- Film_selectAll_rowset
+EXPLAIN
+SELECT *
+FROM film
+ORDER BY film_id ASC
+LIMIT ?,?
+;
+EXPLAIN
+SELECT *
+FROM film
+ORDER BY film_id ASC
+LIMIT 0,5
+;
+EXPLAIN
+SELECT *
+FROM film
+ORDER BY film_id ASC
+LIMIT 5,5
+;
+EXPLAIN
+SELECT *
+FROM film
+ORDER BY film_id ASC
+LIMIT 1000,5
+;
+EXPLAIN
+SELECT *
+FROM film
+ORDER BY film_id ASC
+LIMIT 1005,5
+;
+-- Film_selectAll_keyset
+EXPLAIN
+SELECT *
+FROM film
+WHERE film_id > :filmIdMinExclusive
+ORDER BY film_id ASC
+LIMIT ?
+;
+EXPLAIN
+SELECT *
+FROM film
+WHERE film_id > 0
+ORDER BY film_id ASC
+LIMIT 5
+;
+EXPLAIN
+SELECT *
+FROM film
+WHERE film_id > 5
+ORDER BY film_id ASC
+LIMIT 5
+;
+EXPLAIN
+SELECT *
+FROM film
+WHERE film_id > 1000
+ORDER BY film_id ASC
+LIMIT 5
+;
+EXPLAIN
+SELECT *
+FROM film
+WHERE film_id > 1005
+ORDER BY film_id ASC
+LIMIT 5
+;

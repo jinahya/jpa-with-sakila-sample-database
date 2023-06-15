@@ -81,6 +81,8 @@ $ sh ./.mvn.javadoc.sh
 ### SQL
 
 * [How to Select the First/Least/Max Row per Group in SQL](https://www.xaprb.com/blog/2006/12/07/how-to-select-the-firstleastmax-row-per-group-in-sql/)
+* [SQL — Pagination, You Are Probably Doing It Wrong](https://medium.com/swlh/sql-pagination-you-are-probably-doing-it-wrong-d0f2719cc166)
+* [SQL Seek Method or Keyset Pagination](https://vladmihalcea.com/sql-seek-keyset-pagination/)
 
 #### [USE THE INDEX, LUKE](https://use-the-index-luke.com/)
 

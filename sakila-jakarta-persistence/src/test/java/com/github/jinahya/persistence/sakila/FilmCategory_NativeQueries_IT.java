@@ -15,13 +15,13 @@ import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_FILM_ID;
-import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_BY_ID;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_CATEGORY;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_FILM;
-import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_ID;
-import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_ID_CATEGORY_ID;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE;
-import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_ID_FILM_ID;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_ID_FILM_ID_MIN;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_ID_FILM_ID_MIN_EXCLUSIVE;
 import static java.util.Comparator.comparing;
@@ -36,7 +36,7 @@ class FilmCategory_NativeQueries_IT
         super();
     }
 
-    @DisplayName(QUERY_FIND_BY_ID)
+    @DisplayName(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID)
     @Nested
     class FindByIdTest {
 
@@ -47,8 +47,8 @@ class FilmCategory_NativeQueries_IT
                     : FilmCategoryId.of(current().nextInt(), 0);
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(QUERY_FIND_BY_ID, FilmCategory.class)
-                                    .setParameter(QUERY_PARAM_ID, id)
+                            em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID, FilmCategory.class)
+                                    .setParameter(PARAMETER_ID, id)
                                     .getSingleResult() // NoResultException
 
                     )
@@ -59,8 +59,8 @@ class FilmCategory_NativeQueries_IT
         void __16() {
             final var id = FilmCategoryId.of(1, 6);
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(QUERY_FIND_BY_ID, FilmCategory.class)
-                            .setParameter(QUERY_PARAM_ID, id)
+                    em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID, FilmCategory.class)
+                            .setParameter(PARAMETER_ID, id)
                             .getSingleResult()
 
             );
@@ -113,7 +113,7 @@ class FilmCategory_NativeQueries_IT
         void _Empty_0() {
             final var list = applyEntityManager(
                     em -> em.createNamedQuery(QUERY_FIND_ALL_BY_ID_FILM_ID, FilmCategory.class)
-                            .setParameter(QUERY_PARAM_ID_FILM_ID, 0)
+                            .setParameter(PARAMETER_ID_FILM_ID, 0)
                             .setParameter(QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE, 0)
                             .setMaxResults(1)
                             .getResultList()
@@ -132,7 +132,7 @@ class FilmCategory_NativeQueries_IT
                 final var idCategoryIdMinExclusive = i.get();
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL_BY_ID_FILM_ID, FilmCategory.class)
-                                .setParameter(QUERY_PARAM_ID_FILM_ID, idFilmId)
+                                .setParameter(PARAMETER_ID_FILM_ID, idFilmId)
                                 .setParameter(QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
@@ -162,7 +162,7 @@ class FilmCategory_NativeQueries_IT
         void _Empty_0() {
             final var list = applyEntityManager(
                     em -> em.createNamedQuery(QUERY_FIND_ALL_BY_ID_CATEGORY_ID, FilmCategory.class)
-                            .setParameter(QUERY_PARAM_ID_CATEGORY_ID, 0)
+                            .setParameter(PARAMETER_ID_CATEGORY_ID, 0)
                             .setParameter(QUERY_PARAM_ID_FILM_ID_MIN_EXCLUSIVE, 0)
                             .setMaxResults(1)
                             .getResultList()

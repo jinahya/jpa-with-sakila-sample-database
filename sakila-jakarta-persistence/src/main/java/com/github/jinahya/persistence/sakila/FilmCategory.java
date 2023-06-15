@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
 import jakarta.validation.Valid;
@@ -13,6 +14,9 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM;
@@ -64,19 +68,51 @@ import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_
                     WHERE e.id.filmId = :idFilmId
                           AND e.id.categoryId > :idCategoryIdMinExclusive
                     ORDER BY e.id.categoryId ASC""")
-@NamedQuery(name = QUERY_FIND_ALL,
-            query = """
-                    SELECT e
-                    FROM FilmCategory AS e
-                    WHERE (e.id.filmId = :idFilmIdMin AND e.id.categoryId > :idCategoryIdMinExclusive)
-                          OR e.id.filmId > :idFilmIdMin
-                    ORDER BY e.id.filmId ASC, e.id.categoryId ASC""")
-@NamedQuery(name = QUERY_FIND_BY_ID,
-            query = """
-                    SELECT e
-                    FROM FilmCategory AS e
-                    WHERE e.id = :id""")
-//@IdClass(FilmCategoryId.class) // this class uses an embedded id
+@NamedQuery(
+        name = QUERY_FIND_ALL,
+        query = """
+                SELECT e
+                FROM FilmCategory AS e
+                WHERE (e.id.filmId = :idFilmIdMin AND e.id.categoryId > :idCategoryIdMinExclusive)
+                   OR e.id.filmId > :idFilmIdMin
+                ORDER BY e.id.filmId ASC, e.id.categoryId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_BY_ID,
+        query = """
+                SELECT e
+                FROM FilmCategory AS e
+                WHERE e.id = :id"""
+)
+@NamedNativeQuery(
+        name = NATIVE_QUERY_SELECT_ALL_KEYSET,
+        query = """
+                SELECT *
+                FROM film_category
+                WHERE (film_id = ? AND category_id > ?)
+                   OR film_id > ?
+                ORDER BY film_id ASC, category_id ASC
+                LIMIT ?""",
+        resultClass = FilmCategory.class
+)
+@NamedNativeQuery(
+        name = NATIVE_QUERY_SELECT_ALL_ROWSET,
+        query = """
+                SELECT *
+                FROM film_category
+                ORDER BY film_id ASC, category_id ASC
+                LIMIT ?,?""",
+        resultClass = FilmCategory.class
+)
+@NamedNativeQuery(
+        name = NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID,
+        query = """
+                SELECT *
+                FROM film_category AS e
+                WHERE film_id = ? AND category_id = ?""",
+        resultClass = FilmCategory.class
+)
+//@IdClass(FilmCategoryId.class) // this class uses an embedded id!
 @Entity
 @Table(name = FilmCategory.TABLE_NAME)
 public class FilmCategory
