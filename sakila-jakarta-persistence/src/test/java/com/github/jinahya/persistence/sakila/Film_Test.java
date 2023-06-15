@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.Period;
-import java.util.concurrent.ThreadLocalRandom;
 
+import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,7 +39,7 @@ class Film_Test
         void __() {
             // GIVEN
             final var instance = newEntitySpy();
-            final var rentalDuration = ThreadLocalRandom.current().nextInt(365);
+            final var rentalDuration = current().nextInt(365);
             // WHEN
             when(instance.getRentalDuration()).thenReturn(rentalDuration);
             // THEN
@@ -64,7 +64,7 @@ class Film_Test
         void setRentalDurationAsPeriod_NonNull_NonNull() {
             // GIVEN
             final var instance = newEntitySpy();
-            final var days = ThreadLocalRandom.current().nextInt(2);
+            final var days = current().nextInt(2);
             // WHEN
             instance.setRentalDurationAsPeriod(Period.ofDays(days));
             // THEN
@@ -90,7 +90,7 @@ class Film_Test
             // GIVEN
             final var instance = newEntitySpy();
             // WHEN
-            final var length = ThreadLocalRandom.current().nextInt(420);
+            final var length = current().nextInt(420);
             when(instance.getLength()).thenReturn(length);
             // THEN
             final var lengthAsDuration = instance.getLengthAsDuration();
@@ -113,7 +113,7 @@ class Film_Test
         void setLengthAsDuration_NonNull_NonNull() {
             // GIVEN
             final var instance = newEntitySpy();
-            final var minutes = ThreadLocalRandom.current().nextInt(720);
+            final var minutes = current().nextInt(720);
             // WHEN
             instance.setLengthAsDuration(Duration.ofMinutes(minutes));
             // THEN
