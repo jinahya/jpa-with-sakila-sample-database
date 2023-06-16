@@ -13,6 +13,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
+import static java.util.concurrent.ThreadLocalRandom.current;
 
 /**
  * An abstract base class for subclasses of {@link __BaseEntity}.
@@ -85,15 +87,34 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
      */
     Optional<@Valid ENTITY> findById(final @NotNull ID id) {
         requireNonNull(id, "id is null");
-        return Optional.ofNullable(
+        return ofNullable(
                 applyEntityManager(
                         em -> em.find(entityClass, id) // null if not found
                 )
         );
     }
 
+    <A extends Comparable<? super A>> @NotNull List<@Valid @NotNull ENTITY> findAllByUniqueOrderable(
+            @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends A>> attributeExpressionMapper,
+            final A attributeValueMinExclusive, @Positive final int maxResults) {
+        return applyEntityManager(em -> {
+            final var builder = em.getCriteriaBuilder();
+            final var query = builder.createQuery(entityClass);
+            final var root = query.from(entityClass);                          // FROM ENTITY AS e
+            query.select(root);                                                // SELECT e
+            final var attributeExpression = attributeExpressionMapper.apply(root);
+            if (attributeValueMinExclusive != null) {                          // WHERE e.A > attributeValueMinExclusive
+                query.where(builder.greaterThan(attributeExpression, attributeValueMinExclusive));
+            }
+            query.orderBy(builder.asc(attributeExpression));                   // ORDER BY e.A ASC
+            return em.createQuery(query)
+                    .setMaxResults(maxResults)
+                    .getResultList();
+        });
+    }
+
     /**
-     * Finds all entities whose {@link ID} attributes are greater than specified value, ordered by the <em>id></em>
+     * Finds all entities whose {@link ID} attributes are greater than specified value, ordered by the {@link ID}
      * attribute in ascending order.
      *
      * @param idExpressionMapper  a function for evaluating the path to the {@link ID} attribute.
@@ -103,15 +124,20 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
      */
     @NotNull List<@Valid @NotNull ENTITY> findAll(
             @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends ID>> idExpressionMapper,
-            @NotNull final ID idValueMinExclusive, @Positive final int maxResults) {
+            final ID idValueMinExclusive, @Positive final int maxResults) {
+        if (current().nextBoolean()) {
+            return findAllByUniqueOrderable(idExpressionMapper, idValueMinExclusive, maxResults);
+        }
         return applyEntityManager(em -> {
             final var builder = em.getCriteriaBuilder();
             final var query = builder.createQuery(entityClass);
-            final var root = query.from(entityClass);                                                // FROM ENTITY AS e
-            query.select(root);                                                                              // SELECT e
+            final var root = query.from(entityClass);                               // FROM ENTITY AS e
+            query.select(root);                                                     // SELECT e
             final var idExpression = idExpressionMapper.apply(root);
-            query.where(builder.greaterThan(idExpression, idValueMinExclusive));                     // WHERE e.ID = :id
-            query.orderBy(builder.asc(idExpression));                                               // ORDER BY e.ID ASC
+            if (idValueMinExclusive != null) {
+                query.where(builder.greaterThan(idExpression, idValueMinExclusive));// WHERE e.ID > :idValueMinExclusive
+            }
+            query.orderBy(builder.asc(idExpression));                               // ORDER BY e.ID ASC
             return em.createQuery(query)
                     .setMaxResults(maxResults)
                     .getResultList();
@@ -120,21 +146,24 @@ abstract class __BaseEntityService<ENTITY extends __BaseEntity<ID>, ID extends C
 
     <A> @NotNull List<@Valid @NotNull ENTITY> findAllBy(
             @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends ID>> idExpressionMapper,
-            @NotNull final ID idValueMinExclusive, @Positive final int maxResults,
+            final ID idValueMinExclusive, @Positive final int maxResults,
             @NotNull final Function<? super Root<ENTITY>, ? extends Expression<? extends A>> attributeExpressionMapper,
             @NotNull final A attributeValue) {
         return applyEntityManager(em -> {
             final var builder = em.getCriteriaBuilder();
             final var query = builder.createQuery(entityClass);
-            final var root = query.from(entityClass);                                              // FROM <ENTITY> AS e
-            query.select(root);                                                                              // SELECT e
+            final var root = query.from(entityClass);                               // FROM ENTITY AS e
+            query.select(root);                                                     // SELECT e
             final var idExpression = idExpressionMapper.apply(root);
+            final var idPredicate = ofNullable(idValueMinExclusive)
+                    .map(v -> builder.greaterThan(idExpression, v))
+                    .orElseGet(builder::conjunction);
             final var attributeExpression = attributeExpressionMapper.apply(root);
             query.where(builder.and(
-                    builder.equal(attributeExpression, attributeValue),                   // WHERE e.A = :attributeValue
-                    builder.greaterThan(idExpression, idValueMinExclusive)            // AND e.ID > :idValueMinExclusive
+                    builder.equal(attributeExpression, attributeValue),             // WHERE e.A = :attributeValue
+                    idPredicate                                                     //   AND e.ID > :idValueMinExclusive
             ));
-            query.orderBy(builder.asc(idExpression));                                               // ORDER BY e.ID ASC
+            query.orderBy(builder.asc(idExpression));                               // ORDER BY e.ID ASC
             return em.createQuery(query)
                     .setMaxResults(maxResults)
                     .getResultList();

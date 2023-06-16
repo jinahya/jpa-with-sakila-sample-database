@@ -343,7 +343,7 @@ public class Rental
      * </blockquote>
      */
     @PastOrPresent
-    @NotNull
+//    @NotNull // triggers/rental_date
     @Basic(optional = false)
     @Column(name = "rental_date", nullable = false, insertable = false, updatable = false)
     private LocalDateTime rentalDate;

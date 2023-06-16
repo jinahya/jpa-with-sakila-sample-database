@@ -3,8 +3,6 @@ package com.github.jinahya.persistence.sakila;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 
-import java.time.LocalDateTime;
-
 import static org.jeasy.random.FieldPredicates.named;
 
 class Rental_Randomizer
@@ -36,8 +34,6 @@ class Rental_Randomizer
 
     @Override
     public Rental getRandomValue() {
-        final var value = super.getRandomValue();
-        value.setRentalDate(LocalDateTime.now());
-        return value;
+        return super.getRandomValue();
     }
 }
