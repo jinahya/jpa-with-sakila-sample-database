@@ -253,20 +253,20 @@ public class FilmCategoryConstants {
      * match a specific value, ordered by {@link FilmCategoryId_#filmId id.filmId} attribute in ascending order.
      *
      * @see #PARAMETER_ID_CATEGORY_ID
-     * @see #QUERY_PARAM_ID_FILM_ID_MIN_EXCLUSIVE
+     * @see #PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE
      */
     public static final String QUERY_FIND_ALL_BY_ID_CATEGORY_ID = "FilmCategory_findAllByIdCategoryId";
 
     public static final String PARAMETER_ID_CATEGORY_ID = "idCategoryId";
 
-    public static final String QUERY_PARAM_ID_FILM_ID_MIN_EXCLUSIVE = "idFilmIdMinExclusive";
+    public static final String PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE = "idFilmIdMinExclusive";
 
     /**
      * The name of the query selects all entities whose {@link FilmCategory_#category caetgory} attributes match a
      * specific value, ordered by {@link FilmCategoryId_#filmId id.filmId} attribute in ascending order.
      *
      * @see #PARAMETER_CATEGORY
-     * @see #QUERY_PARAM_ID_FILM_ID_MIN_EXCLUSIVE
+     * @see #PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE
      */
     public static final String QUERY_FIND_ALL_BY_CATEGORY = "FilmCategory_findAllByCategory";
 

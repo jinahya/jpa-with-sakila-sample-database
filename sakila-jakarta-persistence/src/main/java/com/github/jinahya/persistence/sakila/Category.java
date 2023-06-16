@@ -111,7 +111,8 @@ public class Category
     }
 
     @Deprecated(forRemoval = true)
-    private void setCategoryId(final Integer categoryId) {
+    @_VisibleForTesting
+    void setCategoryId(final Integer categoryId) {
         this.categoryId = categoryId;
     }
 

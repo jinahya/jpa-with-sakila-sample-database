@@ -12,18 +12,19 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_BY_ID;
+import static java.util.Optional.ofNullable;
 
 /**
  * An entity class for mapping {@value #TABLE_NAME} table.
@@ -41,20 +42,33 @@ import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_
  * @see <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">5.1.9 The film_category
  * Table</a>
  */
-@NamedQuery(name = QUERY_FIND_ALL_BY_CATEGORY,
-            query = """
-                    SELECT e
-                    FROM FilmCategory AS e
-                    WHERE e.category = :category
-                          AND e.id.filmId > :idFilmIdMinExclusive
-                    ORDER BY e.id.filmId ASC""")
-@NamedQuery(name = QUERY_FIND_ALL_BY_ID_CATEGORY_ID,
-            query = """
-                    SELECT e
-                    FROM FilmCategory AS e
-                    WHERE e.id.categoryId = :idCategoryId
-                          AND e.id.filmId > :idFilmIdMinExclusive
-                    ORDER BY e.id.filmId ASC""")
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID,
+        query = """
+                SELECT e
+                FROM FilmCategory AS e
+                WHERE e.category.categoryId = :categoryCategoryId
+                      AND e.id.filmId > :idFilmIdMinExclusive
+                ORDER BY e.id.filmId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_CATEGORY,
+        query = """
+                SELECT e
+                FROM FilmCategory AS e
+                WHERE e.category = :category
+                      AND e.id.filmId > :idFilmIdMinExclusive
+                ORDER BY e.id.filmId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_ID_CATEGORY_ID,
+        query = """
+                SELECT e
+                FROM FilmCategory AS e
+                WHERE e.id.categoryId = :idCategoryId
+                      AND e.id.filmId > :idFilmIdMinExclusive
+                ORDER BY e.id.filmId ASC"""
+)
 @NamedQuery(
         name = QUERY_FIND_ALL_BY_FILM,
         query = """
@@ -138,16 +152,18 @@ public class FilmCategory
     public static final String TABLE_NAME = "film_category";
 
     /**
-     * The name of the table column to which the {@link FilmCategoryId_#filmId filmId} attribute maps. The value is
+     * The name of the table column to which the {@link FilmCategoryId_#filmId id.filmId} attribute maps. The value is
      * {@value}.
      */
     public static final String COLUMN_NAME_FILM_ID = Film.COLUMN_NAME_FILM_ID;
 
     /**
-     * The name of the table column to which the {@link FilmCategoryId_#categoryId categoryId} attribute maps. The value
-     * is {@value}.
+     * The name of the table column to which the {@link FilmCategoryId_#categoryId id.categoryId} attribute maps. The
+     * value is {@value}.
      */
     public static final String COLUMN_NAME_CATEGORY_ID = Category.COLUMN_NAME_CATEGORY_ID;
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     /**
      * Creates a new instance with specified film and category.
@@ -170,6 +186,8 @@ public class FilmCategory
         super();
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     /**
      * {@inheritDoc}
      *
@@ -183,10 +201,10 @@ public class FilmCategory
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof FilmCategory)) return false;
-        return equals(obj);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FilmCategory that)) return false;
+        return Objects.equals(id, that.id);
     }
 
     @Override
@@ -204,6 +222,8 @@ public class FilmCategory
         return id;
     }
 
+    // -------------------------------------------------------------------------------------------------------------- id
+
     /**
      * Returns current value of {@link FilmCategory_#id id} attribute.
      *
@@ -218,21 +238,11 @@ public class FilmCategory
      *
      * @param id new value for the {@link FilmCategory_#id id} attribute.
      */
-    public void setId(final FilmCategoryId id) {
+    void setId(final FilmCategoryId id) {
         this.id = id;
     }
 
-    /**
-     * The embedded id of this entity.
-     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">
-     * film_id: A foreign key identifying the film.<br/>category_id: A foreign key identifying the category.
-     * </blockquote>
-     */
-    @Valid
-    @NotNull
-    @EmbeddedId
-    private FilmCategoryId id;
-
+    // ------------------------------------------------------------------------------------------------------------ film
     /**
      * Returns current value of {@link FilmCategory_#film film} attribute.
      *
@@ -251,22 +261,16 @@ public class FilmCategory
      */
     public void setFilm(final Film film) {
         this.film = film;
-        Optional.ofNullable(id)
+        ofNullable(getId())
                 .orElseGet(() -> id = new FilmCategoryId())
                 .setFilmId(
-                        Optional.ofNullable(this.film)
+                        ofNullable(this.film)
                                 .map(Film::getFilmId)
                                 .orElse(null)
                 );
     }
 
-    /**
-     * 이 엔터티에 매핑된 영화(Film).
-     */
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
-    private Film film;
-
+    // -------------------------------------------------------------------------------------------------------- category
     /**
      * Returns current value of {@link FilmCategory_#category category} attribute.
      *
@@ -285,14 +289,34 @@ public class FilmCategory
      */
     public void setCategory(final Category category) {
         this.category = category;
-        Optional.ofNullable(id)
+        ofNullable(getId())
                 .orElseGet(() -> id = new FilmCategoryId())
                 .setCategoryId(
-                        Optional.ofNullable(this.category)
+                        ofNullable(this.category)
                                 .map(Category::getCategoryId)
                                 .orElse(null)
                 );
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    /**
+     * The embedded id of this entity.
+     * <blockquote cite="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables-film_category.html">
+     * film_id: A foreign key identifying the film.<br/>category_id: A foreign key identifying the category.
+     * </blockquote>
+     */
+    @Valid
+    @NotNull
+    @EmbeddedId
+    private FilmCategoryId id;
+
+    /**
+     * 이 엔터티에 매핑된 영화(Film).
+     */
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = COLUMN_NAME_FILM_ID, nullable = false, insertable = false, updatable = false)
+    private Film film;
 
     /**
      * 이 엔터티에 매핑된 카테고리(Category).

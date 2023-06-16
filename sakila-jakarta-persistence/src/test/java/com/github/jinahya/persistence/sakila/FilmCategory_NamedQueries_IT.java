@@ -8,15 +8,23 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.persistence.sakila.Category.ofCategoryId;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_CATEGORY;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_CATEGORY_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_FILM;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_FILM_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM_FILM_ID;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_BY_ID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -210,6 +218,111 @@ class FilmCategory_NamedQueries_IT
                 }
                 idCategoryIdMinExclusive.set(
                         list.get(list.size() - 1).getId().getCategoryId()
+                );
+            }
+        }
+    }
+
+    @DisplayName(QUERY_FIND_ALL_BY_ID_CATEGORY_ID)
+    @Nested
+    class FindAllByIdCategoryIdTest {
+
+        @DisplayName("(15)")
+        @Test
+        void __() {
+            final var idCategoryId = 15; // Sports
+            final var idFilmIdMinExclusive = new AtomicInteger(0);
+            final var maxResults = 2;
+            while (true) {
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_ID_CATEGORY_ID, FilmCategory.class)
+                                .setParameter(PARAMETER_ID_CATEGORY_ID, idCategoryId)
+                                .setParameter(PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
+                                .setMaxResults(maxResults)
+                                .getResultList()
+                );
+                assertThat(list)
+                        .isNotNull()
+                        .doesNotContainNull()
+                        .extracting(FilmCategory::getId)
+                        .allMatch(v -> v.getCategoryId() == idCategoryId)
+                        .allMatch(v -> v.getFilmId() > idFilmIdMinExclusive.get())
+                        .isSorted();
+                if (list.isEmpty()) {
+                    break;
+                }
+                idFilmIdMinExclusive.set(
+                        list.get(list.size() - 1).getId().getFilmId()
+                );
+            }
+        }
+    }
+
+    @DisplayName(QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID)
+    @Nested
+    class FindAllByCategoryCategoryIdTest {
+
+        @DisplayName("(15)")
+        @Test
+        void __() {
+            final var categoryCategoryId = 15; // Sports
+            final var idFilmIdMinExclusive = new AtomicInteger(0);
+            final var maxResults = 2;
+            while (true) {
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID, FilmCategory.class)
+                                .setParameter(PARAMETER_CATEGORY_CATEGORY_ID, categoryCategoryId)
+                                .setParameter(PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
+                                .setMaxResults(maxResults)
+                                .getResultList()
+                );
+                assertThat(list)
+                        .isNotNull()
+                        .doesNotContainNull()
+                        .extracting(FilmCategory::getId)
+                        .allMatch(v -> v.getCategoryId() == categoryCategoryId)
+                        .allMatch(v -> v.getFilmId() > idFilmIdMinExclusive.get())
+                        .isSorted();
+                if (list.isEmpty()) {
+                    break;
+                }
+                idFilmIdMinExclusive.set(
+                        list.get(list.size() - 1).getId().getFilmId()
+                );
+            }
+        }
+    }
+
+    @DisplayName(QUERY_FIND_ALL_BY_CATEGORY)
+    @Nested
+    class FindAllByIdCategoryTest {
+
+        @DisplayName("(15)")
+        @Test
+        void __() {
+            final var category = ofCategoryId(15); // Sports
+            final var idFilmIdMinExclusive = new AtomicInteger(0);
+            final var maxResults = 2;
+            while (true) {
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_CATEGORY, FilmCategory.class)
+                                .setParameter(PARAMETER_CATEGORY, category)
+                                .setParameter(PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
+                                .setMaxResults(maxResults)
+                                .getResultList()
+                );
+                assertThat(list)
+                        .isNotNull()
+                        .doesNotContainNull()
+                        .extracting(FilmCategory::getId)
+                        .allMatch(v -> Objects.equals(v.getCategoryId(), category.getCategoryId()))
+                        .allMatch(v -> v.getFilmId() > idFilmIdMinExclusive.get())
+                        .isSorted();
+                if (list.isEmpty()) {
+                    break;
+                }
+                idFilmIdMinExclusive.set(
+                        list.get(list.size() - 1).getId().getFilmId()
                 );
             }
         }
