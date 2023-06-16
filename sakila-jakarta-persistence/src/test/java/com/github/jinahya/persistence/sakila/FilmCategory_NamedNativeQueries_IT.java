@@ -30,11 +30,10 @@ class FilmCategory_NamedNativeQueries_IT
         void _NoResultException_00() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID)
-                                    .setParameter(1, 0) // film_id
-                                    .setParameter(2, 0) // category_id
+                            em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID, FilmCategory.class)
+                                    .setParameter(1, 0) // film_id = ?
+                                    .setParameter(2, 0) // category_id = ?
                                     .getSingleResult() // NoResultException
-
                     )
             ).isInstanceOf(NoResultException.class);
         }
@@ -46,8 +45,8 @@ class FilmCategory_NamedNativeQueries_IT
             final var categoryId = 6;
             final var found = applyEntityManager(
                     em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID, FilmCategory.class)
-                            .setParameter(1, filmId) // film_id
-                            .setParameter(2, categoryId) // category_id
+                            .setParameter(1, filmId)     // film_id = ?
+                            .setParameter(2, categoryId) // category_id = ?
                             .getSingleResult()
 
             );
@@ -72,8 +71,8 @@ class FilmCategory_NamedNativeQueries_IT
             for (final var offset = new LongAdder(); ; ) {
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(NATIVE_QUERY_SELECT_ALL_ROWSET, FilmCategory.class)
-                                .setParameter(1, offset.intValue())                                          // OFFSET ?
-                                .setParameter(2, limit)                                                            // ,?
+                                .setParameter(1, offset.intValue()) // OFFSET ?
+                                .setParameter(2, limit)             //        ,?
                                 .getResultList()
                 );
                 assertThat(list)
@@ -102,10 +101,10 @@ class FilmCategory_NamedNativeQueries_IT
             while (true) {
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(NATIVE_QUERY_SELECT_ALL_KEYSET, FilmCategory.class)
-                                .setParameter(1, filmIdMin.get())                         // WHERE (film_id = ?
-                                .setParameter(2, categoryIdMinExclusive.get())            //        AND category_id > ?)
-                                .setParameter(3, filmIdMin.get())                         //    OR film_id > ?
-                                .setParameter(4, limit)                                   // LIMIT ?
+                                .setParameter(1, filmIdMin.get())              // WHERE (film_id = ?
+                                .setParameter(2, categoryIdMinExclusive.get()) //        AND category_id > ?)
+                                .setParameter(3, filmIdMin.get())              //    OR film_id > ?
+                                .setParameter(4, limit)                        // LIMIT ?
                                 .getResultList()
                 );
                 assertThat(list)

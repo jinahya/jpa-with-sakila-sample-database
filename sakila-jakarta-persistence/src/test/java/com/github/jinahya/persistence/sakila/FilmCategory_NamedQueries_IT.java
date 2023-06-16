@@ -9,14 +9,16 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_FILM;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_FILM_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_FILM_ID;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_BY_ID;
-import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE;
-import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_PARAM_ID_FILM_ID_MIN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -82,8 +84,8 @@ class FilmCategory_NamedQueries_IT
             while (true) {
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL, FilmCategory.class)
-                                .setParameter(QUERY_PARAM_ID_FILM_ID_MIN, filmIdMIn.get())
-                                .setParameter(QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE, categoryIdMinExclusive.get())
+                                .setParameter(PARAMETER_ID_FILM_ID_MIN, filmIdMIn.get())
+                                .setParameter(PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, categoryIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -122,7 +124,7 @@ class FilmCategory_NamedQueries_IT
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL_BY_ID_FILM_ID, FilmCategory.class)
                                 .setParameter(PARAMETER_ID_FILM_ID, idFilmId)
-                                .setParameter(QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
+                                .setParameter(PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -131,6 +133,41 @@ class FilmCategory_NamedQueries_IT
                         .doesNotContainNull()
                         .extracting(FilmCategory::getId)
                         .allMatch(v -> v.getFilmId() == idFilmId)
+                        .allMatch(v -> v.getCategoryId() > idCategoryIdMinExclusive.get())
+                        .isSorted();
+                if (list.isEmpty()) {
+                    break;
+                }
+                idCategoryIdMinExclusive.set(
+                        list.get(list.size() - 1).getId().getCategoryId()
+                );
+            }
+        }
+    }
+
+    @DisplayName(QUERY_FIND_ALL_BY_FILM_FILM_ID)
+    @Nested
+    class FindAllByFilmFilmIdTest {
+
+        @DisplayName("(1004)")
+        @Test
+        void __() {
+            final var filmFilmId = 1004; // Gone with the Wind
+            final var idCategoryIdMinExclusive = new AtomicInteger(0);
+            final var maxResults = 2;
+            while (true) {
+                final var list = applyEntityManager(
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_FILM_FILM_ID, FilmCategory.class)
+                                .setParameter(PARAMETER_FILM_FILM_ID, filmFilmId)
+                                .setParameter(PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
+                                .setMaxResults(maxResults)
+                                .getResultList()
+                );
+                assertThat(list)
+                        .isNotNull()
+                        .doesNotContainNull()
+                        .extracting(FilmCategory::getId)
+                        .allMatch(v -> v.getFilmId() == filmFilmId)
                         .allMatch(v -> v.getCategoryId() > idCategoryIdMinExclusive.get())
                         .isSorted();
                 if (list.isEmpty()) {
@@ -157,7 +194,7 @@ class FilmCategory_NamedQueries_IT
                 final var list = applyEntityManager(
                         em -> em.createNamedQuery(QUERY_FIND_ALL_BY_FILM, FilmCategory.class)
                                 .setParameter(PARAMETER_FILM, film)
-                                .setParameter(QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
+                                .setParameter(PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

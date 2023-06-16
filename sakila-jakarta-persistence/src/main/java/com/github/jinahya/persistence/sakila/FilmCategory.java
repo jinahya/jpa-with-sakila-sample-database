@@ -20,6 +20,7 @@ import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.NATIVE
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM;
+import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_CATEGORY_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_FILM_ID;
 import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_FIND_BY_ID;
@@ -47,13 +48,6 @@ import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_
                     WHERE e.category = :category
                           AND e.id.filmId > :idFilmIdMinExclusive
                     ORDER BY e.id.filmId ASC""")
-@NamedQuery(name = QUERY_FIND_ALL_BY_FILM,
-            query = """
-                    SELECT e
-                    FROM FilmCategory AS e
-                    WHERE e.film = :film
-                          AND e.id.categoryId > :idCategoryIdMinExclusive
-                    ORDER BY e.id.categoryId ASC""")
 @NamedQuery(name = QUERY_FIND_ALL_BY_ID_CATEGORY_ID,
             query = """
                     SELECT e
@@ -61,13 +55,33 @@ import static com.github.jinahya.persistence.sakila.FilmCategoryConstants.QUERY_
                     WHERE e.id.categoryId = :idCategoryId
                           AND e.id.filmId > :idFilmIdMinExclusive
                     ORDER BY e.id.filmId ASC""")
-@NamedQuery(name = QUERY_FIND_ALL_BY_ID_FILM_ID,
-            query = """
-                    SELECT e
-                    FROM FilmCategory AS e
-                    WHERE e.id.filmId = :idFilmId
-                          AND e.id.categoryId > :idCategoryIdMinExclusive
-                    ORDER BY e.id.categoryId ASC""")
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_FILM,
+        query = """
+                SELECT e
+                FROM FilmCategory AS e
+                WHERE e.film = :film
+                      AND e.id.categoryId > :idCategoryIdMinExclusive
+                ORDER BY e.id.categoryId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_FILM_FILM_ID,
+        query = """
+                SELECT e
+                FROM FilmCategory AS e
+                WHERE e.film.filmId = :filmFilmId
+                      AND e.id.categoryId > :idCategoryIdMinExclusive
+                ORDER BY e.id.categoryId ASC"""
+)
+@NamedQuery(
+        name = QUERY_FIND_ALL_BY_ID_FILM_ID,
+        query = """
+                SELECT e
+                FROM FilmCategory AS e
+                WHERE e.id.filmId = :idFilmId
+                      AND e.id.categoryId > :idCategoryIdMinExclusive
+                ORDER BY e.id.categoryId ASC"""
+)
 @NamedQuery(
         name = QUERY_FIND_ALL,
         query = """

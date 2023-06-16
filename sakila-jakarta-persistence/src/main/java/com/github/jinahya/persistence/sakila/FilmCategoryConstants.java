@@ -2,62 +2,134 @@ package com.github.jinahya.persistence.sakila;
 
 import jakarta.persistence.metamodel.Attribute;
 
+import static com.github.jinahya.persistence.sakila.FilmCategory_.category;
+import static com.github.jinahya.persistence.sakila.FilmCategory_.film;
 import static com.github.jinahya.persistence.sakila.FilmCategory_.id;
 import static java.util.Optional.ofNullable;
 
 /**
  * Defines constants related to {@link FilmCategory} class.
  * <p>
- * Named queries, JPQLs, and an equivalent SQLs are as follows.
+ * Named queries, JPQLs, and equivalent SQLs are as follows.
  * <table summery="Named queries, JPQLs, and SQLs">
- * <thead><tr><th>Queries</th><th>JPQL</th><th>(My)SQL</th></tr></thead>
+ * <thead><tr><th>Name</th><th>JPQL</th><th>(My)SQL</th></tr></thead>
  * <tbody>
  * <tr>
- * <td>{@link #NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID}<br/>{@value #NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID}</td>
- * <td/>
- * <td>{@snippet lang = "sql":
+ * <td>{@link #QUERY_FIND_BY_ID}<br/>{@value #QUERY_FIND_BY_ID}</td>
+ * <td>{@snippet lang = "jpql":
+ * SELECT e
+ * FROM FilmCategory AS e
+ * WHERE e.id = :id // @highlight substring="e.id"
+ *}</td>
+ * <td><span id="selectByFilmIdAndCategoryId">{@snippet lang = "sql":
  * SELECT *
  * FROM film_category
- * WHERE film_id = ? AND category_id = ? // @link substring="film_id" target="FilmCategory#COLUMN_NAME_FILM_ID" @link substring="category_id" target="FilmCategory#COLUMN_NAME_CATEGORY_ID"
- *}
- * </td>
+ * WHERE film_id = ? AND category_id = ? // @highlight substring="film_id" @highlight substring="category_id"
+ *}</span>
  * </tr>
  * <tr>
- * <td>{@link #NATIVE_QUERY_SELECT_ALL_ROWSET}<br/>{@value #NATIVE_QUERY_SELECT_ALL_ROWSET}</td>
- * <td/>
+ * <td>{@link #QUERY_FIND_ALL}<br/>{@value #QUERY_FIND_ALL}</td>
+ * <td>{@snippet lang = "jpql":
+ * SELECT e
+ * FROM FilmCategory AS e
+ * WHERE (e.id.filmId = :idFilmIdMin // @highlight substring="e.id.filmId"
+ *        AND e.id.categoryId > :idCategoryIdMinExclusive) // @highlight substring="e.id.categoryId"
+ *    OR e.id.filmId > :filmIdMin
+ * ORDER BY e.id.filmId ASC, e.id.categoryId ASC
+ *
+ *}</td>
  * <td>{@snippet lang = "sql":
  * SELECT *
  * FROM film_category
- * ORDER BY film_id ASC, category_id ASC
- * LIMIT ?,?
- *}
- * </td>
- * </tr>
- * <tr>
- * <td>{@link #NATIVE_QUERY_SELECT_ALL_KEYSET}<br/>{@value #NATIVE_QUERY_SELECT_ALL_KEYSET}</td>
- * <td/>
- * <td>{@snippet lang = "sql":
- * SELECT *
- * FROM film_category
- * WHERE (film_id = ? AND category_id > ?)
+ * WHERE (film_id = ? // @highlight substring="film_id"
+ *        AND category_id > ?) // @highlight substring="category_id"
  *    OR film_id > ?
  * ORDER BY film_id ASC, category_id ASC
  * LIMIT ?
- *}
- * </td>
+ *}</td>
+ * </tr>
  * </tr>
  * <tr>
- * <td>{@link #QUERY_FIND_BY_ID}<br/>{@value #QUERY_FIND_BY_ID}</td>
- * <td/>{@snippet lang = "jpql":
+ * <td>{@link #QUERY_FIND_ALL_BY_ID_FILM_ID}<br/>{@value #QUERY_FIND_ALL_BY_ID_FILM_ID}</td>
+ * <td>{@snippet lang = "jpql":
  * SELECT e
  * FROM FilmCategory AS e
- * WHERE e.id = :id // @link substring=".id" target="FilmCategory_#id"
+ * WHERE e.id.filmId = :idFilmId // @highlight substring="e.id.filmId" @link substring=":idFilmId" target="#PARAMETER_ID_FILM_ID"
+ *   AND e.id.categoryId > :idCategoryIdMinExclusive
+ * ORDER BY e.id.categoryId ASC
+ *
  *}</td>
  * <td>{@snippet lang = "sql":
  * SELECT *
  * FROM film_category
- * WHERE film_id = ? AND category_id = ?
+ * WHERE film_id = ?
+ *   AND category_id > ?
+ * ORDER BY category_id ASC
+ * LIMIT ?
  *}</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #QUERY_FIND_ALL_BY_FILM_FILM_ID}<br/>{@value #QUERY_FIND_ALL_BY_FILM_FILM_ID}</td>
+ * <td>{@snippet lang = "jpql":
+ * SELECT e
+ * FROM FilmCategory AS e
+ * WHERE e.film.filmId = :filmFilmId // @highlight substring="e.film.filmId"
+ *   AND e.id.categoryId > :idCategoryIdMinExclusive
+ * ORDER BY e.id.categoryId ASC
+ *}</td>
+ * <td style="text-align: center">?</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #QUERY_FIND_ALL_BY_FILM}<br/>{@value #QUERY_FIND_ALL_BY_FILM}</td>
+ * <td>{@snippet lang = "jpql":
+ * SELECT e
+ * FROM FilmCategory AS e
+ * WHERE e.film = :film // @highlight substring="e.film"
+ *   AND e.id.categoryId > :idCategoryIdMinExclusive
+ * ORDER BY e.id.categoryId ASC
+ *}</td>
+ * <td style="text-align: center">?</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #QUERY_FIND_ALL_BY_ID_CATEGORY_ID}<br/>{@value #QUERY_FIND_ALL_BY_ID_CATEGORY_ID}</td>
+ * <td>{@snippet lang = "jpql":
+ * SELECT e
+ * FROM CategoryFilm AS e
+ * WHERE e.id.categoryId = :idCategoryId // @highlight substring="e.id.categoryId" @link substring=":idCategoryId" target="#PARAMETER_ID_CATEGORY_ID"
+ *   AND e.id.filmId > :idFilmIdMinExclusive
+ * ORDER BY e.id.filmId ASC
+ *
+ *}</td>
+ * <td>{@snippet lang = "sql":
+ * SELECT *
+ * FROM film_category
+ * WHERE category_id = ?
+ *   AND film_id > ?
+ * ORDER BY film_id ASC
+ * LIMIT ?
+ *}</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID}<br/>{@value #QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID}</td>
+ * <td>{@snippet lang = "jpql":
+ * SELECT e
+ * FROM CategoryFilm AS e
+ * WHERE e.category.categoryId = :categoryCategoryId // @highlight substring="e.category.categoryId"
+ *   AND e.id.filmId > :idFilmIdMinExclusive
+ * ORDER BY e.id.filmId ASC
+ *}</td>
+ * <td style="text-align: center">?</td>
+ * </tr>
+ * <tr>
+ * <td>{@link #QUERY_FIND_ALL_BY_CATEGORY}<br/>{@value #QUERY_FIND_ALL_BY_CATEGORY}</td>
+ * <td>{@snippet lang = "jpql":
+ * SELECT e
+ * FROM CategoryFilm AS e
+ * WHERE e.category = :category // @highlight substring="e.category"
+ *   AND e.id.filmId > :idFilmIdMinExclusive
+ * ORDER BY e.id.filmId ASC
+ *}</td>
+ * <td style="text-align: center">?</td>
  * </tr>
  * </tbody>
  * </table>
@@ -116,88 +188,60 @@ public class FilmCategoryConstants {
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * The name of the query selects all entities.
-     * <p>
-     * The JPQL and an equivalent SQL are as follows.
-     * <table>
-     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
-     * <tbody>
-     * <tr>
-     * <td>{@snippet lang = "jpql":
-     * SELECT e
-     * FROM FilmCategory AS e
-     * WHERE (e.id.filmId = :idFilmIdMin AND e.id.categoryId > :idCategoryIdMinExclusive)
-     *       OR e.id.filmId > :idFilmIdMin
-     * ORDER BY e.id.filmId ASC, e.id.categoryId ASC
-     *}</td>
-     * <td>{@snippet lang = "sql":
-     * SELECT *
-     * FROM film_category
-     * WHERE (film_id = ? AND category_id > ?)
-     *       OR film_id ?
-     * ORDER BY film_id ASC, category_id ASC
-     *}</td>
-     * </tr>
-     * </tbody>
-     * </table>
+     * The name of the query selects all entities, order ed by {@link FilmCategoryId_#filmId filmId} and
+     * {@link FilmCategoryId_#categoryId categoryId}, both in ascending order.
      *
-     * @see FilmCategory_#id
-     * @see FilmCategoryId_#filmId
-     * @see FilmCategoryId_#categoryId
-     * @see #QUERY_PARAM_ID_FILM_ID_MIN
-     * @see #QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE
+     * @see #PARAMETER_ID_FILM_ID_MIN
+     * @see #PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE
      */
     public static final String QUERY_FIND_ALL = "FilmCategory_findAll";
 
-    public static final String QUERY_PARAM_ID_FILM_ID_MIN = "idFilmIdMin";
+    public static final String PARAMETER_ID_FILM_ID_MIN = "idFilmIdMin";
 
-    public static final String QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE = "idCategoryIdMinExclusive";
+    public static final String PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE = "idCategoryIdMinExclusive";
 
     // -----------------------------------------------------------------------------------------------------------------
 
     /**
-     * The name of the query selects all entities whose {@link FilmCategoryId_#filmId id.filmId} attributes match
-     * specified value, ordered by {@link FilmCategoryId_#categoryId id.categoryId} attribute in ascending order.
-     * <p>
-     * The JPQL and an equivalent SQL are as follows.
-     * <table>
-     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
-     * <tbody>
-     * <tr>
-     * <td>{@snippet lang = "jpql":
-     * SELECT e
-     * FROM FilmCategory AS e
-     * WHERE e.id.filmId = :idFilmId
-     *       AND e.id.categoryId > :idCategoryIdMinExclusive
-     * ORDER BY e.id.categoryId ASC
-     *}</td>
-     * <td>{@snippet lang = "sql":
-     * SELECT *
-     * FROM film_category
-     * WHERE film_id = ?
-     *       AND category_id > ?
-     * ORDER BY category_id ASC
-     *}</td>
-     * </tr>
-     * </tbody>
-     * </table>
+     * The name of the query selects all entities whose {@link FilmCategoryId_#filmId id.filmId} attributes match a
+     * specific value, ordered by {@link FilmCategoryId_#categoryId id.categoryId} attribute in ascending order.
      *
-     * @see FilmCategory_#id
-     * @see FilmCategoryId_#filmId
-     * @see FilmCategoryId_#categoryId
      * @see #PARAMETER_ID_FILM_ID
-     * @see #QUERY_PARAM_ID_CATEGORY_ID_MIN_EXCLUSIVE
+     * @see #PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE
      */
     public static final String QUERY_FIND_ALL_BY_ID_FILM_ID = "FilmCategory_findAllByIdFilmId";
 
     public static final String PARAMETER_ID_FILM_ID = "idFilmId";
 
-    public static final String QUERY_FIND_ALL_BY_FILM = "FilmCategory_findAllByIdFilm";
+    /**
+     * The name of the query selects all entities whose {@link Film_#filmId film.filmId} attributes match a specific
+     * value, ordered by {@link Category_#categoryId category.categoryId} attribute in ascending order.
+     *
+     * @see #PARAMETER_FILM_FILM_ID
+     */
+    public static final String QUERY_FIND_ALL_BY_FILM_FILM_ID = "FilmCategory_findAllByFilmFilmId";
+
+    public static final String PARAMETER_FILM_FILM_ID = "filmFilmId";
+
+    static {
+        ofNullable(Film_.filmId).map(Attribute::getName).ifPresent(v -> {
+            assert v.equals(PARAMETER_FILM_FILM_ID);
+        });
+    }
+
+    /**
+     * The name of the query selects all entities whose {@link FilmCategory_#film film} attributes match a specific
+     * value, ordered by {@link FilmCategoryId_#categoryId id.categoryId} attribute in ascending order.
+     *
+     * @see #PARAMETER_FILM
+     * @see #PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE
+     */
+    public static final String QUERY_FIND_ALL_BY_FILM = "FilmCategory_findAllByFilm";
 
     public static final String PARAMETER_FILM = "film";
 
     static {
-        ofNullable(FilmCategory_.film).map(Attribute::getName).ifPresent(v -> {
+        ofNullable(film).map(Attribute::getName).ifPresent(v -> {
             assert v.equals(PARAMETER_FILM);
         });
     }
@@ -206,34 +250,8 @@ public class FilmCategoryConstants {
 
     /**
      * The name of the query selects all entities whose {@link FilmCategoryId_#categoryId id.caetgoryId} attributes
-     * match specified value, ordered by {@link FilmCategoryId_#filmId id.filmId} attribute in ascending order.
-     * <p>
-     * The JPQL and an equivalent SQL are as follows.
-     * <table>
-     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
-     * <tbody>
-     * <tr>
-     * <td>{@snippet lang = "jpql":
-     * SELECT e
-     * FROM FilmCategory AS e
-     * WHERE e.id.categoryId = :idCategoryId
-     *       AND e.id.filmId > :idFilmIdMinExclusive
-     * ORDER BY e.id.filmId ASC
-     *}</td>
-     * <td>{@snippet lang = "sql":
-     * SELECT *
-     * FROM film_category
-     * WHERE category_id = ?
-     *       AND film_id > ?
-     * ORDER BY film_id ASC
-     *}</td>
-     * </tr>
-     * </tbody>
-     * </table>
+     * match a specific value, ordered by {@link FilmCategoryId_#filmId id.filmId} attribute in ascending order.
      *
-     * @see FilmCategory_#id
-     * @see FilmCategoryId_#filmId
-     * @see FilmCategoryId_#categoryId
      * @see #PARAMETER_ID_CATEGORY_ID
      * @see #QUERY_PARAM_ID_FILM_ID_MIN_EXCLUSIVE
      */
@@ -244,52 +262,45 @@ public class FilmCategoryConstants {
     public static final String QUERY_PARAM_ID_FILM_ID_MIN_EXCLUSIVE = "idFilmIdMinExclusive";
 
     /**
-     * The name of the query selects all entities whose {@link FilmCategory_#category caetgory} attributes match
-     * specified value, ordered by {@link FilmCategoryId_#filmId id.filmId} attribute in ascending order.
-     * <p>
-     * The JPQL and an equivalent SQL are as follows.
-     * <table>
-     * <thead><tr><th>JPQL</th><th>(My)SQL</th></tr></thead>
-     * <tbody>
-     * <tr>
-     * <td>{@snippet lang = "jpql":
-     * SELECT e
-     * FROM FilmCategory AS e
-     * WHERE e.category = :category
-     *       AND e.id.filmId > :idFilmIdMinExclusive
-     * ORDER BY e.id.filmId ASC
-     *}</td>
-     * <td>{@snippet lang = "sql":
-     * SELECT *
-     * FROM film_category
-     * WHERE category_id = ?
-     *       AND film_id > ?
-     * ORDER BY film_id ASC
-     *}</td>
-     * </tr>
-     * </tbody>
-     * </table>
+     * The name of the query selects all entities whose {@link FilmCategory_#category caetgory} attributes match a
+     * specific value, ordered by {@link FilmCategoryId_#filmId id.filmId} attribute in ascending order.
      *
-     * @see FilmCategory_#category
-     * @see FilmCategoryId_#filmId
-     * @see #QUERY_PARAM_CATEGORY
+     * @see #PARAMETER_CATEGORY
      * @see #QUERY_PARAM_ID_FILM_ID_MIN_EXCLUSIVE
      */
     public static final String QUERY_FIND_ALL_BY_CATEGORY = "FilmCategory_findAllByCategory";
 
     /**
-     * The name of the query param for denoting {@link FilmCategory_#category} attribute. The value is {@value}.
+     * The name of the query selects all entities whose {@link Category_#categoryId category.categoryId} attributes
+     * match a specific value, ordered by {@link FilmCategoryId_#filmId id.filmId} attribute in ascending order.
      *
-     * @see #QUERY_FIND_ALL_BY_CATEGORY
+     * @see #PARAMETER_FILM_FILM_ID
      */
-    public static final String QUERY_PARAM_CATEGORY = "category";
+    public static final String QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID = "FilmCategory_findAllByCategoryCategoryId";
+
+    public static final String PARAMETER_CATEGORY_CATEGORY_ID = "categoryCategoryId";
 
     static {
-        ofNullable(FilmCategory_.category).ifPresent(v -> {
-            assert v.getName().equals(QUERY_PARAM_CATEGORY);
+        ofNullable(Category_.categoryId).map(Attribute::getName).ifPresent(v -> {
+            assert v.equals(PARAMETER_CATEGORY_CATEGORY_ID);
         });
     }
 
+    /**
+     * The name of the parameter for specifying a value of {@link FilmCategory_#category} attribute. The value is
+     * {@value}.
+     *
+     * @see #QUERY_FIND_ALL_BY_CATEGORY
+     */
+    public static final String PARAMETER_CATEGORY = "category";
+
+    static {
+        ofNullable(category).ifPresent(v -> {
+            assert v.getName().equals(PARAMETER_CATEGORY);
+        });
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     private FilmCategoryConstants() {
         throw new AssertionError("instantiation is not allowed");
     }
