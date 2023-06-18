@@ -4,30 +4,30 @@
              version="3.0">
   <persistence-unit name="sakilaPU">
     <description>Sakila Persistence Unit</description>
-    <class>com.github.jinahya.persistence.sakila.__BaseEntity</class>
-    <class>com.github.jinahya.persistence.sakila._BaseEntity</class>
-    <class>com.github.jinahya.persistence.sakila._DomainConverters$BooleanConverter</class>
-    <class>com.github.jinahya.persistence.sakila._DomainConverters$GeometryConverter</class>
-    <class>com.github.jinahya.persistence.sakila.Actor</class>
-    <class>com.github.jinahya.persistence.sakila.Address</class>
-    <class>com.github.jinahya.persistence.sakila.Category</class>
-    <class>com.github.jinahya.persistence.sakila.City</class>
-    <class>com.github.jinahya.persistence.sakila.Country</class>
-    <class>com.github.jinahya.persistence.sakila.Customer</class>
-    <class>com.github.jinahya.persistence.sakila.CustomerList</class>
-    <class>com.github.jinahya.persistence.sakila.Film</class>
-    <class>com.github.jinahya.persistence.sakila.Film$RatingConverter</class>
-    <class>com.github.jinahya.persistence.sakila.Film$SpecialFeaturesConverter</class>
-    <class>com.github.jinahya.persistence.sakila.FilmActor</class>
-    <class>com.github.jinahya.persistence.sakila.FilmCategory</class>
-    <class>com.github.jinahya.persistence.sakila.Inventory</class>
-    <class>com.github.jinahya.persistence.sakila.Language</class>
-    <class>com.github.jinahya.persistence.sakila.NicerButSlowerFilmList</class>
-    <class>com.github.jinahya.persistence.sakila.Payment</class>
-    <class>com.github.jinahya.persistence.sakila.Rental</class>
-    <class>com.github.jinahya.persistence.sakila.Staff</class>
-    <class>com.github.jinahya.persistence.sakila.StaffList</class>
-    <class>com.github.jinahya.persistence.sakila.Store</class>
+    <class>com.github.jinahya.sakila.persistence.__BaseEntity</class>
+    <class>com.github.jinahya.sakila.persistence._BaseEntity</class>
+    <class>com.github.jinahya.sakila.persistence._DomainConverters$BooleanConverter</class>
+    <class>com.github.jinahya.sakila.persistence._DomainConverters$GeometryConverter</class>
+    <class>com.github.jinahya.sakila.persistence.Actor</class>
+    <class>com.github.jinahya.sakila.persistence.Address</class>
+    <class>com.github.jinahya.sakila.persistence.Category</class>
+    <class>com.github.jinahya.sakila.persistence.City</class>
+    <class>com.github.jinahya.sakila.persistence.Country</class>
+    <class>com.github.jinahya.sakila.persistence.Customer</class>
+    <class>com.github.jinahya.sakila.persistence.CustomerList</class>
+    <class>com.github.jinahya.sakila.persistence.Film</class>
+    <class>com.github.jinahya.sakila.persistence.Film$RatingConverter</class>
+    <class>com.github.jinahya.sakila.persistence.Film$SpecialFeaturesConverter</class>
+    <class>com.github.jinahya.sakila.persistence.FilmActor</class>
+    <class>com.github.jinahya.sakila.persistence.FilmCategory</class>
+    <class>com.github.jinahya.sakila.persistence.Inventory</class>
+    <class>com.github.jinahya.sakila.persistence.Language</class>
+    <class>com.github.jinahya.sakila.persistence.NicerButSlowerFilmList</class>
+    <class>com.github.jinahya.sakila.persistence.Payment</class>
+    <class>com.github.jinahya.sakila.persistence.Rental</class>
+    <class>com.github.jinahya.sakila.persistence.Staff</class>
+    <class>com.github.jinahya.sakila.persistence.StaffList</class>
+    <class>com.github.jinahya.sakila.persistence.Store</class>
     <exclude-unlisted-classes/>
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>

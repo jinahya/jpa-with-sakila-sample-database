@@ -7,7 +7,7 @@
   <!--    <artifactId>jinahya-parent</artifactId>-->
   <!--    <version>0.9.0</version>-->
   <!--  </parent>-->
-  <groupId>com.github.jinahya</groupId>
+  <groupId>com.github.jinahya.sakila</groupId>
   <artifactId>sakila-jakarta-persistence</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -62,7 +62,7 @@
     <version.org.hibernate.validator>8.0.0.Final</version.org.hibernate.validator>
     <version.org.jboss.weld>5.1.0.Final</version.org.jboss.weld>
     <version.org.jboss.weld.se>${version.org.jboss.weld}</version.org.jboss.weld.se>
-<!--    <version.org.junit>5.9.3</version.org.junit>-->
+    <!--    <version.org.junit>5.9.3</version.org.junit>-->
     <version.org.junit>5.10.0-M1</version.org.junit>
     <version.org.junit.jupiter>${version.org.junit}</version.org.junit.jupiter>
     <version.org.mockito>5.3.1</version.org.mockito> <!-- https://search.maven.org/artifact/org.mockito/mockito-junit-jupiter -->
@@ -383,6 +383,20 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.3.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>without-persistence-xml</classifier>
+              <excludes>
+                <exclude>META-INF/persistence.xml</exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -536,7 +550,7 @@
       </activation>
       <properties>
         <!-- https://www.eclipse.org/eclipselink/documentation/4.0/solutions/solutions.html#TESTINGJPA004 -->
-<!--        <argLine>-javaagent:${basedir}/target/dependencies-copied/eclipselink.jar</argLine>-->
+        <argLine>-javaagent:${basedir}/target/dependencies-copied/eclipselink.jar</argLine>
       </properties>
       <dependencies>
         <dependency>

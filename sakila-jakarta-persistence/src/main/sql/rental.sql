@@ -62,6 +62,165 @@ GROUP BY s.store_id, c.customer_id
 ORDER BY s.store_id, rental_count DESC
 ;
 
+
+-- in 2005
+SELECT *
+FROM rental
+WHERE YEAR(rental_date) = 2005
+ORDER BY rental_id ASC
+LIMIT 5
+;
+SELECT *
+FROM rental
+WHERE rental_date >= '2005-01-01 00:00:00'
+  AND rental_date <= '2005-12-31 00:00:00'
+ORDER BY rental_id ASC
+LIMIT 5
+;
+SELECT *
+FROM rental
+WHERE rental_date >= '2005-01-01 00:00:00'
+  AND rental_date < '2006-01-01 00:00:00'
+ORDER BY rental_id ASC
+LIMIT 5
+;
+
+-- in 2006
+SELECT *
+FROM rental
+WHERE YEAR(rental_date) = 2006
+ORDER BY rental_id ASC
+LIMIT 5
+;
+SELECT *
+FROM rental
+WHERE rental_date >= '2006-01-01 00:00:00'
+  AND rental_date <= '2006-12-31 00:00:00'
+ORDER BY rental_id ASC
+LIMIT 5
+;
+SELECT *
+FROM rental
+WHERE rental_date >= '2006-01-01 00:00:00'
+  AND rental_date < '2007-01-01 00:00:00'
+ORDER BY rental_id ASC
+LIMIT 5
+;
+
+-- in January, 2006
+SELECT *
+FROM rental
+WHERE YEAR(rental_date) = 2006
+  AND MONTH(rental_date) = 2
+ORDER BY rental_id ASC
+LIMIT 5
+;
+SELECT *
+FROM rental
+WHERE rental_date >= '2006-02-01 00:00:00'
+  AND rental_date <= '2006-02-28 00:00:00'
+ORDER BY rental_id ASC
+LIMIT 5
+;
+SELECT *
+FROM rental
+WHERE rental_date >= '2006-02-01 00:00:00'
+  AND rental_date < '2006-03-01 00:00:00'
+ORDER BY rental_id ASC
+LIMIT 5
+;
+
+-- in 14 January, 2006
+EXPLAIN
+SELECT COUNT(1)
+FROM rental
+WHERE YEAR(rental_date) = 2006
+  AND MONTH(rental_date) = 2
+  AND DAYOFMONTH(rental_date) = 14
+;
+EXPLAIN
+SELECT *
+FROM rental
+WHERE YEAR(rental_date) = 2006
+  AND MONTH(rental_date) = 2
+  AND DAYOFMONTH(rental_date) = 14
+ORDER BY rental_id ASC
+LIMIT 5
+;
+SELECT *
+FROM rental
+WHERE rental_date >= '2006-02-14 00:00:00'
+  AND rental_date <= '2006-02-14 23:59:59'
+ORDER BY rental_id ASC
+LIMIT 5
+;
+SELECT *
+FROM rental
+WHERE rental_date >= '2006-02-01 00:00:00'
+  AND rental_date < '2006-02-15 00:00:00'
+ORDER BY rental_id ASC
+LIMIT 5
+;
+
+-- best years by rental count
+SELECT YEAR(rental_date) AS year_of_rental_date,
+       COUNT(1)          AS rental_count
+FROM rental
+GROUP BY year_of_rental_date
+ORDER BY rental_count DESC
+LIMIT 5
+;
+
+-- best year-months by rental cunt
+SELECT YEAR(rental_date)  AS year_of_rental_date,
+       MONTH(rental_date) AS month_of_rental_date,
+       COUNT(1)           AS rental_count
+FROM rental
+GROUP BY year_of_rental_date, month_of_rental_date
+ORDER BY rental_count DESC
+LIMIT 5
+;
+
+-- best dates by rental count
+SELECT DATE(rental_date) AS date_of_rental_date,
+       COUNT(1)          AS rental_count
+FROM rental
+GROUP BY date_of_rental_date
+ORDER BY rental_count DESC
+LIMIT 5
+;
+
+-- best months in each year
+SELECT YEAR(rental_date)  AS rental_year,
+       MONTH(rental_date) AS rental_month,
+       COUNT(1)           AS rentals
+FROM rental
+GROUP BY rental_year, rental_month
+ORDER BY rentals DESC
+;
+SELECT YEAR(rental_date)                                                         AS rental_year,
+       MONTH(rental_date)                                                        AS rental_month,
+       COUNT(1)                                                                  AS rentals,
+       DENSE_RANK() OVER (PARTITION BY YEAR(rental_date) ORDER BY COUNT(1) DESC) AS ranking
+FROM rental
+GROUP BY rental_year, rental_month
+ORDER BY rentals DESC, rental_year ASC, rental_month ASC
+;
+SELECT r.rental_year,
+       r.rental_month,
+       r.rentals,
+       r.ranking
+FROM (SELECT YEAR(rental_date)                                                         AS rental_year,
+             MONTH(rental_date)                                                        AS rental_month,
+             COUNT(1)                                                                  AS rentals,
+             DENSE_RANK() OVER (PARTITION BY YEAR(rental_date) ORDER BY COUNT(1) DESC) AS ranking
+      FROM rental
+      GROUP BY rental_year, rental_month
+      ORDER BY rentals DESC, rental_year ASC, rental_month ASC) AS r
+WHERE r.ranking < 2
+;
+
+
 -- -------------------------------------------------------------------------------------------------------- inventory_id
 
 -- top stores of all time
