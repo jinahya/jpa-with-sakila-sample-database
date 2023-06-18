@@ -1,6 +1,6 @@
 package com.github.jinahya.sakila.data.jpa.repository;
 
-import com.github.jinahya.persistence.sakila._BaseEntity;
+import com.github.jinahya.sakila.persistence._BaseEntity;
 import org.springframework.data.repository.NoRepositoryBean;
 
 @NoRepositoryBean

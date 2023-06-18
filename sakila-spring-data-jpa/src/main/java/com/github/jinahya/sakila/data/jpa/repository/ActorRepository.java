@@ -1,7 +1,7 @@
 package com.github.jinahya.sakila.data.jpa.repository;
 
-import com.github.jinahya.persistence.sakila.Actor;
-import com.github.jinahya.persistence.sakila.Actor_;
+import com.github.jinahya.sakila.persistence.Actor;
+import com.github.jinahya.sakila.persistence.Actor_;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

@@ -1,7 +1,7 @@
 package com.github.jinahya.sakila.stereotype;
 
-import com.github.jinahya.persistence.sakila.__BaseEntity;
 import com.github.jinahya.sakila.data.jpa.repository.__BaseEntityRepository;
+import com.github.jinahya.sakila.persistence.__BaseEntity;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.springframework.boot.test.mock.mockito.MockBean;

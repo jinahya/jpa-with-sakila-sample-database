@@ -7,7 +7,7 @@
   </root>
   <logger name="com.github.jinahya.sakila" level="DEBUG"/>
   <logger name="org.hibernate.SQL" level="DEBUG"/>
-<!--  <logger name="org.hibernate.type" level="TRACE"/>-->
-<!--  <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>-->
+  <!--  <logger name="org.hibernate.type" level="TRACE"/>-->
+  <!--  <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>-->
   <logger name="org.hibernate.orm.jdbc.bind" level="TRACE"/> <!-- https://stackoverflow.com/a/75265897/330457 -->
 </configuration>

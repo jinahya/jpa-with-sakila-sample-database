@@ -1,14 +1,11 @@
 package com.github.jinahya.sakila.stereotype;
 
-import com.github.jinahya.persistence.sakila.Actor;
 import com.github.jinahya.sakila.data.jpa.repository.ActorRepository;
+import com.github.jinahya.sakila.persistence.Actor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.test.context.ContextConfiguration;
 
 import java.util.concurrent.ThreadLocalRandom;
 

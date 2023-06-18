@@ -1,14 +1,12 @@
 package com.github.jinahya.sakila.stereotype;
 
-import com.github.jinahya.persistence.sakila.__BaseEntity;
 import com.github.jinahya.sakila.data.jpa.repository.__BaseEntityRepository;
+import com.github.jinahya.sakila.persistence.__BaseEntity;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ResolvableType;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.Objects;
 import java.util.function.Function;

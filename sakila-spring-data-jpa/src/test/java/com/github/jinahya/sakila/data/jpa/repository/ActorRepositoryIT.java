@@ -1,7 +1,7 @@
 package com.github.jinahya.sakila.data.jpa.repository;
 
-import com.github.jinahya.persistence.sakila.Actor;
-import com.github.jinahya.persistence.sakila.Actor_;
+import com.github.jinahya.sakila.persistence.Actor;
+import com.github.jinahya.sakila.persistence.Actor_;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

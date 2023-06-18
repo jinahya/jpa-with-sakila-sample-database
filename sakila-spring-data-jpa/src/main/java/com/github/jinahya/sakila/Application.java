@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @EntityScan(
         basePackageClasses = {
-                com.github.jinahya.persistence.sakila._NoOp.class
+                com.github.jinahya.sakila.persistence._NoOp.class
         }
 )
 //@EnableJpaRepositories(

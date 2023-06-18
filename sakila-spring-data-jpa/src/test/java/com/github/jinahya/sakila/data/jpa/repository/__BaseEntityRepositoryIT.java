@@ -1,6 +1,6 @@
 package com.github.jinahya.sakila.data.jpa.repository;
 
-import com.github.jinahya.persistence.sakila.__BaseEntity;
+import com.github.jinahya.sakila.persistence.__BaseEntity;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

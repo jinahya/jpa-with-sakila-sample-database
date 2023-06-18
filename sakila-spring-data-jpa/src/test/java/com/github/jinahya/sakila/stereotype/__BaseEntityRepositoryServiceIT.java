@@ -1,7 +1,7 @@
 package com.github.jinahya.sakila.stereotype;
 
-import com.github.jinahya.persistence.sakila.__BaseEntity;
 import com.github.jinahya.sakila.data.jpa.repository.__BaseEntityRepository;
+import com.github.jinahya.sakila.persistence.__BaseEntity;
 
 abstract class __BaseEntityRepositoryServiceIT<
         SERVICE extends __BaseEntityRepositoryService<REPOSITORY, ENTITY, ID>,
