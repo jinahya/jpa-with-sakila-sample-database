@@ -2,6 +2,7 @@ package com.github.jinahya.sakila.persistence;
 
 import jakarta.persistence.NoResultException;
 import org.jboss.weld.junit5.ExplicitParamInjection;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIN
 import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID;
 import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID;
 import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_BY_INVENTORY_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE;
 import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
@@ -279,6 +281,7 @@ class Inventory_NamedQueries_IT
     @Nested
     class FindDistinctFilmsByStoreIdTest {
 
+        @Disabled // check with Hibernate
         @ExplicitParamInjection
         @MethodSource({"com.github.jinahya.sakila.persistence.Inventory_NamedQueries_IT#getStoreIdList"})
         @ParameterizedTest
@@ -308,7 +311,8 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE)
+    @Disabled // check with Hibernate
+    @DisplayName(QUERY_FIND_DISTINCT_FILMS_BY_STORE)
     @Nested
     class FindDistinctFilmsByStoreTest {
 

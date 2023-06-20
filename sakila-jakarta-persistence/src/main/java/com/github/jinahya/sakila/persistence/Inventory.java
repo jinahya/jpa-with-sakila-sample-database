@@ -18,6 +18,10 @@ import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.Optional;
 
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID;
+
 /**
  * An entity class for mapping {@value Inventory#TABLE_NAME} table.
  * <p>
@@ -33,25 +37,25 @@ import java.util.Optional;
  * @see InventoryConstants
  */
 @NamedQuery(
-        name = InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE,
+        name = QUERY_FIND_DISTINCT_FILMS_BY_STORE,
         query = """
                 SELECT DISTINCT e.film
                 FROM Inventory AS e
                 WHERE e.store = :store
                       AND e.filmId > :filmIdMinExclusive
-                ORDER BY e.filmId ASC"""
+                ORDER BY e.film.filmId ASC"""
 )
 @NamedQuery(
-        name = InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID,
+        name = QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID,
         query = """
                 SELECT DISTINCT e.film
                 FROM Inventory AS e
                 WHERE e.storeId = :storeId
                       AND e.filmId > :filmIdMinExclusive
-                ORDER BY e.filmId ASC"""
+                ORDER BY e.film.filmId ASC"""
 )
 @NamedQuery(
-        name = InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID,
+        name = QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID,
         query = """
                 SELECT e
                 FROM Inventory AS e
