@@ -126,7 +126,7 @@ class Inventory_NamedQueries_IT
     class FindAllByFilmIdTest {
 
         @ExplicitParamInjection
-        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getFilmIdList"})
+        @MethodSource({"com.github.jinahya.sakila.persistence.Inventory_NamedQueries_IT#getFilmIdList"})
         @ParameterizedTest
         void __(final int filmId) {
             for (final var i = new AtomicInteger(0); ; ) {
@@ -158,7 +158,7 @@ class Inventory_NamedQueries_IT
     class FindAllByFilmTest {
 
         @ExplicitParamInjection
-        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getFilmList"})
+        @MethodSource({"com.github.jinahya.sakila.persistence.Inventory_NamedQueries_IT#getFilmList"})
         @ParameterizedTest
         void __(final Film film) {
             for (final var i = new AtomicInteger(0); ; ) {
@@ -190,7 +190,7 @@ class Inventory_NamedQueries_IT
     class FindAllByStoreIdTest {
 
         @ExplicitParamInjection
-        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getStoreIdList"})
+        @MethodSource({"com.github.jinahya.sakila.persistence.Inventory_NamedQueries_IT#getStoreIdList"})
         @ParameterizedTest
         void __(final int storeId) {
             final var maxResults = current().nextInt(32, 64);
@@ -207,7 +207,7 @@ class Inventory_NamedQueries_IT
     class FindAllByStoreTest {
 
         @ExplicitParamInjection
-        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getStoreList"})
+        @MethodSource({"com.github.jinahya.sakila.persistence.Inventory_NamedQueries_IT#getStoreList"})
         @ParameterizedTest
         void __(final Store store) {
             final var maxResults = current().nextInt(32, 64);
@@ -266,7 +266,7 @@ class Inventory_NamedQueries_IT
     class FindDistinctFilmsByStoreIdTest {
 
         @ExplicitParamInjection
-        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getStoreIdList"})
+        @MethodSource({"com.github.jinahya.sakila.persistence.Inventory_NamedQueries_IT#getStoreIdList"})
         @ParameterizedTest
         void __(final int storeId) {
             final var maxResults = current().nextInt(32, 64);
@@ -299,7 +299,7 @@ class Inventory_NamedQueries_IT
     class FindDistinctFilmsByStoreTest {
 
         @ExplicitParamInjection
-        @MethodSource({"com.github.jinahya.persistence.sakila.Inventory_NamedQueries_IT#getStoreList"})
+        @MethodSource({"com.github.jinahya.sakila.persistence.Inventory_NamedQueries_IT#getStoreList"})
         @ParameterizedTest
         void __(final Store store) {
             final var maxResults = current().nextInt(32, 64);
