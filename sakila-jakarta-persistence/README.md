@@ -6,7 +6,7 @@ A Persistence Unit for the [Sakila Sample Database](https://dev.mysql.com/doc/sa
 
 ## Docker
 
-Sakila DB 를 docker 에서 실행하다.
+Sakila DB 를 docker 에서 실행한다.
 
 ### [docker build](https://docs.docker.com/engine/reference/commandline/build/)
 
