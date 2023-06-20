@@ -8,6 +8,14 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.sakila.persistence.ActorConstants.ENTITY_GRAPH_FILMS;
+import static com.github.jinahya.sakila.persistence.ActorConstants.PARAMETER_ACTOR_ID;
+import static com.github.jinahya.sakila.persistence.ActorConstants.PARAMETER_ACTOR_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.ActorConstants.PARAMETER_LAST_NAME;
+import static com.github.jinahya.sakila.persistence.ActorConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME;
+import static com.github.jinahya.sakila.persistence.ActorConstants.QUERY_FIND_BY_ACTOR_ID;
+import static com.github.jinahya.sakila.persistence._PersistenceConstants.PERSISTENCE_FETCHGRAPH;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -29,7 +37,7 @@ class Actor_NamedQueries_IT
         super(Actor.class, Integer.class);
     }
 
-    @DisplayName(ActorConstants.QUERY_FIND_BY_ACTOR_ID)
+    @DisplayName(QUERY_FIND_BY_ACTOR_ID)
     @Nested
     class FindByActorIdTest {
 
@@ -38,8 +46,8 @@ class Actor_NamedQueries_IT
         void _NoResultException_0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(ActorConstants.QUERY_FIND_BY_ACTOR_ID, Actor.class)
-                                    .setParameter(ActorConstants.PARAMETER_ACTOR_ID, 0)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_ACTOR_ID, Actor.class)
+                                    .setParameter(PARAMETER_ACTOR_ID, 0)
                                     .getSingleResult() // NoResultException
                     )
             ).isInstanceOf(NoResultException.class);
@@ -50,8 +58,8 @@ class Actor_NamedQueries_IT
         void _NotNull_1() {
             final var actorId = 1;
             final var result = applyEntityManager(
-                    em -> em.createNamedQuery(ActorConstants.QUERY_FIND_BY_ACTOR_ID, Actor.class)
-                            .setParameter(ActorConstants.PARAMETER_ACTOR_ID, actorId)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_ACTOR_ID, Actor.class)
+                            .setParameter(PARAMETER_ACTOR_ID, actorId)
                             .getSingleResult()
             );
             assertThat(result)
@@ -61,7 +69,7 @@ class Actor_NamedQueries_IT
         }
     }
 
-    @DisplayName(ActorConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
@@ -71,8 +79,8 @@ class Actor_NamedQueries_IT
             final var actorIdMinExclusive = 0;
             final var maxResults = current().nextInt(32, 64);
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(ActorConstants.QUERY_FIND_ALL, Actor.class)
-                            .setParameter(ActorConstants.PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                    em -> em.createNamedQuery(QUERY_FIND_ALL, Actor.class)
+                            .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
                             .setMaxResults(maxResults)
                             .getResultList()
             );
@@ -93,8 +101,8 @@ class Actor_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var actorIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(ActorConstants.QUERY_FIND_ALL, Actor.class)
-                                .setParameter(ActorConstants.PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Actor.class)
+                                .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -114,7 +122,7 @@ class Actor_NamedQueries_IT
         }
     }
 
-    @DisplayName(ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME)
+    @DisplayName(QUERY_FIND_ALL_BY_LAST_NAME)
     @Nested
     class FindAllByLastNameTest {
 
@@ -126,9 +134,9 @@ class Actor_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var actorIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME, Actor.class)
-                                .setParameter(ActorConstants.PARAMETER_LAST_NAME, lastName)
-                                .setParameter(ActorConstants.PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_LAST_NAME, Actor.class)
+                                .setParameter(PARAMETER_LAST_NAME, lastName)
+                                .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -156,11 +164,11 @@ class Actor_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var actorIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(ActorConstants.QUERY_FIND_ALL_BY_LAST_NAME, Actor.class)
-                                .setParameter(ActorConstants.PARAMETER_LAST_NAME, lastName)
-                                .setParameter(ActorConstants.PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_LAST_NAME, Actor.class)
+                                .setParameter(PARAMETER_LAST_NAME, lastName)
+                                .setParameter(PARAMETER_ACTOR_ID_MIN_EXCLUSIVE, actorIdMinExclusive)
                                 .setMaxResults(maxResults)
-                                .setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, em.createEntityGraph(ActorConstants.ENTITY_GRAPH_FILMS))
+                                .setHint(PERSISTENCE_FETCHGRAPH, em.createEntityGraph(ENTITY_GRAPH_FILMS))
                                 .getResultList()
                 );
                 assertThat(list)

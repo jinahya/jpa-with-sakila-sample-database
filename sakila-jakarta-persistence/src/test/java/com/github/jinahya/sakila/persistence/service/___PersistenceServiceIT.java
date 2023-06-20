@@ -18,11 +18,14 @@ import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 import java.util.function.Function;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 @AddPackages({___EntityManagerProducer.class})
 @EnableAutoWeld
 abstract class ___PersistenceServiceIT<SERVICE extends ___PersistenceService> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
      * Create a new instance for testing specified service class.

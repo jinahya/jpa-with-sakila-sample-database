@@ -4,6 +4,8 @@ import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 
+import static com.github.jinahya.sakila.persistence.Country_.country;
+import static com.github.jinahya.sakila.persistence.Country_.countryId;
 import static org.jeasy.random.FieldPredicates.named;
 
 class Country_Randomizer
@@ -16,8 +18,8 @@ class Country_Randomizer
     @Override
     EasyRandomParameters parameters() {
         return super.parameters()
-                .excludeField(named(Country_.countryId.getName()))
-                .randomize(named(Country_.country.getName()), new StringRandomizer(50))
+                .excludeField(named(countryId.getName()))
+                .randomize(named(country.getName()), new StringRandomizer(50))
                 ;
     }
 

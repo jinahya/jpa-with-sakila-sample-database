@@ -15,10 +15,13 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 @ApplicationScoped
 public class ___EntityManagerFactoryProducer {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     private static final Map<EntityManagerFactory, EntityManagerFactory> PROXIES =
             new ConcurrentHashMap<>(new WeakHashMap<>());

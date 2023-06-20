@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 
 import java.nio.ByteOrder;
 
+import static com.github.jinahya.sakila.persistence._DomainTypes.Wkb.Type.POINT;
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.nio.ByteOrder.LITTLE_ENDIAN;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.aryEq;
@@ -148,10 +150,10 @@ class Address_Test
                 assertThat(g).isNotNull();
                 assertThat(g.getSrid()).isZero();
                 assertThat(g.getBinary()).isNotNull().satisfies(b -> {
-                    assertThat(b.getOrder()).isSameAs(ByteOrder.LITTLE_ENDIAN);
-                    assertThat(b.getType()).isSameAs(_DomainTypes.Wkb.Type.POINT);
+                    assertThat(b.getOrder()).isSameAs(LITTLE_ENDIAN);
+                    assertThat(b.getType()).isSameAs(POINT);
                     final var buffer = b.getDataBuffer();
-                    assertThat(buffer.order()).isSameAs(ByteOrder.LITTLE_ENDIAN);
+                    assertThat(buffer.order()).isSameAs(LITTLE_ENDIAN);
                     assertThat(buffer.remaining()).isEqualTo(Double.BYTES << 1);
                     assertThat(buffer.getDouble()).isEqualTo(x);
                     assertThat(buffer.getDouble()).isEqualTo(y);

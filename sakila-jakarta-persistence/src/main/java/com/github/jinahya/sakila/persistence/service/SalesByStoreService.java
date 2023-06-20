@@ -13,6 +13,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * A service class related to {@link SalesByStore}.
  *
@@ -21,7 +24,7 @@ import java.util.List;
 public class SalesByStoreService
         extends ___PersistenceService {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
      * Creates a new instance.

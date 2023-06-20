@@ -12,11 +12,14 @@ import java.lang.invoke.MethodHandles;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 @ApplicationScoped
 public class FilmListService
         extends ___PersistenceService {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     public Optional<@Valid FilmList> findByFid(final int fid) {
         return applyConnection(c -> {

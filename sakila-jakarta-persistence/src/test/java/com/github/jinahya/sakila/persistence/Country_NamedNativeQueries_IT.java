@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
+import static com.github.jinahya.sakila.persistence.CountryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET;
+import static com.github.jinahya.sakila.persistence.CountryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET;
+import static com.github.jinahya.sakila.persistence.CountryConstants.NATIVE_QUERY_SELECT_BY_COUNTRY_ID;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,7 +26,7 @@ class Country_NamedNativeQueries_IT
 
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(CountryConstants.NATIVE_QUERY_SELECT_BY_COUNTRY_ID)
+    @DisplayName(NATIVE_QUERY_SELECT_BY_COUNTRY_ID)
     @Nested
     class SelectByCountryIdTest {
 
@@ -32,7 +35,7 @@ class Country_NamedNativeQueries_IT
         void _NoResultException_0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(CountryConstants.NATIVE_QUERY_SELECT_BY_COUNTRY_ID, Country.class)
+                            em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_COUNTRY_ID, Country.class)
                                     .setParameter(1, 0)
                                     .getSingleResult() // NoResultException
                     )
@@ -47,7 +50,7 @@ class Country_NamedNativeQueries_IT
             final var expectedCountry = "Afghanistan";
             // WHEN
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.NATIVE_QUERY_SELECT_BY_COUNTRY_ID, Country.class)
+                    em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_COUNTRY_ID, Country.class)
                             .setParameter(1, countryId)
                             .getSingleResult()
             );
@@ -71,7 +74,7 @@ class Country_NamedNativeQueries_IT
         }
     }
 
-    @DisplayName(CountryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET)
+    @DisplayName(NATIVE_QUERY_SELECT_ALL_ROWSET)
     @Nested
     class SelectAllRowsetTest {
 
@@ -83,7 +86,7 @@ class Country_NamedNativeQueries_IT
                 final var offset = i;
                 // WHEN
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(CountryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET, Country.class)
+                        em -> em.createNamedQuery(NATIVE_QUERY_SELECT_ALL_ROWSET, Country.class)
                                 .setParameter(1, offset)
                                 .setParameter(2, limit)
                                 .getResultList()
@@ -104,7 +107,7 @@ class Country_NamedNativeQueries_IT
         }
     }
 
-    @DisplayName(CountryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET)
+    @DisplayName(NATIVE_QUERY_SELECT_ALL_KEYSET)
     @Nested
     class SelectAllKeysetTest {
 
@@ -116,7 +119,7 @@ class Country_NamedNativeQueries_IT
                 final var countryIdMinExclusive = i;
                 // WHEN
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(CountryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET, Country.class)
+                        em -> em.createNamedQuery(NATIVE_QUERY_SELECT_ALL_KEYSET, Country.class)
                                 .setParameter(1, countryIdMinExclusive)
                                 .setParameter(2, limit)
                                 .getResultList()

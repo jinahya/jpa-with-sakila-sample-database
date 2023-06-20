@@ -16,13 +16,15 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Stream;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class LanguageService_IT
         extends _BaseEntityServiceIT<LanguageService, Language, Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     LanguageService_IT() {
         super(LanguageService.class, Language.class, Integer.class);

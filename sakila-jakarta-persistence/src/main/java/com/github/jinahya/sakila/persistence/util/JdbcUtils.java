@@ -9,6 +9,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * Defines a bunch of utility methods.
  *
@@ -16,7 +19,7 @@ import java.util.Objects;
  */
 public final class JdbcUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     private static <T> T bind(final T obj, final ResultSet results) throws SQLException {
         Objects.requireNonNull(obj, "obj is null");

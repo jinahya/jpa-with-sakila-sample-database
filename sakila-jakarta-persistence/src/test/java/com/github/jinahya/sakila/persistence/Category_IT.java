@@ -16,7 +16,7 @@ class Category_IT
 
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    static Category newPersistedInstance(final EntityManager entityManager) {
+    static Category newPersistedCategory(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new Category_Randomizer().getRandomValue();
         assertThatBean(instance).isValid();
@@ -31,7 +31,7 @@ class Category_IT
 
     @Test
     void __() {
-        final var instance = applyEntityManager(Category_IT::newPersistedInstance);
+        final var instance = applyEntityManager(Category_IT::newPersistedCategory);
         assertThat(instance.getCategoryId()).isNotNull();
         assertThatBean(instance).isValid();
     }

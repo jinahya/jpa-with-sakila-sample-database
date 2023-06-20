@@ -13,6 +13,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.sakila.persistence.InventoryConstants.PARAMETER_FILM;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.PARAMETER_FILM_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.PARAMETER_INVENTORY_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.PARAMETER_STORE_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL_BY_FILM;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL_BY_STORE;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_BY_INVENTORY_ID;
+import static com.github.jinahya.sakila.persistence.InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.Map.entry;
@@ -57,7 +71,7 @@ class Inventory_NamedQueries_IT
         super();
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_BY_INVENTORY_ID)
+    @DisplayName(QUERY_FIND_BY_INVENTORY_ID)
     @Nested
     class FindByInventoryIdTest {
 
@@ -67,8 +81,8 @@ class Inventory_NamedQueries_IT
             final var inventoryId = 0;
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_BY_INVENTORY_ID, Inventory.class)
-                                    .setParameter(InventoryConstants.PARAMETER_INVENTORY_ID, inventoryId)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_INVENTORY_ID, Inventory.class)
+                                    .setParameter(PARAMETER_INVENTORY_ID, inventoryId)
                                     .getSingleResult() // NoResultException
                     )
             ).isInstanceOf(NoResultException.class);
@@ -79,8 +93,8 @@ class Inventory_NamedQueries_IT
         void __1() {
             final var inventoryId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_BY_INVENTORY_ID, Inventory.class)
-                            .setParameter(InventoryConstants.PARAMETER_INVENTORY_ID, inventoryId)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_INVENTORY_ID, Inventory.class)
+                            .setParameter(PARAMETER_INVENTORY_ID, inventoryId)
                             .getSingleResult()
             );
             assertThat(found)
@@ -91,7 +105,7 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
@@ -101,8 +115,8 @@ class Inventory_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var inventoryIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL, Inventory.class)
-                                .setParameter(InventoryConstants.PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Inventory.class)
+                                .setParameter(PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -121,7 +135,7 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_FILM_ID)
     @Nested
     class FindAllByFilmIdTest {
 
@@ -132,9 +146,9 @@ class Inventory_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var inventoryIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL_BY_FILM_ID, Inventory.class)
-                                .setParameter(InventoryConstants.PARAMETER_FILM_ID, filmId)
-                                .setParameter(InventoryConstants.PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_FILM_ID, Inventory.class)
+                                .setParameter(PARAMETER_FILM_ID, filmId)
+                                .setParameter(PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
                                 .getResultList()
                 );
                 assertThat(list)
@@ -153,7 +167,7 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_FILM)
+    @DisplayName(QUERY_FIND_ALL_BY_FILM)
     @Nested
     class FindAllByFilmTest {
 
@@ -164,9 +178,9 @@ class Inventory_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var inventoryIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL_BY_FILM, Inventory.class)
-                                .setParameter(InventoryConstants.PARAMETER_FILM, film)
-                                .setParameter(InventoryConstants.PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_FILM, Inventory.class)
+                                .setParameter(PARAMETER_FILM, film)
+                                .setParameter(PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
                                 .getResultList()
                 );
                 assertThat(list)
@@ -185,7 +199,7 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_STORE_ID)
     @Nested
     class FindAllByStoreIdTest {
 
@@ -202,7 +216,7 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_STORE)
+    @DisplayName(QUERY_FIND_ALL_BY_STORE)
     @Nested
     class FindAllByStoreTest {
 
@@ -219,7 +233,7 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID)
     @Nested
     class FindAllByStoreIdAndFilmIdTest {
 
@@ -236,10 +250,10 @@ class Inventory_NamedQueries_IT
                 for (final var i = new AtomicInteger(0); ; ) {
                     final var inventoryIdMinExclusive = i.get();
                     final var list = applyEntityManager(
-                            em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID, Inventory.class)
-                                    .setParameter(InventoryConstants.PARAMETER_STORE_ID, storeId)
-                                    .setParameter(InventoryConstants.PARAMETER_FILM_ID, filmId)
-                                    .setParameter(InventoryConstants.PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
+                            em -> em.createNamedQuery(QUERY_FIND_ALL_BY_STORE_ID_AND_FILM_ID, Inventory.class)
+                                    .setParameter(PARAMETER_STORE_ID, storeId)
+                                    .setParameter(PARAMETER_FILM_ID, filmId)
+                                    .setParameter(PARAMETER_INVENTORY_ID_MIN_EXCLUSIVE, inventoryIdMinExclusive)
                                     .setMaxResults(maxResults)
                                     .getResultList()
                     );
@@ -261,7 +275,7 @@ class Inventory_NamedQueries_IT
         }
     }
 
-    @DisplayName(InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID)
+    @DisplayName(QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID)
     @Nested
     class FindDistinctFilmsByStoreIdTest {
 
@@ -273,9 +287,9 @@ class Inventory_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var filmIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(InventoryConstants.QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID, Film.class)
-                                .setParameter(InventoryConstants.PARAMETER_STORE_ID, storeId)
-                                .setParameter(InventoryConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_DISTINCT_FILMS_BY_STORE_ID, Film.class)
+                                .setParameter(PARAMETER_STORE_ID, storeId)
+                                .setParameter(PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

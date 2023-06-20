@@ -3,20 +3,20 @@ package com.github.jinahya.sakila.persistence;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class Language_IT
         extends _BaseEntityIT<Language, Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
-    static Language newPersistedInstance(final EntityManager entityManager) {
+    static Language newPersistedLanguage(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new Language_Randomizer().getRandomValue();
         entityManager.persist(instance);
@@ -30,7 +30,7 @@ class Language_IT
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(Language_IT::newPersistedInstance);
+        final var instance = applyEntityManager(Language_IT::newPersistedLanguage);
         assertThat(instance).isNotNull().satisfies(i -> {
             assertThat(i.getLanguageId()).isNotNull();
         });

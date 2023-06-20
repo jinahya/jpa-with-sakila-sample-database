@@ -11,11 +11,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class FilmCategory_IT
         extends _BaseEntityIT<FilmCategory, FilmCategoryId> {
 
-    static FilmCategory newPersistedInstance(final EntityManager entityManager) {
+    static FilmCategory newPersistedFilmCategory(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new FilmCategory_Randomizer().getRandomValue();
-        instance.setFilm(Film_IT.newPersistedInstance(entityManager));
-        instance.setCategory(Category_IT.newPersistedInstance(entityManager));
+        instance.setFilm(Film_IT.newPersistedFilm(entityManager));
+        instance.setCategory(Category_IT.newPersistedCategory(entityManager));
         assertThatBean(instance).isValid();
         entityManager.persist(instance);
 //        entityManager.flush();
@@ -28,7 +28,7 @@ class FilmCategory_IT
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(FilmCategory_IT::newPersistedInstance);
+        final var instance = applyEntityManager(FilmCategory_IT::newPersistedFilmCategory);
         assertThatBean(instance).isValid();
         assertThat(instance).isNotNull().satisfies(e -> {
             assertThat(e.getId()).isNotNull();

@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 @AddPackages({___EntityManagerFactoryProducer.class, __BaseEntityService.class})
 @EnableAutoWeld
 abstract class __BaseEntityServiceIT<
@@ -18,7 +21,7 @@ abstract class __BaseEntityServiceIT<
         ID extends Comparable<? super ID>>
         extends ___PersistenceServiceIT<SERVICE> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     __BaseEntityServiceIT(final Class<SERVICE> serviceClass, final Class<ENTITY> entityClass,
                           final Class<ID> idClass) {

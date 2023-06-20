@@ -8,6 +8,24 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_CATEGORY;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_CATEGORY_CATEGORY_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_FILM;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_FILM_FILM_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_ID_FILM_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM_FILM_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_CATEGORY_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_FILM_ID;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.QUERY_FIND_BY_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -18,7 +36,7 @@ class FilmCategory_NamedQueries_IT
         super();
     }
 
-    @DisplayName(FilmCategoryConstants.QUERY_FIND_BY_ID)
+    @DisplayName(QUERY_FIND_BY_ID)
     @Nested
     class FindByIdTest {
 
@@ -27,8 +45,8 @@ class FilmCategory_NamedQueries_IT
         void _NoResultException_00() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_BY_ID, FilmCategory.class)
-                                    .setParameter(FilmCategoryConstants.PARAMETER_ID, FilmCategoryId.of(0, 0))
+                            em -> em.createNamedQuery(QUERY_FIND_BY_ID, FilmCategory.class)
+                                    .setParameter(PARAMETER_ID, FilmCategoryId.of(0, 0))
                                     .getSingleResult()
                     )
             ).isInstanceOf(NoResultException.class);
@@ -39,8 +57,8 @@ class FilmCategory_NamedQueries_IT
         void _NotNull_16() {
             final var id = FilmCategoryId.of(1, 6);
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_BY_ID, FilmCategory.class)
-                            .setParameter(FilmCategoryConstants.PARAMETER_ID, id)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_ID, FilmCategory.class)
+                            .setParameter(PARAMETER_ID, id)
                             .getSingleResult()
             );
             assertThat(found)
@@ -61,7 +79,7 @@ class FilmCategory_NamedQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
@@ -72,9 +90,9 @@ class FilmCategory_NamedQueries_IT
             final var maxResults = 128;
             while (true) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_ALL, FilmCategory.class)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN, filmIdMIn.get())
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, categoryIdMinExclusive.get())
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, FilmCategory.class)
+                                .setParameter(PARAMETER_ID_FILM_ID_MIN, filmIdMIn.get())
+                                .setParameter(PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, categoryIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -99,7 +117,7 @@ class FilmCategory_NamedQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_FILM_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_ID_FILM_ID)
     @Nested
     class FindAllByIdFilmIdTest {
 
@@ -111,9 +129,9 @@ class FilmCategory_NamedQueries_IT
             final var maxResults = 2;
             while (true) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_FILM_ID, FilmCategory.class)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_FILM_ID, idFilmId)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_ID_FILM_ID, FilmCategory.class)
+                                .setParameter(PARAMETER_ID_FILM_ID, idFilmId)
+                                .setParameter(PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -134,7 +152,7 @@ class FilmCategory_NamedQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM_FILM_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_FILM_FILM_ID)
     @Nested
     class FindAllByFilmFilmIdTest {
 
@@ -146,9 +164,9 @@ class FilmCategory_NamedQueries_IT
             final var maxResults = 2;
             while (true) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM_FILM_ID, FilmCategory.class)
-                                .setParameter(FilmCategoryConstants.PARAMETER_FILM_FILM_ID, filmFilmId)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_FILM_FILM_ID, FilmCategory.class)
+                                .setParameter(PARAMETER_FILM_FILM_ID, filmFilmId)
+                                .setParameter(PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -169,7 +187,7 @@ class FilmCategory_NamedQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM)
+    @DisplayName(QUERY_FIND_ALL_BY_FILM)
     @Nested
     class FindAllByIdFilmTest {
 
@@ -181,9 +199,9 @@ class FilmCategory_NamedQueries_IT
             final var maxResults = 2;
             while (true) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_ALL_BY_FILM, FilmCategory.class)
-                                .setParameter(FilmCategoryConstants.PARAMETER_FILM, film)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_FILM, FilmCategory.class)
+                                .setParameter(PARAMETER_FILM, film)
+                                .setParameter(PARAMETER_ID_CATEGORY_ID_MIN_EXCLUSIVE, idCategoryIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -204,7 +222,7 @@ class FilmCategory_NamedQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_CATEGORY_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_ID_CATEGORY_ID)
     @Nested
     class FindAllByIdCategoryIdTest {
 
@@ -216,9 +234,9 @@ class FilmCategory_NamedQueries_IT
             final var maxResults = 2;
             while (true) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_ALL_BY_ID_CATEGORY_ID, FilmCategory.class)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_CATEGORY_ID, idCategoryId)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_ID_CATEGORY_ID, FilmCategory.class)
+                                .setParameter(PARAMETER_ID_CATEGORY_ID, idCategoryId)
+                                .setParameter(PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -239,7 +257,7 @@ class FilmCategory_NamedQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID)
     @Nested
     class FindAllByCategoryCategoryIdTest {
 
@@ -251,9 +269,9 @@ class FilmCategory_NamedQueries_IT
             final var maxResults = 2;
             while (true) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID, FilmCategory.class)
-                                .setParameter(FilmCategoryConstants.PARAMETER_CATEGORY_CATEGORY_ID, categoryCategoryId)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_CATEGORY_CATEGORY_ID, FilmCategory.class)
+                                .setParameter(PARAMETER_CATEGORY_CATEGORY_ID, categoryCategoryId)
+                                .setParameter(PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -274,7 +292,7 @@ class FilmCategory_NamedQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY)
+    @DisplayName(QUERY_FIND_ALL_BY_CATEGORY)
     @Nested
     class FindAllByIdCategoryTest {
 
@@ -286,9 +304,9 @@ class FilmCategory_NamedQueries_IT
             final var maxResults = 2;
             while (true) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.QUERY_FIND_ALL_BY_CATEGORY, FilmCategory.class)
-                                .setParameter(FilmCategoryConstants.PARAMETER_CATEGORY, category)
-                                .setParameter(FilmCategoryConstants.PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_CATEGORY, FilmCategory.class)
+                                .setParameter(PARAMETER_CATEGORY, category)
+                                .setParameter(PARAMETER_ID_FILM_ID_MIN_EXCLUSIVE, idFilmIdMinExclusive.get())
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

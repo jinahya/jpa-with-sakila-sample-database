@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static com.github.jinahya.sakila.persistence.ActorConstants.NATIVE_QUERY_SELECT_ALL;
+import static com.github.jinahya.sakila.persistence.ActorConstants.NATIVE_QUERY_SELECT_BY_ACTOR_ID;
 import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -16,7 +18,7 @@ class Actor_NamedNativeQueries_IT
         super(Actor.class, Integer.class);
     }
 
-    @DisplayName(ActorConstants.NATIVE_QUERY_SELECT_BY_ACTOR_ID)
+    @DisplayName(NATIVE_QUERY_SELECT_BY_ACTOR_ID)
     @Nested
     class SelectByActorIdTest {
 
@@ -24,7 +26,7 @@ class Actor_NamedNativeQueries_IT
         void _NoResultException_0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(ActorConstants.NATIVE_QUERY_SELECT_BY_ACTOR_ID, Actor.class)
+                            em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_ACTOR_ID, Actor.class)
                                     .setParameter(1, 0)
                                     .getSingleResult()
                     )
@@ -35,7 +37,7 @@ class Actor_NamedNativeQueries_IT
         void _NotNull_1() {
             final var actorId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(ActorConstants.NATIVE_QUERY_SELECT_BY_ACTOR_ID, Actor.class)
+                    em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_ACTOR_ID, Actor.class)
                             .setParameter(1, actorId)
                             .getSingleResult()
             );
@@ -46,7 +48,7 @@ class Actor_NamedNativeQueries_IT
         }
     }
 
-    @DisplayName(ActorConstants.NATIVE_QUERY_SELECT_ALL)
+    @DisplayName(NATIVE_QUERY_SELECT_ALL)
     @Nested
     class SelectAllClass {
 
@@ -56,7 +58,7 @@ class Actor_NamedNativeQueries_IT
             for (var i = 0; ; ) {
                 final var offset = i;
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(ActorConstants.NATIVE_QUERY_SELECT_ALL, Actor.class)
+                        em -> em.createNamedQuery(NATIVE_QUERY_SELECT_ALL, Actor.class)
                                 .setParameter(1, offset)
                                 .setParameter(2, limit)
                                 .getResultList()

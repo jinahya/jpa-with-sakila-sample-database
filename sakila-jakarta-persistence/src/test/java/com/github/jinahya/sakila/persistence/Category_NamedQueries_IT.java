@@ -8,6 +8,10 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.sakila.persistence.CategoryConstants.PARAMETER_CATEGORY_ID;
+import static com.github.jinahya.sakila.persistence.CategoryConstants.PARAMETER_CATEGORY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.CategoryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.CategoryConstants.QUERY_FIND_BY_CATEGORY_ID;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +23,7 @@ class Category_NamedQueries_IT
 
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(CategoryConstants.QUERY_FIND_BY_CATEGORY_ID)
+    @DisplayName(QUERY_FIND_BY_CATEGORY_ID)
     @Nested
     class FindByCategoryIdTest {
 
@@ -28,8 +32,8 @@ class Category_NamedQueries_IT
         void __0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(CategoryConstants.QUERY_FIND_BY_CATEGORY_ID, Category.class)
-                                    .setParameter(CategoryConstants.PARAMETER_CATEGORY_ID, 0)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_CATEGORY_ID, Category.class)
+                                    .setParameter(PARAMETER_CATEGORY_ID, 0)
                                     .getSingleResult()
                     )
             ).isInstanceOf(NoResultException.class);
@@ -40,8 +44,8 @@ class Category_NamedQueries_IT
         void __1() {
             final var categoryId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(CategoryConstants.QUERY_FIND_BY_CATEGORY_ID, Category.class)
-                            .setParameter(CategoryConstants.PARAMETER_CATEGORY_ID, categoryId)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_CATEGORY_ID, Category.class)
+                            .setParameter(PARAMETER_CATEGORY_ID, categoryId)
                             .getSingleResult()
             );
             assertThat(found)
@@ -51,7 +55,7 @@ class Category_NamedQueries_IT
         }
     }
 
-    @DisplayName(CategoryConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
@@ -61,8 +65,8 @@ class Category_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var categoryIdMinExclusive = i.get();
                 final var found = applyEntityManager(
-                        em -> em.createNamedQuery(CategoryConstants.QUERY_FIND_ALL, Category.class)
-                                .setParameter(CategoryConstants.PARAMETER_CATEGORY_ID_MIN_EXCLUSIVE, categoryIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Category.class)
+                                .setParameter(PARAMETER_CATEGORY_ID_MIN_EXCLUSIVE, categoryIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

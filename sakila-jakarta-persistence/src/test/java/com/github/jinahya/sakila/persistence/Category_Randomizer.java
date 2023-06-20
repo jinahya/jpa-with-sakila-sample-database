@@ -4,6 +4,8 @@ import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.jeasy.random.randomizers.text.StringRandomizer;
 
+import static com.github.jinahya.sakila.persistence.Category_.categoryId;
+import static com.github.jinahya.sakila.persistence.Category_.name;
 import static org.jeasy.random.FieldPredicates.named;
 
 class Category_Randomizer
@@ -16,8 +18,8 @@ class Category_Randomizer
     @Override
     EasyRandomParameters parameters() {
         return super.parameters()
-                .excludeField(named(Category_.categoryId.getName()))
-                .randomize(named(Category_.name.getName()), new StringRandomizer(25))
+                .excludeField(named(categoryId.getName()))
+                .randomize(named(name.getName()), new StringRandomizer(25))
                 ;
     }
 

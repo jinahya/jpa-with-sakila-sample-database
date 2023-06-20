@@ -7,15 +7,16 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static com.github.jinahya.sakila.persistence.Country_IT.newPersistedCountry;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class City_IT
         extends _BaseEntityIT<City, Integer> {
 
-    static City newPersistedInstance(final EntityManager entityManager) {
+    static City newPersistedCity(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new City_Randomizer().getRandomValue();
-        instance.setCountry(Country_IT.newPersistedInstance(entityManager));
+        instance.setCountry(newPersistedCountry(entityManager));
         entityManager.persist(instance);
         entityManager.flush();
         return instance;
@@ -27,7 +28,7 @@ class City_IT
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(City_IT::newPersistedInstance);
+        final var instance = applyEntityManager(City_IT::newPersistedCity);
         assertThat(instance).isNotNull();
         assertThatBean(instance).isValid();
     }

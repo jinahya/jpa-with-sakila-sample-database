@@ -8,6 +8,8 @@ import org.jboss.weld.junit5.auto.EnableAutoWeld;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @AddPackages({___EntityManagerProducer.class, FilmListService.class})
 @EnableAutoWeld
 class FilmListService_IT {
@@ -19,8 +21,8 @@ class FilmListService_IT {
         void __1009() {
             final var fid = 1009;
             final var found = filmListService.findByFid(fid);
-            Assertions.assertThat(found).hasValueSatisfying(v -> {
-                Assertions.assertThat(v.getCategories())
+            assertThat(found).hasValueSatisfying(v -> {
+                assertThat(v.getCategories())
                         .containsOnly("Drama", "Action");
             });
         }

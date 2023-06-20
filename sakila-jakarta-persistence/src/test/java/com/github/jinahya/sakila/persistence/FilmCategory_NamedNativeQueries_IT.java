@@ -8,6 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.LongAdder;
 
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET;
+import static com.github.jinahya.sakila.persistence.FilmCategoryConstants.NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -18,7 +21,7 @@ class FilmCategory_NamedNativeQueries_IT
         super();
     }
 
-    @DisplayName(FilmCategoryConstants.NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID)
+    @DisplayName(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID)
     @Nested
     class SelectByFilmIdAndCategoryIdTest {
 
@@ -27,7 +30,7 @@ class FilmCategory_NamedNativeQueries_IT
         void _NoResultException_00() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(FilmCategoryConstants.NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID, FilmCategory.class)
+                            em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID, FilmCategory.class)
                                     .setParameter(1, 0) // film_id = ?
                                     .setParameter(2, 0) // category_id = ?
                                     .getSingleResult() // NoResultException
@@ -41,7 +44,7 @@ class FilmCategory_NamedNativeQueries_IT
             final var filmId = 1;
             final var categoryId = 6;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(FilmCategoryConstants.NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID, FilmCategory.class)
+                    em -> em.createNamedQuery(NATIVE_QUERY_SELECT_BY_FILM_ID_AND_CATEGORY_ID, FilmCategory.class)
                             .setParameter(1, filmId)     // film_id = ?
                             .setParameter(2, categoryId) // category_id = ?
                             .getSingleResult()
@@ -58,7 +61,7 @@ class FilmCategory_NamedNativeQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET)
+    @DisplayName(NATIVE_QUERY_SELECT_ALL_ROWSET)
     @Nested
     class SelectAllRowsetTest {
 
@@ -67,7 +70,7 @@ class FilmCategory_NamedNativeQueries_IT
             final var limit = 128;
             for (final var offset = new LongAdder(); ; ) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_ROWSET, FilmCategory.class)
+                        em -> em.createNamedQuery(NATIVE_QUERY_SELECT_ALL_ROWSET, FilmCategory.class)
                                 .setParameter(1, offset.intValue()) // OFFSET ?
                                 .setParameter(2, limit)             //        ,?
                                 .getResultList()
@@ -86,7 +89,7 @@ class FilmCategory_NamedNativeQueries_IT
         }
     }
 
-    @DisplayName(FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET)
+    @DisplayName(NATIVE_QUERY_SELECT_ALL_KEYSET)
     @Nested
     class SelectAllKeysetTest {
 
@@ -97,7 +100,7 @@ class FilmCategory_NamedNativeQueries_IT
             final var limit = 128;
             while (true) {
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmCategoryConstants.NATIVE_QUERY_SELECT_ALL_KEYSET, FilmCategory.class)
+                        em -> em.createNamedQuery(NATIVE_QUERY_SELECT_ALL_KEYSET, FilmCategory.class)
                                 .setParameter(1, filmIdMin.get())              // WHERE (film_id = ?
                                 .setParameter(2, categoryIdMinExclusive.get()) //        AND category_id > ?)
                                 .setParameter(3, filmIdMin.get())              //    OR film_id > ?

@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import java.util.Locale;
 
 import static java.lang.invoke.MethodHandles.lookup;
+import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -42,21 +43,21 @@ class Country_Test
         @ParameterizedTest
         void _NotNull_NotNull(final Locale locale) {
             final var instance = newEntitySpy();
-            final var displayLanguageInEnglish = locale.getDisplayLanguage(Locale.ENGLISH);
+            final var displayLanguageInEnglish = locale.getDisplayLanguage(ENGLISH);
             if (displayLanguageInEnglish.isBlank()) {
                 return;
             }
             when(instance.getCountry()).thenReturn(displayLanguageInEnglish);
-            assertThat(instance.getLocalesForCountry())
-                    .satisfiesAnyOf(
-                            l -> {
-                                assertThat(l).isEmpty();
-                            },
-                            l -> {
-                                assertThat(l).extracting(v -> v.getDisplayCountry(Locale.ENGLISH))
-                                        .containsOnly(displayLanguageInEnglish);
-                            }
-                    );
+            assertThat(instance.getLocalesForCountry()).satisfiesAnyOf(
+                    l -> {
+                        assertThat(l).isEmpty();
+                    },
+                    l -> {
+                        assertThat(l)
+                                .extracting(v -> v.getDisplayCountry(ENGLISH))
+                                .containsOnly(displayLanguageInEnglish);
+                    }
+            );
         }
     }
 
@@ -78,7 +79,7 @@ class Country_Test
         void _NotNull_NotNull(final Locale locale) {
             final var instance = newEntitySpy();
             instance.setCountryAsLocale(locale);
-            verify(instance, times(1)).setCountry(locale.getDisplayCountry(Locale.ENGLISH));
+            verify(instance, times(1)).setCountry(locale.getDisplayCountry(ENGLISH));
         }
     }
 }

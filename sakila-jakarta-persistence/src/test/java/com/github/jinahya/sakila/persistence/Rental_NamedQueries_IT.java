@@ -16,6 +16,16 @@ import java.time.ZoneOffset;
 import java.util.Optional;
 
 import static com.github.jinahya.sakila.persistence.RentalComparators.COMPARING_RENTAL_DATE_RENTAL_ID;
+import static com.github.jinahya.sakila.persistence.RentalConstants.PARAMETER_RENTAL_DATE_MAX_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.RentalConstants.PARAMETER_RENTAL_DATE_MAX_INCLUSIVE;
+import static com.github.jinahya.sakila.persistence.RentalConstants.PARAMETER_RENTAL_DATE_MIN;
+import static com.github.jinahya.sakila.persistence.RentalConstants.PARAMETER_RENTAL_DATE_MIN_INCLUSIVE;
+import static com.github.jinahya.sakila.persistence.RentalConstants.PARAMETER_RENTAL_ID;
+import static com.github.jinahya.sakila.persistence.RentalConstants.PARAMETER_RENTAL_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.RentalConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN;
+import static com.github.jinahya.sakila.persistence.RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN;
+import static com.github.jinahya.sakila.persistence.RentalConstants.QUERY_FIND_BY_RENTAL_ID;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.time.LocalDateTime.ofEpochSecond;
 import static java.util.Comparator.comparing;
@@ -54,7 +64,7 @@ class Rental_NamedQueries_IT
         log.debug("MAX(rentalDate): {}", maxRentalDate);
     }
 
-    @DisplayName(RentalConstants.QUERY_FIND_BY_RENTAL_ID)
+    @DisplayName(QUERY_FIND_BY_RENTAL_ID)
     @Nested
     class FindByRentalIdTest {
 
@@ -63,8 +73,8 @@ class Rental_NamedQueries_IT
         void _NoResultException_0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(RentalConstants.QUERY_FIND_BY_RENTAL_ID, Rental.class)
-                                    .setParameter(RentalConstants.PARAMETER_RENTAL_ID, 0)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_RENTAL_ID, Rental.class)
+                                    .setParameter(PARAMETER_RENTAL_ID, 0)
                                     .getSingleResult()
                     )
             ).isInstanceOf(NoResultException.class);
@@ -75,8 +85,8 @@ class Rental_NamedQueries_IT
         void _NotNull_1() {
             final var rentalId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(RentalConstants.QUERY_FIND_BY_RENTAL_ID, Rental.class)
-                            .setParameter(RentalConstants.PARAMETER_RENTAL_ID, rentalId)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_RENTAL_ID, Rental.class)
+                            .setParameter(PARAMETER_RENTAL_ID, rentalId)
                             .getSingleResult()
             );
             assertThat(found)
@@ -93,7 +103,7 @@ class Rental_NamedQueries_IT
         }
     }
 
-    @DisplayName(RentalConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllRentalIdTest {
 
@@ -103,8 +113,8 @@ class Rental_NamedQueries_IT
             for (var i = 0; ; ) {
                 final var rentalIdMinExclusive = i;
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(RentalConstants.QUERY_FIND_ALL, Rental.class)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Rental.class)
+                                .setParameter(PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
                                 .setMaxResults(maxResult)
                                 .getResultList()
                 );
@@ -120,7 +130,7 @@ class Rental_NamedQueries_IT
         }
     }
 
-    @DisplayName(RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN)
+    @DisplayName(QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN)
     @Nested
     class FindAllByRentalDateBetweenTest {
 
@@ -135,11 +145,11 @@ class Rental_NamedQueries_IT
                 final var rentalIdMinExclusive = rentalIdMinExclusiveHolder;
                 final var rentalDateMin = rentalDateMinHolder;
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN, Rental.class)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MIN_INCLUSIVE, rentalDateMinInclusive)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MAX_INCLUSIVE, rentalDateMaxInclusive)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MIN, rentalDateMin)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN, Rental.class)
+                                .setParameter(PARAMETER_RENTAL_DATE_MIN_INCLUSIVE, rentalDateMinInclusive)
+                                .setParameter(PARAMETER_RENTAL_DATE_MAX_INCLUSIVE, rentalDateMaxInclusive)
+                                .setParameter(PARAMETER_RENTAL_DATE_MIN, rentalDateMin)
+                                .setParameter(PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -183,11 +193,11 @@ class Rental_NamedQueries_IT
                 final var rentalDateMin = rentalDateMinHolder;
                 final var rentalIdMinExclusive = rentalIdMinExclusiveHolder;
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN, Rental.class)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MIN_INCLUSIVE, rentalDateMinInclusive)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MAX_INCLUSIVE, rentalDateMaxInclusive)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MIN, rentalDateMin)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN, Rental.class)
+                                .setParameter(PARAMETER_RENTAL_DATE_MIN_INCLUSIVE, rentalDateMinInclusive)
+                                .setParameter(PARAMETER_RENTAL_DATE_MAX_INCLUSIVE, rentalDateMaxInclusive)
+                                .setParameter(PARAMETER_RENTAL_DATE_MIN, rentalDateMin)
+                                .setParameter(PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -239,7 +249,7 @@ class Rental_NamedQueries_IT
         }
     }
 
-    @DisplayName(RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN)
+    @DisplayName(QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN)
     @Nested
     class FindAllByRentalDateBetweenHalOpenTest {
 
@@ -254,11 +264,11 @@ class Rental_NamedQueries_IT
                 final var rentalIdMinExclusive = rentalIdMinExclusiveHolder;
                 final var rentalDateMin = rentalDateMinHolder;
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN, Rental.class)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MIN_INCLUSIVE, rentalDateMinInclusive)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MAX_EXCLUSIVE, rentalDateMaxExclusive)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MIN, rentalDateMin)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN, Rental.class)
+                                .setParameter(PARAMETER_RENTAL_DATE_MIN_INCLUSIVE, rentalDateMinInclusive)
+                                .setParameter(PARAMETER_RENTAL_DATE_MAX_EXCLUSIVE, rentalDateMaxExclusive)
+                                .setParameter(PARAMETER_RENTAL_DATE_MIN, rentalDateMin)
+                                .setParameter(PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -304,11 +314,11 @@ class Rental_NamedQueries_IT
                 final var rentalDateMin = rentalDateMinHolder;
                 final var rentalIdMinExclusive = rentalIdMinExclusiveHolder;
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(RentalConstants.QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN, Rental.class)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MIN_INCLUSIVE, rentalDateMinInclusive)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MAX_EXCLUSIVE, rentalDateMaxExclusive)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_DATE_MIN, rentalDateMin)
-                                .setParameter(RentalConstants.PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_RENTAL_DATE_BETWEEN_HALF_OPEN, Rental.class)
+                                .setParameter(PARAMETER_RENTAL_DATE_MIN_INCLUSIVE, rentalDateMinInclusive)
+                                .setParameter(PARAMETER_RENTAL_DATE_MAX_EXCLUSIVE, rentalDateMaxExclusive)
+                                .setParameter(PARAMETER_RENTAL_DATE_MIN, rentalDateMin)
+                                .setParameter(PARAMETER_RENTAL_ID_MIN_EXCLUSIVE, rentalIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

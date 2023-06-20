@@ -10,13 +10,15 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @AddBeanClasses({SalesByStoreService.class})
 class SalesByStoreService_IT
         extends ___PersistenceServiceIT<SalesByStoreService> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     SalesByStoreService_IT() {
         super(SalesByStoreService.class);

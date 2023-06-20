@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class City_Test
@@ -14,32 +16,37 @@ class City_Test
         super(City.class, Integer.class);
     }
 
-    @DisplayName("country")
+    @DisplayName("getCountry()Country")
     @Nested
-    class CountryAttributeTest {
+    class GetCountryAttributeTest {
 
         @DisplayName("new Country().getCountry()null")
         @Test
-        void getCountry_Null_New() {
+        void _Null_New() {
             // GIVEN
             final var instance = newEntityInstance();
             // WHEN / THEN
-            // TODO: Verify instance.getCountry() return null
+            // TODO: Verify instance.getCountry() returned null
         }
+    }
+
+    @DisplayName("setCountry(Country)")
+    @Nested
+    class SetCountryAttributeTest {
 
         @DisplayName("setCountry(null) -> setCountryId(null)")
         @Test
-        void setCountry_InvokeSetCountryIdWithNull_Null() {
+        void _InvokeSetCountryIdWithNull_Null() {
             final var instance = newEntitySpy();
             // WHEN
-            // TODO: Call instance.setCountry(null);
+            instance.setCountry(null);
             // THEN
-            // TODO: Verify instance.setCountryId(null) invoked once
+            verify(instance, times(1)).setCountryId(null);
         }
 
-        @DisplayName("setCountry(countryIdIsNull) -> setCountryId(null)")
+        @DisplayName("setCountry(!nullWithNullCountryId) -> setCountryId(null)")
         @Test
-        void setCountry_InvokeSetCountryIdWithNull_CountryIdIsNull() {
+        void _InvokeSetCountryIdWithNull_NotNullWithNullCountryId() {
             // GIVEN
             final var instance = newEntitySpy();
             final var country = spy(Country.class);
@@ -48,6 +55,20 @@ class City_Test
             // TODO: Call instance.setCountry(null);
             // THEN
             // TODO: Verify instance.setCountryId(null) invoked once
+        }
+
+        @DisplayName("setCountry(!null) -> setCountryId(!null)")
+        @Test
+        void _InvokeSetCountryIdWithNull_NotNull() {
+            // GIVEN
+            final var instance = newEntitySpy();
+            final var country = spy(Country.class);
+            final var countryId = 0;
+            when(country.getCountryId()).thenReturn(countryId);
+            // WHEN
+            // TODO: Call instance.setCountry(country);
+            // THEN
+            // TODO: Verify instance.setCountryId(countryId) invoked once
         }
     }
 }

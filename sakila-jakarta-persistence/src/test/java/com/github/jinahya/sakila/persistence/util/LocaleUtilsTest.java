@@ -9,11 +9,13 @@ import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 import java.util.stream.Stream;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class LocaleUtilsTest {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     public static Stream<Locale> getLocaleStream() {
         return Stream.of(Locale.getAvailableLocales());

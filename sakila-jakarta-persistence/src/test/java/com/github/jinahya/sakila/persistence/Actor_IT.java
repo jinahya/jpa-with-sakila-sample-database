@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class Actor_IT
         extends _BaseEntityIT<Actor, Integer> {
 
-    static Actor newPersistedInstance(final EntityManager entityManager) {
+    static Actor newPersistedActor(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new Actor_Randomizer().getRandomValue();
         entityManager.persist(instance);
@@ -25,7 +25,7 @@ class Actor_IT
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(Actor_IT::newPersistedInstance);
+        final var instance = applyEntityManager(Actor_IT::newPersistedActor);
         assertThat(instance).isNotNull();
         assertThatBean(instance).isValid();
     }

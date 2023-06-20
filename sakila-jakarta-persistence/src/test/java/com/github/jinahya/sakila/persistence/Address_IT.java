@@ -4,23 +4,24 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.lang.invoke.MethodHandles;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static com.github.jinahya.sakila.persistence.City_IT.newPersistedCity;
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class Address_IT
         extends _BaseEntityIT<Address, Integer> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
-    static Address newPersistedInstance(final EntityManager entityManager) {
+    static Address newPersistedAddress(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new Address_Randomizer().getRandomValue();
-        instance.setCity(City_IT.newPersistedInstance(entityManager));
+        instance.setCity(newPersistedCity(entityManager));
         entityManager.persist(instance);
         entityManager.flush();
         return instance;
@@ -32,7 +33,7 @@ class Address_IT
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(Address_IT::newPersistedInstance);
+        final var instance = applyEntityManager(Address_IT::newPersistedAddress);
         assertThat(instance).isNotNull();
         assertThatBean(instance).isValid();
     }

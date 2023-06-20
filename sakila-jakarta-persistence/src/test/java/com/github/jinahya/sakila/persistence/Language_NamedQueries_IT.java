@@ -9,6 +9,10 @@ import org.slf4j.Logger;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.sakila.persistence.LanguageConstants.PARAMETER_LANGUAGE_ID;
+import static com.github.jinahya.sakila.persistence.LanguageConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.LanguageConstants.QUERY_FIND_BY_LANGUAGE_ID;
+import static com.github.jinahya.sakila.persistence.LanguageConstants.QUERY_PARAM_LANGUAGE_ID_MIN_EXCLUSIVE;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,7 +23,7 @@ class Language_NamedQueries_IT
 
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(LanguageConstants.QUERY_FIND_BY_LANGUAGE_ID)
+    @DisplayName(QUERY_FIND_BY_LANGUAGE_ID)
     @Nested
     class FindByLanguageIdTest {
 
@@ -28,8 +32,8 @@ class Language_NamedQueries_IT
         void __0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(LanguageConstants.QUERY_FIND_BY_LANGUAGE_ID, Language.class)
-                                    .setParameter(LanguageConstants.PARAMETER_LANGUAGE_ID, 0)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_LANGUAGE_ID, Language.class)
+                                    .setParameter(PARAMETER_LANGUAGE_ID, 0)
                                     .getSingleResult()
                     )
             ).isInstanceOf(NoResultException.class);
@@ -40,8 +44,8 @@ class Language_NamedQueries_IT
         void __1() {
             final var languageId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(LanguageConstants.QUERY_FIND_BY_LANGUAGE_ID, Language.class)
-                            .setParameter(LanguageConstants.PARAMETER_LANGUAGE_ID, languageId)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_LANGUAGE_ID, Language.class)
+                            .setParameter(PARAMETER_LANGUAGE_ID, languageId)
                             .getSingleResult()
             );
             assertThat(found)
@@ -50,7 +54,7 @@ class Language_NamedQueries_IT
         }
     }
 
-    @DisplayName(LanguageConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
@@ -60,8 +64,8 @@ class Language_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var languageIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(LanguageConstants.QUERY_FIND_ALL, Language.class)
-                                .setParameter(LanguageConstants.QUERY_PARAM_LANGUAGE_ID_MIN_EXCLUSIVE, languageIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Language.class)
+                                .setParameter(QUERY_PARAM_LANGUAGE_ID_MIN_EXCLUSIVE, languageIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

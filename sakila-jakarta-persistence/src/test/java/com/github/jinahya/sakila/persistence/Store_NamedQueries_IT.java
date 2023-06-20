@@ -18,6 +18,7 @@ import static com.github.jinahya.sakila.persistence.StoreConstants.QUERY_FIND_AL
 import static com.github.jinahya.sakila.persistence.StoreConstants.QUERY_FIND_BY_MANAGER_STAFF;
 import static com.github.jinahya.sakila.persistence.StoreConstants.QUERY_FIND_BY_MANAGER_STAFF_ID;
 import static com.github.jinahya.sakila.persistence.StoreConstants.QUERY_FIND_BY_STORE_ID;
+import static com.github.jinahya.sakila.persistence._PersistenceConstants.PERSISTENCE_FETCHGRAPH;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -70,11 +71,11 @@ class Store_NamedQueries_IT
                         .setParameter(PARAMETER_STORE_ID, 1);
                 if (current().nextBoolean()) {
                     final var graph = em.createEntityGraph(ENTITY_GRAPH_MANAGER_STAFF);
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 } else {
                     final var graph = em.createEntityGraph(Store.class);
                     graph.addAttributeNodes(Store_.managerStaff);
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 }
                 return query.getSingleResult();
             });
@@ -97,11 +98,11 @@ class Store_NamedQueries_IT
                         .setParameter(PARAMETER_STORE_ID, 1);
                 if (current().nextBoolean()) {
                     final var graph = em.createEntityGraph(ENTITY_GRAPH_ADDRESS);
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 } else {
                     final var graph = em.createEntityGraph(Store.class);
                     graph.addAttributeNodes(Store_.address);
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 }
                 return query.getSingleResult();
             });
@@ -124,11 +125,11 @@ class Store_NamedQueries_IT
                         .setParameter(PARAMETER_STORE_ID, 1);
                 if (current().nextBoolean()) {
                     final var graph = em.createEntityGraph(ENTITY_GRAPH_MANAGER_STAFF_AND_ADDRESS);
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 } else {
                     final var graph = em.createEntityGraph(Store.class);
                     graph.addAttributeNodes(Store_.managerStaff, Store_.address);
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 }
                 return query.getSingleResult();
             });
@@ -224,7 +225,7 @@ class Store_NamedQueries_IT
             final var found = applyEntityManager(
                     em -> em.createNamedQuery(QUERY_FIND_BY_MANAGER_STAFF, Store.class)
                             .setParameter(PARAMETER_MANAGER_STAFF, managerStaff)
-                            .setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, em.createEntityGraph(ENTITY_GRAPH_MANAGER_STAFF))
+                            .setHint(PERSISTENCE_FETCHGRAPH, em.createEntityGraph(ENTITY_GRAPH_MANAGER_STAFF))
                             .getSingleResult()
             );
             assertThat(found)

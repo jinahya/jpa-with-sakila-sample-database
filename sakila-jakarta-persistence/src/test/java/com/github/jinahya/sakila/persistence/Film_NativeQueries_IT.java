@@ -9,6 +9,20 @@ import org.slf4j.Logger;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.sakila.persistence.FilmConstants.PARAMETER_FILM_ID;
+import static com.github.jinahya.sakila.persistence.FilmConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.FilmConstants.PARAMETER_LANGUAGE;
+import static com.github.jinahya.sakila.persistence.FilmConstants.PARAMETER_LANGUAGE_ID;
+import static com.github.jinahya.sakila.persistence.FilmConstants.PARAMETER_TITLE;
+import static com.github.jinahya.sakila.persistence.FilmConstants.PARAMETER_TITLE_PATTERN;
+import static com.github.jinahya.sakila.persistence.FilmConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.FilmConstants.QUERY_FIND_ALL_BY_LANGUAGE;
+import static com.github.jinahya.sakila.persistence.FilmConstants.QUERY_FIND_ALL_BY_LANGUAGE_ID;
+import static com.github.jinahya.sakila.persistence.FilmConstants.QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE;
+import static com.github.jinahya.sakila.persistence.FilmConstants.QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE_ID;
+import static com.github.jinahya.sakila.persistence.FilmConstants.QUERY_FIND_ALL_BY_TITLE;
+import static com.github.jinahya.sakila.persistence.FilmConstants.QUERY_FIND_ALL_BY_TITLE_LIKE;
+import static com.github.jinahya.sakila.persistence.FilmConstants.QUERY_FIND_BY_FILM_ID;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +38,7 @@ class Film_NativeQueries_IT
         super();
     }
 
-    @DisplayName(FilmConstants.QUERY_FIND_BY_FILM_ID)
+    @DisplayName(QUERY_FIND_BY_FILM_ID)
     @Nested
     class FindByFilmIdTest {
 
@@ -33,8 +47,8 @@ class Film_NativeQueries_IT
         void _NoResultException_0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(FilmConstants.QUERY_FIND_BY_FILM_ID, Film.class)
-                                    .setParameter(FilmConstants.PARAMETER_FILM_ID, 0)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_FILM_ID, Film.class)
+                                    .setParameter(PARAMETER_FILM_ID, 0)
                                     .getSingleResult()
                     )
             ).isInstanceOf(NoResultException.class);
@@ -45,8 +59,8 @@ class Film_NativeQueries_IT
         void _NotNull_1() {
             final var filmId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(FilmConstants.QUERY_FIND_BY_FILM_ID, Film.class)
-                            .setParameter(FilmConstants.PARAMETER_FILM_ID, filmId)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_FILM_ID, Film.class)
+                            .setParameter(PARAMETER_FILM_ID, filmId)
                             .getSingleResult()
             );
             assertThat(found)
@@ -56,7 +70,7 @@ class Film_NativeQueries_IT
         }
     }
 
-    @DisplayName(FilmConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
@@ -66,8 +80,8 @@ class Film_NativeQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var filmIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmConstants.QUERY_FIND_ALL, Film.class)
-                                .setParameter(FilmConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Film.class)
+                                .setParameter(PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -86,7 +100,7 @@ class Film_NativeQueries_IT
         }
     }
 
-    @DisplayName(FilmConstants.QUERY_FIND_ALL_BY_LANGUAGE_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_LANGUAGE_ID)
     @Nested
     class FindAllByLanguageIdTest {
 
@@ -97,9 +111,9 @@ class Film_NativeQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var filmIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmConstants.QUERY_FIND_ALL_BY_LANGUAGE_ID, Film.class)
-                                .setParameter(FilmConstants.PARAMETER_LANGUAGE_ID, languageId)
-                                .setParameter(FilmConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_LANGUAGE_ID, Film.class)
+                                .setParameter(PARAMETER_LANGUAGE_ID, languageId)
+                                .setParameter(PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -118,7 +132,7 @@ class Film_NativeQueries_IT
         }
     }
 
-    @DisplayName(FilmConstants.QUERY_FIND_ALL_BY_LANGUAGE)
+    @DisplayName(QUERY_FIND_ALL_BY_LANGUAGE)
     @Nested
     class FindAllByLanguageTest {
 
@@ -129,9 +143,9 @@ class Film_NativeQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var filmIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmConstants.QUERY_FIND_ALL_BY_LANGUAGE, Film.class)
-                                .setParameter(FilmConstants.PARAMETER_LANGUAGE, language)
-                                .setParameter(FilmConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_LANGUAGE, Film.class)
+                                .setParameter(PARAMETER_LANGUAGE, language)
+                                .setParameter(PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -151,7 +165,7 @@ class Film_NativeQueries_IT
         }
     }
 
-    @DisplayName(FilmConstants.QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE_ID)
     @Nested
     class FindAllByOriginalLanguageIdTest {
 
@@ -167,7 +181,7 @@ class Film_NativeQueries_IT
         }
     }
 
-    @DisplayName(FilmConstants.QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE)
+    @DisplayName(QUERY_FIND_ALL_BY_ORIGINAL_LANGUAGE)
     @Nested
     class FindAllByOriginalLanguageTest {
 
@@ -183,7 +197,7 @@ class Film_NativeQueries_IT
         }
     }
 
-    @DisplayName(FilmConstants.QUERY_FIND_ALL_BY_TITLE)
+    @DisplayName(QUERY_FIND_ALL_BY_TITLE)
     @Nested
     class FindAllByTitleTest {
 
@@ -195,9 +209,9 @@ class Film_NativeQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var filmIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmConstants.QUERY_FIND_ALL_BY_TITLE, Film.class)
-                                .setParameter(FilmConstants.PARAMETER_TITLE, title)
-                                .setParameter(FilmConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_TITLE, Film.class)
+                                .setParameter(PARAMETER_TITLE, title)
+                                .setParameter(PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -216,7 +230,7 @@ class Film_NativeQueries_IT
         }
     }
 
-    @DisplayName(FilmConstants.QUERY_FIND_ALL_BY_TITLE_LIKE)
+    @DisplayName(QUERY_FIND_ALL_BY_TITLE_LIKE)
     @Nested
     class FindAllByTitleLikeTest {
 
@@ -228,9 +242,9 @@ class Film_NativeQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var filmIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(FilmConstants.QUERY_FIND_ALL_BY_TITLE_LIKE, Film.class)
-                                .setParameter(FilmConstants.PARAMETER_TITLE_PATTERN, titlePattern)
-                                .setParameter(FilmConstants.PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_TITLE_LIKE, Film.class)
+                                .setParameter(PARAMETER_TITLE_PATTERN, titlePattern)
+                                .setParameter(PARAMETER_FILM_ID_MIN_EXCLUSIVE, filmIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

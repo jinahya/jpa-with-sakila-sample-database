@@ -11,12 +11,15 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.function.Function;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 @EnableAutoWeld
 @AddPackages({___EntityManagerFactoryProducer.class})
 abstract class __BaseEntityIT<T extends __BaseEntity<U>, U extends Comparable<? super U>>
         extends ___BaseEntityTestBase<T, U> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     __BaseEntityIT(final Class<T> entityClass, final Class<U> idClass) {
         super(entityClass, idClass);

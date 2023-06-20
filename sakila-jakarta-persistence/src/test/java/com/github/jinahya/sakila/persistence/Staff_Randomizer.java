@@ -9,12 +9,14 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static org.jeasy.random.FieldPredicates.named;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class Staff_Randomizer
         extends _BaseEntityRandomizer<Staff> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     static Integer randomActive() {
         return ThreadLocalRandom.current().nextBoolean() ? 0 : 1;

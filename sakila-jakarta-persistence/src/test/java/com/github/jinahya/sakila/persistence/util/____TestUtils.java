@@ -19,9 +19,12 @@ import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 public final class ____TestUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     /**
      * Create a new validation proxy of specified object.

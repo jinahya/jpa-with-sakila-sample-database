@@ -6,21 +6,25 @@ import org.junit.jupiter.api.Test;
 import java.util.Objects;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static com.github.jinahya.sakila.persistence.Customer_IT.newPersistedCustomer;
+import static com.github.jinahya.sakila.persistence.Inventory_IT.newPersistedInventory;
+import static com.github.jinahya.sakila.persistence.Staff_IT.newPersistedStaff;
+import static com.github.jinahya.sakila.persistence.Store_IT.newPersistedStore;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Payment_IT
         extends _BaseEntityIT<Payment, Integer> {
 
-    static Payment newPersistedInstance(final EntityManager entityManager, final Store store) {
+    static Payment newPersistedPayment(final EntityManager entityManager, final Store store) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         Objects.requireNonNull(store, "store is null");
         final var instance = new Payment_Randomizer().getRandomValue();
-        instance.setCustomer(Customer_IT.newPersistedInstance(entityManager, store));
-        instance.setStaff(Staff_IT.newPersistedInstance(entityManager, store));
+        instance.setCustomer(newPersistedCustomer(entityManager, store));
+        instance.setStaff(newPersistedStaff(entityManager, store));
         if (current().nextBoolean()) {
             final var rental = new Rental_Randomizer().getRandomValue();
-            rental.setInventory(Inventory_IT.newPersistedInstance(entityManager, store));
+            rental.setInventory(newPersistedInventory(entityManager, store));
             rental.setCustomer(instance.getCustomer());
             rental.setStaff(instance.getStaff());
             entityManager.persist(rental);
@@ -30,10 +34,10 @@ class Payment_IT
         return instance;
     }
 
-    static Payment newPersistedInstance(final EntityManager entityManager) {
+    static Payment newPersistedPayment(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
-        final var store = Store_IT.newPersistedInstance(entityManager);
-        return newPersistedInstance(entityManager, store);
+        final var store = newPersistedStore(entityManager);
+        return newPersistedPayment(entityManager, store);
     }
 
     Payment_IT() {
@@ -42,7 +46,7 @@ class Payment_IT
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(Payment_IT::newPersistedInstance);
+        final var instance = applyEntityManager(Payment_IT::newPersistedPayment);
         assertThat(instance).isNotNull().satisfies(r -> {
             assertThat(r.getPaymentId()).isNotNull();
             assertThatBean(r).isValid();

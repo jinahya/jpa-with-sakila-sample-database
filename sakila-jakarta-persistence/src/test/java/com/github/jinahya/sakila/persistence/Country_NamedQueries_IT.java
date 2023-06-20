@@ -6,6 +6,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
+import static com.github.jinahya.sakila.persistence.CountryConstants.PARAMETER_COUNTRY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.CountryConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.CountryConstants.QUERY_FIND_BY_COUNTRY_ID;
+import static com.github.jinahya.sakila.persistence.Country_.countryId;
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -21,7 +25,7 @@ class Country_NamedQueries_IT
 
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(CountryConstants.QUERY_FIND_BY_COUNTRY_ID)
+    @DisplayName(QUERY_FIND_BY_COUNTRY_ID)
     @Nested
     class FindByCountryIdTest {
 
@@ -33,7 +37,7 @@ class Country_NamedQueries_IT
             // WHEN / THEN
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(CountryConstants.QUERY_FIND_BY_COUNTRY_ID, Country.class)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_COUNTRY_ID, Country.class)
                                     .setParameter(Country_.countryId.getName(), countryId)
                                     .getSingleResult() // NoResultException
                     )
@@ -47,7 +51,7 @@ class Country_NamedQueries_IT
             final var countryId = 1; // Afghanistan
             // WHEN
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(CountryConstants.QUERY_FIND_BY_COUNTRY_ID, Country.class)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_COUNTRY_ID, Country.class)
                             .setParameter(Country_.countryId.getName(), countryId)
                             .getSingleResult()
             );
@@ -69,7 +73,7 @@ class Country_NamedQueries_IT
         }
     }
 
-    @DisplayName(CountryConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
@@ -80,8 +84,8 @@ class Country_NamedQueries_IT
                 final var countryIdMinExclusive = i;
                 // WHEN
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(CountryConstants.QUERY_FIND_ALL, Country.class)
-                                .setParameter(CountryConstants.PARAMETER_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Country.class)
+                                .setParameter(PARAMETER_COUNTRY_ID_MIN_EXCLUSIVE, countryIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );

@@ -9,6 +9,14 @@ import org.slf4j.Logger;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.sakila.persistence.AddressConstants.GRAPH_CITY;
+import static com.github.jinahya.sakila.persistence.AddressConstants.GRAPH_CITY_COUNTRY;
+import static com.github.jinahya.sakila.persistence.AddressConstants.GRAPH_NODE_CITY;
+import static com.github.jinahya.sakila.persistence.AddressConstants.PARAMETER_ADDRESS_ID;
+import static com.github.jinahya.sakila.persistence.AddressConstants.PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.AddressConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.AddressConstants.QUERY_FIND_BY_ADDRESS_ID;
+import static com.github.jinahya.sakila.persistence._PersistenceConstants.PERSISTENCE_FETCHGRAPH;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,7 +28,7 @@ class Address_NamedQueries_IT
 
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(AddressConstants.QUERY_FIND_BY_ADDRESS_ID)
+    @DisplayName(QUERY_FIND_BY_ADDRESS_ID)
     @Nested
     class FindByAddressIdTest {
 
@@ -29,7 +37,7 @@ class Address_NamedQueries_IT
         void _NoResultException_0() {
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(AddressConstants.QUERY_FIND_BY_ADDRESS_ID, Address.class)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_ADDRESS_ID, Address.class)
                                     .setParameter(Address_.addressId.getName(), 0)
                                     .getSingleResult()
                     )
@@ -41,7 +49,7 @@ class Address_NamedQueries_IT
         void _NotNull_1() {
             final var addressId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(AddressConstants.QUERY_FIND_BY_ADDRESS_ID, Address.class)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_ADDRESS_ID, Address.class)
                             .setParameter(Address_.addressId.getName(), addressId)
                             .getSingleResult()
             );
@@ -57,15 +65,15 @@ class Address_NamedQueries_IT
             final var addressId = 1;
             final var found = applyEntityManager(
                     em -> {
-                        final var query = em.createNamedQuery(AddressConstants.QUERY_FIND_BY_ADDRESS_ID, Address.class)
-                                .setParameter(AddressConstants.PARAMETER_ADDRESS_ID, addressId);
+                        final var query = em.createNamedQuery(QUERY_FIND_BY_ADDRESS_ID, Address.class)
+                                .setParameter(PARAMETER_ADDRESS_ID, addressId);
                         if (current().nextBoolean()) {
-                            final var graph = em.createEntityGraph(AddressConstants.GRAPH_CITY);
-                            query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                            final var graph = em.createEntityGraph(GRAPH_CITY);
+                            query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                         } else {
                             final var graph = em.createEntityGraph(Address.class);
-                            graph.addAttributeNodes(AddressConstants.GRAPH_NODE_CITY);
-                            query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                            graph.addAttributeNodes(GRAPH_NODE_CITY);
+                            query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                         }
                         return query.getSingleResult();
                     }
@@ -84,17 +92,17 @@ class Address_NamedQueries_IT
             final var addressId = 1;
             final var found = applyEntityManager(
                     em -> {
-                        final var query = em.createNamedQuery(AddressConstants.QUERY_FIND_BY_ADDRESS_ID, Address.class)
-                                .setParameter(AddressConstants.PARAMETER_ADDRESS_ID, addressId);
+                        final var query = em.createNamedQuery(QUERY_FIND_BY_ADDRESS_ID, Address.class)
+                                .setParameter(PARAMETER_ADDRESS_ID, addressId);
                         if (current().nextBoolean()) {
-                            final var graph = em.createEntityGraph(AddressConstants.GRAPH_CITY_COUNTRY);
-                            query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                            final var graph = em.createEntityGraph(GRAPH_CITY_COUNTRY);
+                            query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                         } else {
                             final var graph = em.createEntityGraph(Address.class);
                             graph.addAttributeNodes(Address_.city);
                             final var subgraph = graph.addSubgraph(Address_.city);
                             subgraph.addAttributeNodes(City_.country);
-                            query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                            query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                         }
                         return query.getSingleResult();
                     }
@@ -119,8 +127,8 @@ class Address_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var addressIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(AddressConstants.QUERY_FIND_ALL, Address.class)
-                                .setParameter(AddressConstants.PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL, Address.class)
+                                .setParameter(PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -144,16 +152,16 @@ class Address_NamedQueries_IT
                 final var addressIdMinExclusive = i.get();
                 final var list = applyEntityManager(
                         em -> {
-                            final var query = em.createNamedQuery(AddressConstants.QUERY_FIND_ALL, Address.class)
-                                    .setParameter(AddressConstants.PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
+                            final var query = em.createNamedQuery(QUERY_FIND_ALL, Address.class)
+                                    .setParameter(PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
                                     .setMaxResults(maxResults);
                             if (current().nextBoolean()) {
-                                final var graph = em.createEntityGraph(AddressConstants.GRAPH_CITY);
-                                query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                                final var graph = em.createEntityGraph(GRAPH_CITY);
+                                query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                             } else {
                                 final var graph = em.createEntityGraph(Address.class);
                                 graph.addAttributeNodes(Address_.city);
-                                query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                                query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                             }
                             return query.getResultList();
                         }
@@ -178,18 +186,18 @@ class Address_NamedQueries_IT
                 final var addressIdMinExclusive = i.get();
                 final var list = applyEntityManager(
                         em -> {
-                            final var query = em.createNamedQuery(AddressConstants.QUERY_FIND_ALL, Address.class)
-                                    .setParameter(AddressConstants.PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
+                            final var query = em.createNamedQuery(QUERY_FIND_ALL, Address.class)
+                                    .setParameter(PARAMETER_ADDRESS_ID_MIN_EXCLUSIVE, addressIdMinExclusive)
                                     .setMaxResults(maxResults);
                             if (current().nextBoolean()) {
-                                final var graph = em.createEntityGraph(AddressConstants.GRAPH_CITY_COUNTRY);
-                                query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                                final var graph = em.createEntityGraph(GRAPH_CITY_COUNTRY);
+                                query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                             } else {
                                 final var graph = em.createEntityGraph(Address.class);
                                 graph.addAttributeNodes(Address_.city);
                                 final var subgraph = graph.addSubgraph(Address_.city);
                                 subgraph.addAttributeNodes(City_.country);
-                                query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                                query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                             }
                             return query.getResultList();
                         }

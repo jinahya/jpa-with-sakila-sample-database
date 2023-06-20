@@ -9,6 +9,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.Objects;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * Utilities related to {@link javax.security} package.
  *
@@ -16,7 +19,7 @@ import java.util.Objects;
  */
 public final class SecurityUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     private static String digest(final String algorithm, final byte[] bytes) {
         Objects.requireNonNull(algorithm, "algorithm is null");

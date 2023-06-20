@@ -5,14 +5,17 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Objects;
 
+import static com.github.jinahya.sakila.persistence.Actor_IT.newPersistedActor;
+import static com.github.jinahya.sakila.persistence.Film_IT.newPersistedFilm;
+
 class FilmActor_IT
         extends _BaseEntityIT<FilmActor, FilmActorId> {
 
-    static FilmActor newPersistedInstance(final EntityManager entityManager) {
+    static FilmActor newPersistedFilmActor(final EntityManager entityManager) {
         Objects.requireNonNull(entityManager, "entityManager is null");
         final var instance = new FilmActor_Randomizer().getRandomValue();
-        instance.setActor(Actor_IT.newPersistedInstance(entityManager));
-        instance.setFilm(Film_IT.newPersistedInstance(entityManager));
+        instance.setActor(newPersistedActor(entityManager));
+        instance.setFilm(newPersistedFilm(entityManager));
         entityManager.persist(instance);
         entityManager.flush();
         return instance;
@@ -24,6 +27,6 @@ class FilmActor_IT
 
     @Test
     void __() {
-        final var instance = applyEntityManager(FilmActor_IT::newPersistedInstance);
+        final var instance = applyEntityManager(FilmActor_IT::newPersistedFilmActor);
     }
 }

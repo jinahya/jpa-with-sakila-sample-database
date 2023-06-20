@@ -8,13 +8,15 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
 
+import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.concurrent.ThreadLocalRandom.current;
 import static org.jeasy.random.FieldPredicates.named;
+import static org.slf4j.LoggerFactory.getLogger;
 
 class Address_Randomizer
         extends _BaseEntityRandomizer<Address> {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     Address_Randomizer() {
         super(Address.class);

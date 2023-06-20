@@ -15,6 +15,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 /**
  * Defines a bunch of utility methods.
  *
@@ -22,7 +25,7 @@ import java.util.function.Supplier;
  */
 public final class PersistenceUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     private static final ThreadLocal<Boolean> ROLLBACK = new ThreadLocal<>();
 
@@ -58,7 +61,7 @@ public final class PersistenceUtils {
             final Class<?> workClass = Class.forName("org.hibernate.jdbc.ReturningWork");
             final Method executeMethod = workClass.getMethod("execute", Connection.class);
             final Object proxy = Proxy.newProxyInstance(
-                    MethodHandles.lookup().lookupClass().getClassLoader(),
+                    lookup().lookupClass().getClassLoader(),
                     new Class[]{workClass},
                     (p, m, a) -> {
                         if (m.equals(executeMethod)) {

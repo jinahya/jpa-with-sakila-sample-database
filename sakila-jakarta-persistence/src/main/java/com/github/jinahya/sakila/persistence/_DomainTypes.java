@@ -10,9 +10,12 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static java.lang.invoke.MethodHandles.lookup;
+import static org.slf4j.LoggerFactory.getLogger;
+
 public final class _DomainTypes {
 
-    private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger log = getLogger(lookup().lookupClass());
 
     interface AttributeEnum<E extends Enum<E> & AttributeEnum<E, A>, A> {
 

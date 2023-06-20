@@ -8,6 +8,13 @@ import org.slf4j.Logger;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.github.jinahya.sakila.persistence.CityConstants.GRAPH_COUNTRY;
+import static com.github.jinahya.sakila.persistence.CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE;
+import static com.github.jinahya.sakila.persistence.CityConstants.PARAM_COUNTRY_ID;
+import static com.github.jinahya.sakila.persistence.CityConstants.QUERY_FIND_ALL;
+import static com.github.jinahya.sakila.persistence.CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID;
+import static com.github.jinahya.sakila.persistence.CityConstants.QUERY_FIND_BY_CITY_ID;
+import static com.github.jinahya.sakila.persistence._PersistenceConstants.PERSISTENCE_FETCHGRAPH;
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Comparator.comparing;
 import static java.util.concurrent.ThreadLocalRandom.current;
@@ -25,7 +32,7 @@ class City_NamedQueries_IT
 
     private static final Logger log = getLogger(lookup().lookupClass());
 
-    @DisplayName(CityConstants.QUERY_FIND_BY_CITY_ID)
+    @DisplayName(QUERY_FIND_BY_CITY_ID)
     @Nested
     class FindByCityIdTest {
 
@@ -35,7 +42,7 @@ class City_NamedQueries_IT
             final var cityId = 0;
             assertThatThrownBy(
                     () -> applyEntityManager(
-                            em -> em.createNamedQuery(CityConstants.QUERY_FIND_BY_CITY_ID, City.class)
+                            em -> em.createNamedQuery(QUERY_FIND_BY_CITY_ID, City.class)
                                     .setParameter(City_.cityId.getName(), cityId)
                                     .getSingleResult() // NoResultException
                     )
@@ -47,7 +54,7 @@ class City_NamedQueries_IT
         void _NotNull_1() {
             final var cityId = 1;
             final var found = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_BY_CITY_ID, City.class)
+                    em -> em.createNamedQuery(QUERY_FIND_BY_CITY_ID, City.class)
                             .setParameter(City_.cityId.getName(), cityId)
                             .getSingleResult()
             );
@@ -62,15 +69,15 @@ class City_NamedQueries_IT
         void _NotNull_1FetchCountry() {
             final var cityId = 1;
             final var found = applyEntityManager(em -> {
-                final var query = em.createNamedQuery(CityConstants.QUERY_FIND_BY_CITY_ID, City.class)
+                final var query = em.createNamedQuery(QUERY_FIND_BY_CITY_ID, City.class)
                         .setParameter(City_.cityId.getName(), cityId);
                 if (current().nextBoolean()) {
-                    final var graph = em.getEntityGraph(CityConstants.GRAPH_COUNTRY);
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    final var graph = em.getEntityGraph(GRAPH_COUNTRY);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 } else {
                     final var graph = em.createEntityGraph(City.class);
                     graph.addAttributeNodes(City_.country.getName());
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 }
                 return query.getSingleResult();
             });
@@ -85,7 +92,7 @@ class City_NamedQueries_IT
         }
     }
 
-    @DisplayName(CityConstants.QUERY_FIND_ALL)
+    @DisplayName(QUERY_FIND_ALL)
     @Nested
     class FindAllTest {
 
@@ -94,8 +101,8 @@ class City_NamedQueries_IT
         void __first() {
             final var maxResults = current().nextInt(1, 8);
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL, City.class)
-                            .setParameter(CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
+                    em -> em.createNamedQuery(QUERY_FIND_ALL, City.class)
+                            .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
                             .setMaxResults(maxResults)
                             .getResultList()
             );
@@ -119,7 +126,7 @@ class City_NamedQueries_IT
         }
     }
 
-    @DisplayName(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID)
+    @DisplayName(QUERY_FIND_ALL_BY_COUNTRY_ID)
     @Nested
     class FindAllByCountryIdTest {
 
@@ -128,9 +135,9 @@ class City_NamedQueries_IT
         void _Empty_0() {
             final var countryId = 0;
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                            .setParameter(CityConstants.PARAM_COUNTRY_ID, countryId)
-                            .setParameter(CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
+                    em -> em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                            .setParameter(PARAM_COUNTRY_ID, countryId)
+                            .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
                             .getResultList()
             );
             assertThat(list).isEmpty();
@@ -143,9 +150,9 @@ class City_NamedQueries_IT
             final var cityIdMinExclusive = 0;
             final var maxResults = current().nextInt(8, 16);
             final var list = applyEntityManager(
-                    em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                            .setParameter(CityConstants.PARAM_COUNTRY_ID, countryId)
-                            .setParameter(CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                    em -> em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                            .setParameter(PARAM_COUNTRY_ID, countryId)
+                            .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
                             .setMaxResults(maxResults)
                             .getResultList()
             );
@@ -166,9 +173,9 @@ class City_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var cityIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                                .setParameter(CityConstants.PARAM_COUNTRY_ID, countryId)
-                                .setParameter(CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                                .setParameter(PARAM_COUNTRY_ID, countryId)
+                                .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -191,17 +198,17 @@ class City_NamedQueries_IT
             final var countryId = 44; // India
             final var maxResults = current().nextInt(8, 16);
             final var list = applyEntityManager(em -> {
-                final var query = em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                        .setParameter(CityConstants.PARAM_COUNTRY_ID, countryId)
-                        .setParameter(CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
+                final var query = em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                        .setParameter(PARAM_COUNTRY_ID, countryId)
+                        .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, 0)
                         .setMaxResults(maxResults);
                 if (current().nextBoolean()) {
-                    final var graph = em.getEntityGraph(CityConstants.GRAPH_COUNTRY);
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    final var graph = em.getEntityGraph(GRAPH_COUNTRY);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 } else {
                     final var graph = em.createEntityGraph(City.class);
                     graph.addAttributeNodes(City_.country.getName());
-                    query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                    query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                 }
                 return query.getResultList();
             });
@@ -229,9 +236,9 @@ class City_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var cityIdMinExclusive = i.get();
                 final var list = applyEntityManager(
-                        em -> em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                                .setParameter(CityConstants.PARAM_COUNTRY_ID, countryId)
-                                .setParameter(CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                        em -> em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                                .setParameter(PARAM_COUNTRY_ID, countryId)
+                                .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
                                 .setMaxResults(maxResults)
                                 .getResultList()
                 );
@@ -256,17 +263,17 @@ class City_NamedQueries_IT
             for (final var i = new AtomicInteger(0); ; ) {
                 final var cityIdMinExclusive = i.get();
                 final var list = applyEntityManager(em -> {
-                    final var query = em.createNamedQuery(CityConstants.QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
-                            .setParameter(CityConstants.PARAM_COUNTRY_ID, countryId)
-                            .setParameter(CityConstants.PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
+                    final var query = em.createNamedQuery(QUERY_FIND_ALL_BY_COUNTRY_ID, City.class)
+                            .setParameter(PARAM_COUNTRY_ID, countryId)
+                            .setParameter(PARAM_CITY_ID_MIN_EXCLUSIVE, cityIdMinExclusive)
                             .setMaxResults(maxResults);
                     if (current().nextBoolean()) {
-                        final var graph = em.getEntityGraph(CityConstants.GRAPH_COUNTRY);
-                        query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                        final var graph = em.getEntityGraph(GRAPH_COUNTRY);
+                        query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                     } else {
                         final var graph = em.createEntityGraph(City.class);
                         graph.addAttributeNodes(City_.country.getName());
-                        query.setHint(_PersistenceConstants.PERSISTENCE_FETCHGRAPH, graph);
+                        query.setHint(PERSISTENCE_FETCHGRAPH, graph);
                     }
                     return query.getResultList();
                 });

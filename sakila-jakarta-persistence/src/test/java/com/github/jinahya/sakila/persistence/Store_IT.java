@@ -4,7 +4,9 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 
 import static com.github.jinahya.assertj.validation.ValidationAssertions.assertThatBean;
+import static com.github.jinahya.sakila.persistence.Store.COLUMN_VALUE_STORE_ID_THE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.extractProperty;
 
 /**
  * A class unit-testing {@link Store} class.
@@ -22,19 +24,20 @@ class Store_IT
      * @return the store.
      */
     static Store findTheStore(final EntityManager entityManager) {
-        final var found = entityManager.find(Store.class, Store.COLUMN_VALUE_STORE_ID_THE);
-        assertThat(found).isNotNull();
-        assertThat(found.getStoreId())
-                .isEqualTo(Store.COLUMN_VALUE_STORE_ID_THE);
+        final var found = entityManager.find(Store.class, COLUMN_VALUE_STORE_ID_THE);
+        assertThat(found)
+                .isNotNull()
+                .extracting(Store::getStoreId)
+                .isEqualTo(COLUMN_VALUE_STORE_ID_THE);
         return found;
     }
 
-    static Store newPersistedInstance(final EntityManager entityManager) {
+    static Store newPersistedStore(final EntityManager entityManager) {
         final var instance = new Store_Randomizer().getRandomValue();
-        final var staff = Staff_IT.newPersistedInstance(entityManager);
+        final var staff = Staff_IT.newPersistedStaff(entityManager);
         entityManager.detach(staff);
         instance.setManagerStaffId(staff.getStaffId());
-        instance.setAddress(Address_IT.newPersistedInstance(entityManager));
+        instance.setAddress(Address_IT.newPersistedAddress(entityManager));
         entityManager.persist(instance);
         entityManager.flush();
         return instance;
@@ -46,7 +49,7 @@ class Store_IT
 
     @Test
     void persist__() {
-        final var instance = applyEntityManager(Store_IT::newPersistedInstance);
+        final var instance = applyEntityManager(Store_IT::newPersistedStore);
         assertThat(instance)
                 .isNotNull()
                 .satisfies(e -> {
